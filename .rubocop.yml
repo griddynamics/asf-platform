@@ -1,0 +1,5 @@
+AllCops:
+  Exclude:
+    - 'cookbooks/**/*'
+    - 'metadata.rb'
+    - 'Rakefile'
