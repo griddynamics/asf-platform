@@ -1,7 +1,7 @@
 # Encoding: utf-8
 #
-# Cookbook Name:: cicd-infrastructure
+# Cookbook Name:: cicd_infrastructure
 # Recipe:: default
 #
-# Copyright 2014, YOUR_COMPANY_NAME
+# Copyright 2014, Grid Dynamics International, Inc.
 #
