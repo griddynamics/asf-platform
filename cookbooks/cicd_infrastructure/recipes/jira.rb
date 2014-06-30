@@ -1,13 +1,10 @@
 # Encoding: utf-8
 #
-# Cookbook Name:: cicd-infrastructure
+# Cookbook Name:: cicd_infrastructure
 # Recipe:: default
 #
 # Copyright 2014, Grid Dynamics International, Inc.
 #
 
-include Opscode::OpenSSL::Password
-node.set_unless['postgresql']['password']['postgres'] = secure_password
-
-include_recipe 'jira::server'
-include_recipe 'jira::local_database'
+include_recipe 'java::default'
+include_recipe 'jira::default'

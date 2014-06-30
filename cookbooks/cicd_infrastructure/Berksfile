@@ -2,4 +2,4 @@ source "https://api.berkshelf.com"
 
 metadata
 
-cookbook 'jira', git: 'https://github.com/secondmarket-cookbooks/jira.git'
+cookbook 'jira', git: 'https://github.com/bflad/chef-jira.git'
