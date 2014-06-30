@@ -1,0 +1,76 @@
+application:
+  configuration:
+    input.jira_version: "5.2.7"
+    input.cookbooks_url: "http://qubell-jira.s3.amazonaws.com/jira-component-cookbooks.tar.gz"
+  interfaces:
+    input:
+      jira_version: "bind(workflow#input.jira_version)"
+      cookbooks_url: "bind(workflow#input.cookbooks_url)"
+    output: 
+      public_ips: 
+        type: "bind(workflow#result.public_ips)"
+        name: "Instance IP: "
+      jira_endpoint: 
+        type: "bind(workflow#result.jira_endpoint)"
+        name: "JIRA dashboard: "
+  components:
+    workflow:
+      type: workflow.Instance
+      interfaces:
+        input:  
+          jira_version: 
+            type: configuration(string)
+            name: JIRA version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        result:  
+          public_ips: publish-signal(list<string>)
+          jira_endpoint: publish-signal(string)
+        keypair-store:
+          get-keypair: "send-command(string id => object privateKey)"
+      configuration:
+        configuration.triggers: {}
+        configuration.workflows:
+          launch:
+            steps:
+              - start_vm:
+                  action: provisionVms
+                  parameters:
+                    roleName: jira
+                    hardwareId: m1.small
+                    quantity: 1
+                    retryCount: 1
+                    jcloudsProvider: aws-ec2
+                    jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                    jcloudsRegions: us-east-1
+                    jcloudsNodeNamePrefix: jira
+                    vmIdentity: ec2-user
+                    imageId: us-east-1/ami-d41689bd
+                    ec2SecurityGroup: default
+                  output:
+                    public_ips: ips
+                    private_ips: privateips
+
+              - install_jira:
+                  action: chefsolo
+                  precedingPhases: [ install_chef ]
+                  parameters:
+                      roles: [ jira ]
+                      recipeUrl: "{$.cookbooks_url}"
+                      runList: [ "recipe[jira-wrapper::default]" ]
+                      jattrs:
+                        jira:
+                          version: "{$.jira_version}"
+                        java:
+                          oracle:
+                            accept_oracle_download_terms: true
+            return:
+              public_ips:
+                value: {$.public_ips}
+              jira_endpoint:
+                value: "http://{$.public_ips}:8080"
+          destroy:
+            steps:
+                - destroy:
+                    action: undeployEnv
