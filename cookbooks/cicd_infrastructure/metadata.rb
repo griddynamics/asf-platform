@@ -7,7 +7,5 @@ description      'Installs/Configures cicd-infrastructure'
 # long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.1.0'
 
-depends 'openldap'
 depends 'java'
 depends 'jira'
-depends 'chef-sugar'
