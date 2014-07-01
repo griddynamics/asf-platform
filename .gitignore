@@ -7,15 +7,15 @@
 pkg/
 
 # Berkshelf
-.vagrant
-/cookbooks
-Berksfile.lock
+cookbooks/*/.vagrant
+cookbooks/*/cookbooks
+cookbooks/*/Berksfile.lock
 
 # Bundler
-Gemfile.lock
+cookbooks/*/Gemfile.lock
 bin/*
-.bundle/*
+cookbooks/*/.bundle/*
 
-.coverage/*
-.kitchen/
-.kitchen.local.yml
+cookbooks/*/.coverage/*
+cookbooks/*/.kitchen/
+cookbooks/*/.kitchen.local.yml
