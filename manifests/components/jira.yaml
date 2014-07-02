@@ -1,18 +1,14 @@
 application:
   configuration:
     input.jira_version: "5.2.7"
-    input.cookbooks_url: "http://qubell-jira.s3.amazonaws.com/jira-component-cookbooks.tar.gz"
+    input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
   interfaces:
     input:
       jira_version: "bind(workflow#input.jira_version)"
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
     output: 
-      public_ips: 
-        type: "bind(workflow#result.public_ips)"
-        name: "Instance IP: "
-      jira_endpoint: 
-        type: "bind(workflow#result.jira_endpoint)"
-        name: "JIRA dashboard: "
+      public_ips: "bind(workflow#result.public_ips)"
+      jira_endpoint: "bind(workflow#result.jira_endpoint)"
   components:
     workflow:
       type: workflow.Instance
@@ -25,8 +21,12 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         result:  
-          public_ips: publish-signal(list<string>)
-          jira_endpoint: publish-signal(string)
+          public_ips:
+            type: publish-signal(list<string>)
+            name: "Instance IP: "
+          jira_endpoint: 
+            type: publish-signal(string)
+            name: "JIRA dashboard: "
         keypair-store:
           get-keypair: "send-command(string id => object privateKey)"
       configuration:
@@ -54,7 +54,7 @@ application:
 
               - install_jira:
                   action: chefsolo
-                  precedingPhases: [ install_chef ]
+                  precedingPhases: [ start_vm ]
                   parameters:
                       roles: [ jira ]
                       recipeUrl: "{$.cookbooks_url}"
@@ -65,11 +65,13 @@ application:
                         java:
                           oracle:
                             accept_oracle_download_terms: true
+                  output: 
+                    chef_attrs: chefState
             return:
               public_ips:
-                value: {$.public_ips}
+                value: "{$.public_ips}"
               jira_endpoint:
-                value: "http://{$.public_ips}:8080"
+                value: "https://{$.chef_attrs.jira.apache2.virtual_host_name}:{$.chef_attrs.jira.apache2.ssl.port}"
           destroy:
             steps:
                 - destroy:
