@@ -58,7 +58,8 @@ application:
                   parameters:
                       roles: [ jira ]
                       recipeUrl: "{$.cookbooks_url}"
-                      runList: [ "recipe[jira-wrapper::default]" ]
+                      runList: [ "recipe[cicd_infrastructure::jira]" ]
+                      version: "11.8.2"
                       jattrs:
                         jira:
                           version: "{$.jira_version}"
