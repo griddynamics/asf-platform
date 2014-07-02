@@ -24,9 +24,12 @@ ruby_block "wait for JIRA" do
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
         request = Net::HTTP::Get.new(uri.request_uri)
-        res = http.request(request)
-        puts http.request(request).code
-        sleep(30) until http.request(request).code.eql?("200")
+
+        10.times {
+            |x| Chef::Log.info("Trying to connect... #{10 - x} retries remain")
+            break if http.request(request).code.eql?('200')
+            sleep(30)
+        }
     end
 end
 
