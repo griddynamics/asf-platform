@@ -100,7 +100,7 @@ application:
               public_ips:
                 value: "{$.public_ips}"
               jira_endpoint:
-                value: "https://{$.attrs.jira.apache2.virtual_host_name}:{$.chef_attrs.jira.apache2.ssl.port}"
+                value: "https://{$.public_ips[0]}"
               logging-dashboard:
                 value: "{$.logging-dashboard}"
           destroy:
