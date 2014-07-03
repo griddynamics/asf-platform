@@ -26,7 +26,7 @@ ruby_block "wait for JIRA" do
         request = Net::HTTP::Get.new(uri.request_uri)
 
         10.times {
-            |x| Chef::Log.info("Trying to connect... #{10 - x} retries remain")
+            |x| Chef::Log.info("Trying to connect to https://#{host}:#{port}... #{10 - x} retries remain")
             break if http.request(request).code.eql?('200')
             sleep(30)
         }
