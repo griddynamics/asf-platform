@@ -1,4 +1,7 @@
 application:
+  bindings:
+    - [workflow, logger]
+
   configuration:
     input.jira_version: "5.2.7"
     input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
@@ -9,7 +12,13 @@ application:
     output: 
       public_ips: "bind(workflow#result.public_ips)"
       jira_endpoint: "bind(workflow#result.jira_endpoint)"
+      logging-dashboard: "bind(workflow#result.logging-dashboard)"
   components:
+    logger:
+      type: reference.Service
+      interfaces:
+        logger:
+          logger-server: publish-signal(string)
     workflow:
       type: workflow.Instance
       interfaces:
@@ -27,15 +36,22 @@ application:
           jira_endpoint: 
             type: publish-signal(string)
             name: "JIRA dashboard: "
+          logging-dashboard: 
+            type: publish-signal(string)
+            name: "Logging Dashboard"
+        logger:
+          logger-server: consume-signal(string)
         keypair-store:
           get-keypair: "send-command(string id => object privateKey)"
+
+      required: [logger]
       configuration:
         configuration.triggers: {}
         configuration.workflows:
           launch:
             steps:
               - start_vm:
-                  action: provisionVms
+                  action: provisionVmsWithLogging
                   parameters:
                     roleName: jira
                     hardwareId: m1.small
@@ -51,6 +67,7 @@ application:
                   output:
                     public_ips: ips
                     private_ips: privateips
+                    logging-dashboard: logging-dashboard
 
               - install_jira:
                   action: chefsolo
@@ -68,11 +85,21 @@ application:
                             accept_oracle_download_terms: true
                   output: 
                     chef_attrs: chefState
+
+              - enable_logging:
+                  action: registerLogPath
+                  precedingPhases: [ start_vm ]
+                  parameters:
+                    roles: [ jira ]
+                    paths: [ "/opt/atlassian/jira/logs/catalina.out" ]
+
             return:
               public_ips:
                 value: "{$.public_ips}"
               jira_endpoint:
                 value: "https://{$.chef_attrs.jira.apache2.virtual_host_name}:{$.chef_attrs.jira.apache2.ssl.port}"
+              logging-dashboard:
+                value: "{$.logging-dashboard}"
           destroy:
             steps:
                 - destroy:
