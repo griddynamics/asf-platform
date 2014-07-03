@@ -1,19 +1,24 @@
 application:
+  bindings:
+    - [workflow, logger]
+
   configuration:
-    input.jira_version: "5.2.7"
-    input.cookbooks_url: "http://qubell-jira.s3.amazonaws.com/jira-component-cookbooks.tar.gz"
+    input.jira_version: "6.1.5"
+    input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
   interfaces:
     input:
       jira_version: "bind(workflow#input.jira_version)"
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
     output: 
-      public_ips: 
-        type: "bind(workflow#result.public_ips)"
-        name: "Instance IP: "
-      jira_endpoint: 
-        type: "bind(workflow#result.jira_endpoint)"
-        name: "JIRA dashboard: "
+      public_ips: "bind(workflow#result.public_ips)"
+      jira_endpoint: "bind(workflow#result.jira_endpoint)"
+      logging-dashboard: "bind(workflow#result.logging-dashboard)"
   components:
+    logger:
+      type: reference.Service
+      interfaces:
+        logger:
+          logger-server: publish-signal(string)
     workflow:
       type: workflow.Instance
       interfaces:
@@ -25,17 +30,28 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         result:  
-          public_ips: publish-signal(list<string>)
-          jira_endpoint: publish-signal(string)
+          public_ips:
+            type: publish-signal(list<string>)
+            name: "Instance IP: "
+          jira_endpoint: 
+            type: publish-signal(string)
+            name: "JIRA Dashboard: "
+          logging-dashboard: 
+            type: publish-signal(string)
+            name: "Logging Dashboard"
+        logger:
+          logger-server: consume-signal(string)
         keypair-store:
           get-keypair: "send-command(string id => object privateKey)"
+
+      required: [logger]
       configuration:
         configuration.triggers: {}
         configuration.workflows:
           launch:
             steps:
               - start_vm:
-                  action: provisionVms
+                  action: provisionVmsWithLogging
                   parameters:
                     roleName: jira
                     hardwareId: m1.small
@@ -48,28 +64,45 @@ application:
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-d41689bd
                     ec2SecurityGroup: default
+                    providerSettings:
+                      userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                   output:
                     public_ips: ips
                     private_ips: privateips
+                    logging-dashboard: logging-dashboard
 
               - install_jira:
                   action: chefsolo
-                  precedingPhases: [ install_chef ]
+                  precedingPhases: [ start_vm ]
                   parameters:
                       roles: [ jira ]
                       recipeUrl: "{$.cookbooks_url}"
-                      runList: [ "recipe[jira-wrapper::default]" ]
+                      runList: [ "recipe[cicd_infrastructure::jira]" ]
+                      version: "11.12.8"
                       jattrs:
                         jira:
                           version: "{$.jira_version}"
+                          install_type: "standalone"
                         java:
                           oracle:
                             accept_oracle_download_terms: true
+                  output: 
+                    attrs: chefState
+
+              - enable_logging:
+                  action: registerLogPath
+                  precedingPhases: [ start_vm ]
+                  parameters:
+                    roles: [ jira ]
+                    paths: [ "/opt/atlassian/jira/logs/catalina.out" ]
+
             return:
               public_ips:
-                value: {$.public_ips}
+                value: "{$.public_ips}"
               jira_endpoint:
-                value: "http://{$.public_ips}:8080"
+                value: "https://{$.public_ips[0]}"
+              logging-dashboard:
+                value: "{$.logging-dashboard}"
           destroy:
             steps:
                 - destroy:
