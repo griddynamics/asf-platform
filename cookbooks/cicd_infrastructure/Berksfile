@@ -3,3 +3,5 @@ source "https://api.berkshelf.com"
 metadata
 
 cookbook 'jira', git: 'https://github.com/bflad/chef-jira.git'
+cookbook 'ssl_certificates', git: 'https://github.com/TYPO3-cookbooks/ssl_certificates.git'
+cookbook 'gerrit', git: 'https://github.com/TYPO3-cookbooks/gerrit.git'
