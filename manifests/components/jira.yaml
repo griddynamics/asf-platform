@@ -3,7 +3,7 @@ application:
     - [workflow, logger]
 
   configuration:
-    input.jira_version: "5.2.7"
+    input.jira_version: "6.1.5"
     input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
   interfaces:
     input:
