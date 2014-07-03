@@ -35,7 +35,7 @@ application:
             name: "Instance IP: "
           jira_endpoint: 
             type: publish-signal(string)
-            name: "JIRA dashboard: "
+            name: "JIRA Dashboard: "
           logging-dashboard: 
             type: publish-signal(string)
             name: "Logging Dashboard"
@@ -64,6 +64,8 @@ application:
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-d41689bd
                     ec2SecurityGroup: default
+                    providerSettings:
+                      userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                   output:
                     public_ips: ips
                     private_ips: privateips
@@ -76,15 +78,16 @@ application:
                       roles: [ jira ]
                       recipeUrl: "{$.cookbooks_url}"
                       runList: [ "recipe[cicd_infrastructure::jira]" ]
-                      version: "11.8.2"
+                      version: "11.12.8"
                       jattrs:
                         jira:
                           version: "{$.jira_version}"
+                          install_type: "standalone"
                         java:
                           oracle:
                             accept_oracle_download_terms: true
                   output: 
-                    chef_attrs: chefState
+                    attrs: chefState
 
               - enable_logging:
                   action: registerLogPath
@@ -97,7 +100,7 @@ application:
               public_ips:
                 value: "{$.public_ips}"
               jira_endpoint:
-                value: "https://{$.chef_attrs.jira.apache2.virtual_host_name}:{$.chef_attrs.jira.apache2.ssl.port}"
+                value: "https://{$.attrs.jira.apache2.virtual_host_name}:{$.chef_attrs.jira.apache2.ssl.port}"
               logging-dashboard:
                 value: "{$.logging-dashboard}"
           destroy:
