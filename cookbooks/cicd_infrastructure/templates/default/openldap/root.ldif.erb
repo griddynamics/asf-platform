@@ -1,0 +1,22 @@
+dn: <%= @basedn %>
+objectClass: dcObject
+objectClass: organizationalUnit
+dc: example
+ou: example organization
+
+dn: ou=people,<%= @basedn %>
+ou: people
+objectClass: top
+objectClass: organizationalUnit
+
+dn: ou=groups,<%= @basedn %>
+ou: groups
+objectClass: top
+objectClass: organizationalUnit
+
+dn: cn=admin,<%= @basedn %>
+objectClass: simpleSecurityObject
+objectClass: organizationalRole
+cn: admin
+description: LDAP administrator
+userPassword: <%= node['openldap']['rootpw'] %>

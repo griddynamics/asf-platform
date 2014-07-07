@@ -1,0 +1,68 @@
+application:
+  configuration:
+    input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
+  interfaces:
+    input:
+      cookbooks_url: "bind(workflow#input.cookbooks_url)"
+    output: 
+      public_ips: "bind(workflow#result.public_ips)"
+      ldap_endpoint: "bind(workflow#result.ldap_endpoint)"
+  components:
+    workflow:
+      type: workflow.Instance
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        result:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: "Instance IP: "
+          ldap_endpoint:
+            type: publish-signal(list<string>)
+            name: "LDAP connnection string: "
+        keypair-store:
+          get-keypair: "send-command(string id => object privateKey)"
+      configuration:
+        configuration.triggers: {}
+        configuration.workflows:
+          launch:
+            steps:
+              - start_vm:
+                  action: provisionVms
+                  parameters:
+                    roleName: ldap
+                    hardwareId: t1.micro
+                    quantity: 1
+                    retryCount: 1
+                    jcloudsProvider: aws-ec2
+                    jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                    jcloudsRegions: us-east-1
+                    jcloudsNodeNamePrefix: ldap
+                    vmIdentity: ec2-user
+                    imageId: us-east-1/ami-d41689bd
+                    ec2SecurityGroup: default
+                  output:
+                    public_ips: ips
+                    private_ips: privateips
+
+              - install_openldap:
+                  action: chefsolo
+                  precedingPhases: [ start_vm ]
+                  parameters:
+                    roles: [ ldap ]
+                    recipeUrl: "{$.cookbooks_url}"
+                    runList: [ "recipe[cicd_infrastructure::openldap]" ]
+                    version: "11.8.2"
+                  output:
+                    chef_attrs: chefState
+            return:
+              public_ips:
+                value: "{$.public_ips}"
+              ldap_endpoint:
+                value: "ldap://{$.public_ips}:389"
+          destroy:
+            steps:
+              - destroy:
+                  action: undeployEnv
