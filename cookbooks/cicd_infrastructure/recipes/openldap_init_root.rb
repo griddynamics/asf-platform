@@ -14,10 +14,12 @@ template "#{Chef::Config[:file_cache_path]}/initial.ldif" do
   variables(basedn: node['openldap']['basedn'])
 end
 
-execute "register cn=admin,#{node['openldap']['basedn']}" do
-  command "ldapadd -Y EXTERNAL -H ldapi:/// \
-  -f #{Chef::Config[:file_cache_path]}/initial.ldif"
+bash "setup #{node['openldap']['basedn']} database" do
   user 'root'
+  code <<-EOH
+  ldapadd -Y EXTERNAL -H ldapi:/// \
+  -f #{Chef::Config[:file_cache_path]}/initial.ldif
+  EOH
   action :run
   only_if { File.exist?("#{Chef::Config[:file_cache_path]}/initial.ldif") }
 end
@@ -28,14 +30,15 @@ template "#{Chef::Config[:file_cache_path]}/root.ldif" do
   group 'root'
   mode '0644'
   variables(basedn: node['openldap']['basedn'])
-  notifies :stop, 'service[slapd]', :immediately
 end
 
 bash 'create ldap root structure' do
   user 'root'
   code <<-EOH
-  slapadd -n 3 -l #{Chef::Config[:file_cache_path]}/root.ldif
+  ldapadd -x -w #{node['openldap']['rootpw']} -c \
+  -D "cn=admin,#{node['openldap']['basedn']}" \
+  -f #{Chef::Config[:file_cache_path]}/root.ldif
   EOH
+  only_if { File.exist?("#{Chef::Config[:file_cache_path]}/root.ldif") }
   action :run
-  notifies :start, 'service[slapd]'
 end
