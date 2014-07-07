@@ -13,7 +13,7 @@ node['openldap']['users'].each do |record|
     group 'root'
     mode '0644'
     variables(
-      basedn: node['ca_openldap']['basedn'],
+      basedn: node['openldap']['basedn'],
       username: record.username,
       password: record.password
     )
@@ -23,8 +23,8 @@ node['openldap']['users'].each do |record|
     user 'root'
     code <<-EOH
     ldapadd -x \
-      -w #{node['ca_openldap']['rootpassword']} \
-      -D "#{node['ca_openldap']['rootdn']},#{node['ca_openldap']['basedn']}" \
+      -w #{node['openldap']['rootpw']} \
+      -D "cn=admin,#{node['openldap']['basedn']}" \
       -f #{Chef::Config[:file_cache_path]}/user_#{record}.ldif
     EOH
   end
