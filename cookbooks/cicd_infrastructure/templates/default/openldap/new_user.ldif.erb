@@ -1,0 +1,16 @@
+dn: uid=<%= @username %>,ou=people,<%= @basedn %>
+uid: <%= @username %>
+cn: <%= @username %> <%= @username %>
+objectClass: account
+objectClass: posixAccount
+objectClass: top
+objectClass: shadowAccount
+userPassword: <%= @password %>
+shadowLastChange: 15140
+shadowMin: 0
+shadowMax: 99999
+shadowWarning: 7
+loginShell: /bin/bash
+uidNumber: 1000
+gidNumber: 1000
+homeDirectory: /home/<%= @username %>
