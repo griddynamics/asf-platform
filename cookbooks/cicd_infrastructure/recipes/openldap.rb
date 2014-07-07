@@ -45,6 +45,7 @@ unless node['platform'].eql?('ubuntu')
   libnss_ldap.package_name('nss-pam-ldapd')
   libnss_ldap.action(:upgrade)
 
-  ldap_conf = resources(template: '/etc/ldap.conf')
+  ldap_conf = resources(template: "#{node['openldap']['dir']}/ldap.conf")
+  ldap_conf.source 'openldap/ldap.conf.erb'
   ldap_conf.cookbook('cicd_infrastructure')
 end
