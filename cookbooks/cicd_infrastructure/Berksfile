@@ -6,3 +6,4 @@ cookbook 'jira', git: 'https://github.com/bflad/chef-jira.git'
 cookbook 'nexus', git: 'https://github.com/RiotGames/nexus-cookbook', tag: "3.3.0"
 cookbook 'ssl_certificates', git: 'https://github.com/TYPO3-cookbooks/ssl_certificates.git'
 cookbook 'gerrit', git: 'https://github.com/TYPO3-cookbooks/gerrit.git'
+cookbook 'jenkins', git: 'https://github.com/opscode-cookbooks/jenkins', tag: "v2.1.2"
