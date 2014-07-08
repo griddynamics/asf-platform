@@ -1,0 +1,7 @@
+dn: uid=<%= @username %>,ou=people,<%= @basedn %>
+objectClass: inetOrgPerson
+uid: <%= @username %>
+displayName: <%= @username %>
+cn: <%= @username %>
+sn: <%= @username %>
+userPassword: <%= @password %>

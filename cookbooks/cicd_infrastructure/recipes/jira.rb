@@ -27,7 +27,8 @@ include_recipe 'jira::default'
 
 #         10.times {
 #             sleep(60)
-#             break if File.read("/opt/atlassian/jira/logs/catalina.out").include?("You can now access JIRA through your web browser")
+#            break if File.read("/opt/atlassian/jira/logs/catalina.out")
+#            .include?("You can now access JIRA through your web browser")
 #         }
 #     end
 # end
