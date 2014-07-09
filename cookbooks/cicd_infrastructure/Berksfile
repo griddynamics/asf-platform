@@ -5,7 +5,8 @@ metadata
 cookbook 'jira', '2.0.1', git: 'https://github.com/bflad/chef-jira.git'
 cookbook 'nexus', git: 'https://github.com/RiotGames/nexus-cookbook', tag: "3.3.0"
 cookbook 'ssl_certificates', git: 'https://github.com/TYPO3-cookbooks/ssl_certificates.git'
-cookbook 'gerrit', git: 'https://github.com/TYPO3-cookbooks/gerrit.git'
+cookbook 'gerrit', git: 'https://github.com/TYPO3-cookbooks/gerrit.git', '0.3.2'
 cookbook 'jenkins', git: 'https://github.com/opscode-cookbooks/jenkins', tag: "v2.1.2"
 cookbook 'openldap', '1.12.10'
 cookbook 'java', '1.22.0'
+cookbook 'sonar', git: 'https://github.com/ctrabold/chef-sonar.git', '0.0.4'
