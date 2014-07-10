@@ -1,10 +1,12 @@
 application:
   configuration:
+    input.sonar_version: "3.7.4"
     input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
   interfaces:
     input:
+      sonar_version: "bind(workflow#input.sonar_version)"
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
-    output: 
+    output:
       public_ips: "bind(workflow#result.public_ips)"
       sonar_endpoint: "bind(workflow#result.sonar_endpoint)"
   components:
@@ -12,16 +14,19 @@ application:
       type: workflow.Instance
       interfaces:
         input:
+          sonar_version:
+            type: configuration(string)
+            name: Sonar version
           cookbooks_url:
             type: configuration(string)
             name: Cookbooks tarball URL
         result:
           public_ips:
             type: publish-signal(list<string>)
-            name: "Instance IP: "
+            name: "Instance IP"
           sonar_endpoint:
             type: publish-signal(list<string>)
-            name: "Sonar URL: "
+            name: "Sonar URL"
         keypair-store:
           get-keypair: "send-command(string id => object privateKey)"
       configuration:
@@ -55,6 +60,9 @@ application:
                     recipeUrl: "{$.cookbooks_url}"
                     runList: [ "recipe[cicd_infrastructure::sonar]" ]
                     version: "11.8.2"
+                    jattrs:
+                      sonar:
+                        version: "{$.sonar_version}"
                   output:
                     chef_attrs: chefState
             return:
