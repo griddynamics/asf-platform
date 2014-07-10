@@ -39,7 +39,7 @@ application:
                   action: provisionVms
                   parameters:
                     roleName: jira
-                    hardwareId: m1.small
+                    hardwareId: m3.large
                     quantity: 1
                     retryCount: 1
                     jcloudsProvider: aws-ec2
