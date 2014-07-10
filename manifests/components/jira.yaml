@@ -1,7 +1,4 @@
 application:
-  bindings:
-    - [workflow, logger]
-
   configuration:
     input.jira_version: "6.1.5"
     input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
@@ -9,49 +6,37 @@ application:
     input:
       jira_version: "bind(workflow#input.jira_version)"
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
-    output: 
+    output:
       public_ips: "bind(workflow#result.public_ips)"
       jira_endpoint: "bind(workflow#result.jira_endpoint)"
-      logging-dashboard: "bind(workflow#result.logging-dashboard)"
   components:
-    logger:
-      type: reference.Service
-      interfaces:
-        logger:
-          logger-server: publish-signal(string)
     workflow:
       type: workflow.Instance
       interfaces:
-        input:  
-          jira_version: 
+        input:
+          jira_version:
             type: configuration(string)
             name: JIRA version
           cookbooks_url:
             type: configuration(string)
             name: Cookbooks tarball URL
-        result:  
+        result:
           public_ips:
             type: publish-signal(list<string>)
-            name: "Instance IP: "
-          jira_endpoint: 
+            name: "Instance IP"
+          jira_endpoint:
             type: publish-signal(string)
-            name: "JIRA Dashboard: "
-          logging-dashboard: 
-            type: publish-signal(string)
-            name: "Logging Dashboard"
-        logger:
-          logger-server: consume-signal(string)
+            name: "JIRA Dashboard"
         keypair-store:
           get-keypair: "send-command(string id => object privateKey)"
 
-      required: [logger]
       configuration:
         configuration.triggers: {}
         configuration.workflows:
           launch:
             steps:
               - start_vm:
-                  action: provisionVmsWithLogging
+                  action: provisionVms
                   parameters:
                     roleName: jira
                     hardwareId: m1.small
@@ -69,7 +54,6 @@ application:
                   output:
                     public_ips: ips
                     private_ips: privateips
-                    logging-dashboard: logging-dashboard
 
               - install_jira:
                   action: chefsolo
@@ -86,23 +70,14 @@ application:
                         java:
                           oracle:
                             accept_oracle_download_terms: true
-                  output: 
+                  output:
                     attrs: chefState
-
-              - enable_logging:
-                  action: registerLogPath
-                  precedingPhases: [ start_vm ]
-                  parameters:
-                    roles: [ jira ]
-                    paths: [ "/opt/atlassian/jira/logs/catalina.out" ]
 
             return:
               public_ips:
                 value: "{$.public_ips}"
               jira_endpoint:
                 value: "https://{$.public_ips[0]}"
-              logging-dashboard:
-                value: "{$.logging-dashboard}"
           destroy:
             steps:
                 - destroy:
