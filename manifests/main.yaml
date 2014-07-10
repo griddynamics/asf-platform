@@ -20,76 +20,76 @@ application:
       jenkins_host: "bind(jenkins#output.public_ips)"
       gerrit_host: "bind(gerrit#output.public_ips)"
   components:
-      gerrit:
-        type: reference.Submodule
-        configuration:
-            __locator.application-id: "Gerrit"
-        interfaces:
-          input:
-            gerrit_version:
-              type: configuration(string)
-              name: Gerrit version
-            cookbooks_url:
-              type: configuration(string)
-              name: Cookbooks tarball URL
-          output:
-            public_ips:
-              type: publish-signal(list<string>)
-              name: Gerrit
-            gerrit_endpoint:
-              type: publish-signal(string)
-              name: Gerrit
+    gerrit:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Gerrit"
+      interfaces:
+        input:
+          gerrit_version:
+            type: configuration(string)
+            name: Gerrit version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: Gerrit
+          gerrit_endpoint:
+            type: publish-signal(string)
+            name: Gerrit
 
-      jenkins:
-        type: reference.Submodule
-        configuration:
-            __locator.application-id: "Jenkins"
-        interfaces:
-          input:
-            cookbooks_url:
-              type: configuration(string)
-              name: Cookbooks tarball URL
-          output:
-            public_ips:
-              type: publish-signal(list<string>)
-              name: Jenkins
-            jenkins_endpoint:
-              type: publish-signal(string)
-              name: Jenkins
+    jenkins:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Jenkins"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: Jenkins
+          jenkins_endpoint:
+            type: publish-signal(string)
+            name: Jenkins
 
-      jira:
-        type: reference.Submodule
-        configuration:
-          __locator.application-id: "JIRA"
-        interfaces:
-          input:
-            jira_version:
-              type: configuration(string)
-              name: JIRA version
-            cookbooks_url:
-              type: configuration(string)
-              name: Cookbooks tarball URL
-          output:
-            public_ips:
-              type: publish-signal(list<string>)
-              name: JIRA
-            jira_endpoint:
-              type: publish-signal(string)
-              name: JIRA
+    jira:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "JIRA"
+      interfaces:
+        input:
+          jira_version:
+            type: configuration(string)
+            name: JIRA version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: JIRA
+          jira_endpoint:
+            type: publish-signal(string)
+            name: JIRA
 
-      openldap:
-        type: reference.Submodule
-        configuration:
-          __locator.application-id: "OpenLDAP"
-        interfaces:
-          input:
-            cookbooks_url:
-              type: configuration(string)
-              name: Cookbooks tarball URL
-          output:
-            public_ips:
-              type: publish-signal(list<string>)
-              name: OpenLDAP
-            ldap_endpoint:
-              type: publish-signal(list<string>)
-              name: OpenLDAP
+    openldap:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "OpenLDAP"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: OpenLDAP
+          ldap_endpoint:
+            type: publish-signal(list<string>)
+            name: OpenLDAP
