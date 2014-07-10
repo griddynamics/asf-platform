@@ -1,0 +1,72 @@
+application:
+  configuration:
+    input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
+  interfaces:
+    input:
+      cookbooks_url: "bind(workflow#input.cookbooks_url)"
+    output:
+      public_ips: "bind(workflow#result.public_ips)"
+      nexus_endpoint: "bind(workflow#result.nexus_endpoint)"
+  components:
+    workflow:
+      type: workflow.Instance
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        result:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: "Instance IP"
+          nexus_endpoint:
+            type: publish-signal(string)
+            name: "Nexus Dashboard"
+        keypair-store:
+          get-keypair: "send-command(string id => object privateKey)"
+
+      configuration:
+        configuration.triggers: {}
+        configuration.workflows:
+          launch:
+            steps:
+              - start_vm:
+                  action: provisionVms
+                  parameters:
+                    roleName: nexus
+                    hardwareId: m1.medium
+                    quantity: 1
+                    retryCount: 1
+                    jcloudsProvider: aws-ec2
+                    jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                    jcloudsRegions: us-east-1
+                    jcloudsNodeNamePrefix: nexus
+                    vmIdentity: ec2-user
+                    imageId: us-east-1/ami-d41689bd
+                    ec2SecurityGroup: default
+                    providerSettings:
+                      userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
+                  output:
+                    public_ips: ips
+                    private_ips: privateips
+
+              - install_nexus:
+                  action: chefsolo
+                  precedingPhases: [ start_vm ]
+                  parameters:
+                    roles: [ nexus ]
+                    recipeUrl: "{$.cookbooks_url}"
+                    runList: [ "recipe[cicd_infrastructure::nexus]" ]
+                    version: "11.12.8"
+                  output:
+                    attrs: chefState
+
+            return:
+              public_ips:
+                value: "{$.public_ips}"
+              nexus_endpoint:
+                value: "http://{$.public_ips[0]}:8081/nexus"
+          destroy:
+            steps:
+                - destroy:
+                    action: undeployEnv
