@@ -6,5 +6,7 @@
 # Copyright 2014, Grid Dynamics International, Inc.
 #
 
+Chef::Config[:file_cache_path] = '/var/chef/cache/'
+
 include_recipe 'nexus::default'
 
