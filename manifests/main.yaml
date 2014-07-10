@@ -6,22 +6,30 @@ application:
     input.sonar_version: "3.7.4"
   interfaces:
     input:
-      cookbooks_url: "bind(jira#input.cookbooks_url, openldap#input.cookbooks_url, jenkins#input.cookbooks_url, gerrit#input.cookbooks_url)"
       jira_version: "bind(jira#input.jira_version)"
       gerrit_version: "bind(gerrit#input.gerrit_version)"
       sonar_version: "bind(sonar#input.sonar_version)"
+      cookbooks_url: "bind(jira#input.cookbooks_url,
+        openldap#input.cookbooks_url,
+        jenkins#input.cookbooks_url,
+        gerrit#input.cookbooks_url,
+        sonar#input.cookbooks_url,
+        nexus#input.cookbooks_url)"
+
     endpoints:
       jira: "bind(jira#output.jira_endpoint)"
       openldap: "bind(openldap#output.ldap_endpoint)"
       jenkins: "bind(jenkins#output.jenkins_endpoint)"
       gerrit: "bind(gerrit#output.gerrit_endpoint)"
       sonar: "bind(sonar#output.sonar_endpoint)"
+      nexus: "bind(nexus#output.nexus_endpoint)"
     servers:
       jira_host: "bind(jira#output.public_ips)"
       openldap_host: "bind(openldap#output.public_ips)"
       jenkins_host: "bind(jenkins#output.public_ips)"
       gerrit_host: "bind(gerrit#output.public_ips)"
       sonar_host: "bind(sonar#output.public_ips)"
+      nexus_host: "bind(nexus#output.public_ips)"
   components:
     sonar:
       type: reference.Submodule
@@ -115,3 +123,21 @@ application:
           ldap_endpoint:
             type: publish-signal(list<string>)
             name: OpenLDAP
+
+    nexus:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Nexus"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: Nexus
+          nexus_endpoint:
+            type: publish-signal(string)
+            name: Nexus
+
