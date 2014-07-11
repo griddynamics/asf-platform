@@ -1,0 +1,143 @@
+application:
+  configuration:
+    input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
+    input.gerrit_version: "2.8.6"
+    input.jira_version: "6.1.5"
+    input.sonar_version: "3.7.4"
+  interfaces:
+    input:
+      jira_version: "bind(jira#input.jira_version)"
+      gerrit_version: "bind(gerrit#input.gerrit_version)"
+      sonar_version: "bind(sonar#input.sonar_version)"
+      cookbooks_url: "bind(jira#input.cookbooks_url,
+        openldap#input.cookbooks_url,
+        jenkins#input.cookbooks_url,
+        gerrit#input.cookbooks_url,
+        sonar#input.cookbooks_url,
+        nexus#input.cookbooks_url)"
+
+    endpoints:
+      jira: "bind(jira#output.jira_endpoint)"
+      openldap: "bind(openldap#output.ldap_endpoint)"
+      jenkins: "bind(jenkins#output.jenkins_endpoint)"
+      gerrit: "bind(gerrit#output.gerrit_endpoint)"
+      sonar: "bind(sonar#output.sonar_endpoint)"
+      nexus: "bind(nexus#output.nexus_endpoint)"
+    servers:
+      jira_host: "bind(jira#output.public_ips)"
+      openldap_host: "bind(openldap#output.public_ips)"
+      jenkins_host: "bind(jenkins#output.public_ips)"
+      gerrit_host: "bind(gerrit#output.public_ips)"
+      sonar_host: "bind(sonar#output.public_ips)"
+      nexus_host: "bind(nexus#output.public_ips)"
+  components:
+    sonar:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Sonar"
+      interfaces:
+        input:
+          sonar_version:
+            type: configuration(string)
+            name: Sonar version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: Sonar
+          sonar_endpoint:
+            type: publish-signal(list<string>)
+            name: Sonar
+    gerrit:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Gerrit"
+      interfaces:
+        input:
+          gerrit_version:
+            type: configuration(string)
+            name: Gerrit version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: Gerrit
+          gerrit_endpoint:
+            type: publish-signal(string)
+            name: Gerrit
+
+    jenkins:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Jenkins"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: Jenkins
+          jenkins_endpoint:
+            type: publish-signal(string)
+            name: Jenkins
+
+    jira:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "JIRA"
+      interfaces:
+        input:
+          jira_version:
+            type: configuration(string)
+            name: JIRA version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: JIRA
+          jira_endpoint:
+            type: publish-signal(string)
+            name: JIRA
+
+    openldap:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "OpenLDAP"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: OpenLDAP
+          ldap_endpoint:
+            type: publish-signal(list<string>)
+            name: OpenLDAP
+
+    nexus:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Nexus"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: Nexus
+          nexus_endpoint:
+            type: publish-signal(string)
+            name: Nexus
+
