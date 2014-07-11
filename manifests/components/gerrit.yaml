@@ -1,0 +1,76 @@
+application:
+  configuration:
+    input.gerrit_version: "2.8.6"
+    input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
+  interfaces:
+    input:
+      gerrit_version: "bind(workflow#input.gerrit_version)"
+      cookbooks_url: "bind(workflow#input.cookbooks_url)"
+    output:
+      public_ips: "bind(workflow#result.public_ips)"
+      gerrit_endpoint: "bind(workflow#result.gerrit_endpoint)"
+  components:
+    workflow:
+      type: workflow.Instance
+      interfaces:
+        input:
+          gerrit_version:
+            type: configuration(string)
+            name: Gerrit version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        result:
+          public_ips:
+            type: publish-signal(list<string>)
+            name: Instance IP
+          gerrit_endpoint:
+            type: publish-signal(string)
+            name: Gerrit WebUI
+        keypair-store:
+          get-keypair: "send-command(string id => object privateKey)"
+      configuration:
+        configuration.triggers: {}
+        configuration.workflows:
+          launch:
+            steps:
+              - start_vm:
+                  action: provisionVms
+                  parameters:
+                    roleName: gerrit
+                    hardwareId: m3.medium
+                    quantity: 1
+                    retryCount: 1
+                    jcloudsProvider: aws-ec2
+                    jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                    jcloudsRegions: us-east-1
+                    jcloudsNodeNamePrefix: gerrit
+                    vmIdentity: ec2-user
+                    imageId: us-east-1/ami-d41689bd
+                    ec2SecurityGroup: default
+                  output:
+                    public_ips: ips
+                    private_ips: privateips
+
+              - install_gerrit:
+                  action: chefsolo
+                  precedingPhases: [ start_vm ]
+                  parameters:
+                    roles: [ gerrit ]
+                    recipeUrl: "{$.cookbooks_url}"
+                    runList: [ "recipe[cicd_infrastructure::gerrit]" ]
+                    version: "11.8.2"
+                    jattrs:
+                      gerrit:
+                        version: "{$.gerrit_version}"
+                  output:
+                    chef_attrs: chefState
+            return:
+              public_ips:
+                value: "{$.public_ips}"
+              gerrit_endpoint:
+                value: "http://{$.public_ips[0]}"
+          destroy:
+            steps:
+              - destroy:
+                  action: undeployEnv
