@@ -9,6 +9,10 @@ Vagrant.configure('2') do |config|
     override.vm.box = 'centos-6.5'
     override.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_#{override.vm.box}_chef-provisionerless.box"
     config.vm.hostname = 'cicd-infrastructure'
+
+    config.cache.scope = :box
+    config.cache.auto_detect = true
+
     v.memory = 1024
     v.cpus = 2
   end
@@ -19,10 +23,15 @@ Vagrant.configure('2') do |config|
     aws.instance_type = "m3.medium"
     aws.access_key_id = ENV["AWS_ACCESS_KEY"]
     aws.secret_access_key = ENV["AWS_SECRET_KEY"]
-    aws.keypair_name = "secureStore-52a1c0b8e4b05801748e0e50"
+    aws.keypair_name = "-53b42275e4b0aaf59b4b1459"
     aws.ami = "ami-52009e3b"
     aws.security_groups = "default"
-    aws.user_data = "#!/bin/bash\necho 'Defaults:ec2-user !requiretty' > /etc/sudoers.d/999-vagrant-cloud-init-requiretty && chmod 440 /etc/sudoers.d/999-vagrant-cloud-init-requiretty\n"
+    aws.user_data = "#!/bin/bash\necho 'Defaults:ec2-user !requiretty' > \
+    /etc/sudoers.d/999-vagrant-cloud-init-requiretty && \
+    chmod 440 /etc/sudoers.d/999-vagrant-cloud-init-requiretty\n"
+    aws.tags = {
+      'application_name' => 'ASF',
+    }
     override.ssh.username = "ec2-user"
     override.ssh.private_key_path = ENV["AWS_SSH_KEY"]
   end
@@ -35,5 +44,3 @@ Vagrant.configure('2') do |config|
     ]
   end
 end
-
-
