@@ -9,13 +9,13 @@ application:
       jira_version: "bind(jira#input.jira_version)"
       gerrit_version: "bind(gerrit#input.gerrit_version)"
       sonar_version: "bind(sonar#input.sonar_version)"
-      cookbooks_url: "bind(jira#input.cookbooks_url,
+      cookbooks_url: |
+        bind(jira#input.cookbooks_url,
         openldap#input.cookbooks_url,
         jenkins#input.cookbooks_url,
         gerrit#input.cookbooks_url,
         sonar#input.cookbooks_url,
-        nexus#input.cookbooks_url)"
-
+        nexus#input.cookbooks_url)
     endpoints:
       jira: "bind(jira#output.jira_endpoint)"
       openldap: "bind(openldap#output.ldap_endpoint)"
