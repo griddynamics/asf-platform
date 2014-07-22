@@ -12,6 +12,10 @@ nexus_ldap_config = node['cicd_infrastructure']['nexus']['ldap']
 
 Chef::Log.Error 'Nexus LDAP configuration failed' if nexus_ldap_config.values.include? nil
 
+service 'nexus' do
+  action :nothing
+end
+
 template "#{node['nexus']['work_dir']}/conf/ldap.xml" do
   source 'nexus/ldap.xml.erb'
   owner node['nexus']['user']

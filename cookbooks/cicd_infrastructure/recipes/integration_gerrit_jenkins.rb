@@ -51,7 +51,7 @@ ruby_block 'add_root_user' do
     db.query("INSERT IGNORE INTO `accounts` \
       VALUES (NULL, 'root', NULL, NULL, 'N', NULL, NULL, NULL, NULL, 25, \
         'N', 'N', 'Y', 'N', NULL, 'Y', 'N', NULL,
-        '#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}', 1)")
+        '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}', 1)")
     db.close
   end
   retries 5
