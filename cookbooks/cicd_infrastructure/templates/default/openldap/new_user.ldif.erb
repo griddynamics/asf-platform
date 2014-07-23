@@ -5,3 +5,8 @@ displayName: <%= @username %>
 cn: <%= @username %>
 sn: <%= @username %>
 userPassword: <%= @password %>
+
+dn: cn=<%= @group %>,ou=groups,<%= @basedn %>
+changetype: modify
+add: member
+member: uid=<%= @username %>,ou=people,<%= @basedn %>

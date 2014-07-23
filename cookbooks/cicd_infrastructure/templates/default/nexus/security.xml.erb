@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<security>
+  <version>2.0.5</version>
+  <users>
+    <user>
+      <id>deployment</id>
+      <firstName>Deployment</firstName>
+      <lastName>User</lastName>
+      <password>b2a0e378437817cebdf753d7dff3dd75483af9e0</password>
+      <status>active</status>
+      <email>changeme1@yourcompany.com</email>
+    </user>
+    <user>
+      <id>admin</id>
+      <firstName>Administrator</firstName>
+      <lastName>User</lastName>
+      <password>$shiro1$SHA-512$1024$ZhEXC0VqNL6Cd9Uv2wceuQ==$CFvC7q2TQko3RhGcTsFtcx5eyddESJW3Jw3HLeXFylQrnhyEjFtc2TkxbtYh5ChZB3O8AOYjUjkvtso0pBOCLQ==</password>
+      <status>active</status>
+      <email>changeme@yourcompany.com</email>
+    </user>
+  </users>
+  <roles>
+  <% @ldap_groups.each do |group, roles| %>
+    <role>
+      <id><%= group %></id>
+      <name>LDAP <%= group %> group </name>
+      <roles>
+        <% for role in roles %>
+        <role><%= role %></role>
+        <% end %>
+      </roles>
+    </role>
+  <% end %>
+  </roles>
+  <userRoleMappings>
+    <userRoleMapping>
+      <userId>deployment</userId>
+      <source>default</source>
+      <roles>
+        <role>nx-deployment</role>
+        <role>repository-any-full</role>
+      </roles>
+    </userRoleMapping>
+    <userRoleMapping>
+      <userId>admin</userId>
+      <source>default</source>
+      <roles>
+        <role>nx-admin</role>
+      </roles>
+    </userRoleMapping>
+  </userRoleMappings>
+</security>

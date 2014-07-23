@@ -14,6 +14,7 @@ default['openldap']['server'] = 'localhost'
 default['openldap']['users'] = [
   {
     'username' => 'sample',
-    'password' => 'samplepassword'
+    'password' => 'samplepassword',
+    'group' => 'developers'
   }
 ]

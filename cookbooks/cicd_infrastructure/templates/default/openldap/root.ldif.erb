@@ -20,3 +20,9 @@ objectClass: organizationalRole
 cn: admin
 description: LDAP administrator
 userPassword: <%= node['openldap']['rootpw'] %>
+
+dn: cn=developers,ou=groups,<%= @basedn %>
+objectClass: top
+objectClass: groupOfNames
+cn: developers
+member: cn=admin,<%= @basedn %>

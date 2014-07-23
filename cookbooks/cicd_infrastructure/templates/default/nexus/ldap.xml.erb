@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ldapConfiguration>
+  <connectionInfo>
+    <searchBase><%= @basedn %></searchBase>
+    <systemUsername><%= @rootdn %></systemUsername>
+    <systemPassword><%= @root_pwd %></systemPassword>
+    <authScheme><%= @scheme %></authScheme>
+    <protocol>ldap</protocol>
+    <host><%= @host %></host>
+    <port><%= @port %></port>
+  </connectionInfo>
+  <userAndGroupConfig>
+    <ldapGroupsAsRoles>true</ldapGroupsAsRoles>
+    <emailAddressAttribute><%= @user_attrs['mail'] %></emailAddressAttribute>
+    <groupBaseDn><%= @groupdn %></groupBaseDn>
+    <groupIdAttribute><%= @group_attrs['groupId'] %></groupIdAttribute>
+    <groupMemberAttribute><%= @group_attrs['memberAttr'] %></groupMemberAttribute>
+    <groupMemberFormat><%= @group_attrs['memberFormat'] %></groupMemberFormat>
+    <groupObjectClass><%= @group_attrs['objClass'] %></groupObjectClass>
+    <userPasswordAttribute><%= @user_attrs['userPwd'] %></userPasswordAttribute>
+    <userIdAttribute><%= @user_attrs['userId'] %></userIdAttribute>
+    <userObjectClass><%= @user_attrs['objClass'] %></userObjectClass>
+    <userBaseDn><%= @userdn %></userBaseDn>
+    <userRealNameAttribute><%= @user_attrs['realname'] %></userRealNameAttribute>
+  </userAndGroupConfig>
+</ldapConfiguration>
