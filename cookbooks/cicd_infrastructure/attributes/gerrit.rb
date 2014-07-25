@@ -21,9 +21,3 @@ default['gerrit']['canonicalWebUrl'] = "http://#{node['gerrit']['hostname']}/"
 
 default['gerrit']['auth']['registerEmailPrivateKey'] = 'gerrit'
 default['gerrit']['auth']['restTokenPrivateKey'] = 'gerrit'
-default['gerrit']['auth']['type'] = 'LDAP'
-
-default['gerrit']['ldap']['server'] = 'ldap://localhost'
-default['gerrit']['ldap']['accountBase'] = 'ou=people,dc=example,dc=com'
-default['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
-default['gerrit']['ldap']['accountFullName'] = 'displayName'

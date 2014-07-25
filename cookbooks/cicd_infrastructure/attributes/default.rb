@@ -26,6 +26,11 @@ default['cicd_infrastructure']['jenkins']['gerrit-trigger']['http_port'] = '80'
 
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
+default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'
+default['cicd_infrastructure']['gerrit']['ldap']['server'] = 'ldap://localhost'
+default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=example,dc=com'
+default['cicd_infrastructure']['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
+default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayName'
 
 default['cicd_infrastructure']['nexus']['auth'] = 'LDAP'
 default['cicd_infrastructure']['nexus']['ldap']['host'] = 'localhost'
