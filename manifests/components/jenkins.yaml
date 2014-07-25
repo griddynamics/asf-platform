@@ -15,7 +15,7 @@ application:
     input:
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
     output:
-      public_ips: "bind(workflow#result.public_ips)"
+      jenkins_public_ips: "bind(workflow#result.jenkins_public_ips)"
       jenkins_endpoint: "bind(workflow#result.jenkins_endpoint)"
   components:
     workflow:
@@ -26,7 +26,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         result:
-          public_ips:
+          jenkins_public_ips:
             type: publish-signal(list<string>)
             name: "Instance IP:"
           jenkins_endpoint:
@@ -53,8 +53,10 @@ application:
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-d41689bd
                     ec2SecurityGroup: default
+                    providerSettings:
+                      userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                   output:
-                    public_ips: ips
+                    jenkins_public_ips: ips
                     private_ips: privateips
 
               - install_jenkins:
@@ -68,10 +70,10 @@ application:
                   output:
                     chef_attrs: chefState
             return:
-              public_ips:
-                value: "{$.public_ips}"
+              jenkins_public_ips:
+                value: "{$.jenkins_public_ips}"
               jenkins_endpoint:
-                value: "http://{$.public_ips[0]}:8080"
+                value: "http://{$.jenkins_public_ips[0]}:8080"
           destroy:
             steps:
               - destroy:

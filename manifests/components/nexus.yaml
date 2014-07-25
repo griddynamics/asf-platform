@@ -15,7 +15,7 @@ application:
     input:
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
     output:
-      public_ips: "bind(workflow#result.public_ips)"
+      nexus_public_ips: "bind(workflow#result.nexus_public_ips)"
       nexus_endpoint: "bind(workflow#result.nexus_endpoint)"
   components:
     workflow:
@@ -26,7 +26,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         result:
-          public_ips:
+          nexus_public_ips:
             type: publish-signal(list<string>)
             name: "Instance IP"
           nexus_endpoint:
@@ -57,7 +57,7 @@ application:
                     providerSettings:
                       userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                   output:
-                    public_ips: ips
+                    nexus_public_ips: ips
                     private_ips: privateips
 
               - install_nexus:
@@ -72,10 +72,10 @@ application:
                     attrs: chefState
 
             return:
-              public_ips:
-                value: "{$.public_ips}"
+              nexus_public_ips:
+                value: "{$.nexus_public_ips}"
               nexus_endpoint:
-                value: "http://{$.public_ips[0]}:8081/nexus"
+                value: "http://{$.nexus_public_ips[0]}:8081/nexus"
           destroy:
             steps:
                 - destroy:
