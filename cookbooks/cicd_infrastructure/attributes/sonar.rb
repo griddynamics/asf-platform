@@ -7,6 +7,3 @@
 #
 
 override['sonar']['version'] = '3.7.4'
-default['ldap']['realm'] = 'mydomain.com'
-default['ldap']['security']['realm'] = 'LDAP'
-default['ldap']['server'] = 'localhost'
