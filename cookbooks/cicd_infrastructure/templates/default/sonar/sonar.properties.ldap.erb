@@ -1,24 +1,24 @@
 # LDAP configuration
 # General Configuration
 
-sonar.security.realm=<%=node['ldap']['security']['realm']%>
+sonar.security.realm=<%= @security_realm %>
 sonar.authenticator.createUsers=true
 sonar.security.savePassword=true
 sonar.security.updateUserAttributes=true
 
-ldap.url=ldap://<%=node['ldap']['server']%>:389 
-ldap.realm=<%=node['ldap']['realm']%>
-ldap.bindDn=cn=admin,dc=example,dc=com
-ldap.bindPassword=password
+ldap.url=ldap://<%= @server %>:<%= @port %>
+ldap.realm=<%= @realm %>
+ldap.bindDn=<%= @rootdn %>
+ldap.bindPassword=<%= @root_pwd %>
 ldap.userObjectClass=inetOrgPerson
 
 # User Configuration
-ldap.user.baseDn=ou=people,dc=example,dc=com
+ldap.user.baseDn=<%= @userdn %>
 ldap.user.request=(&(objectClass=inetOrgPerson)(uid={login}))
 ldap.user.realNameAttribute=cn
 ldap.user.emailAttribute=mail
 ldap.authentication=simple
 
 # Group Configuration
-ldap.group.baseDn=ou=groups,dc=example,dc=com
+ldap.group.baseDn=<%= @groupdn %>
 ldap.group.request=(&(objectClass=groupOfUniqueNames)(uniqueMember={dn}))
