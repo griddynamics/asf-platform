@@ -24,6 +24,18 @@ default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['ssh_port'] = '29418'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['http_port'] = '80'
 
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['username'] = nil
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['password'] = nil
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['application_id'] = '12345'
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['environment_id'] = '54321'
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['endpoint'] = 'https://express.qubell.com/'
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['version'] = '2.5'
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['checksum'] = '7dc571813114ce521bc22580c8b0e0b3'
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] =
+  "https://github.com/qubell/contrib-jenkins-qubell-plugin/releases/download/\
+v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/\
+jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
+
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
 default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'
