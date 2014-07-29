@@ -29,8 +29,8 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['password'] = nil
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['application_id'] = '12345'
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['environment_id'] = '54321'
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['endpoint'] = 'https://express.qubell.com/'
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['version'] = '2.4'
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['checksum'] = 'fcdd75f00cf2d3ff5dc9321e107b4d14'
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['version'] = '2.5'
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['checksum'] = '7dc571813114ce521bc22580c8b0e0b3'
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] =
   "https://github.com/qubell/contrib-jenkins-qubell-plugin/releases/download/\
 v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/\
