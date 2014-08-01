@@ -23,6 +23,14 @@ default['cicd_infrastructure']['jenkins']['plugins'] = [
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['ssh_port'] = '29418'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['http_port'] = '80'
+default['cicd_infrastructure']['jenkins']['auth'] = 'LDAP'
+default['cicd_infrastructure']['jenkins']['ldap']['server'] = nil
+default['cicd_infrastructure']['jenkins']['ldap']['port'] = '389'
+default['cicd_infrastructure']['jenkins']['ldap']['basedn'] = 'dc=example,dc=com'
+default['cicd_infrastructure']['jenkins']['ldap']['userdn'] = 'ou=people'
+default['cicd_infrastructure']['jenkins']['ldap']['user_id'] = 'uid={0}'
+default['cicd_infrastructure']['jenkins']['ldap']['rootdn'] = 'cn=admin,dc=example,dc=com'
+default['cicd_infrastructure']['jenkins']['ldap']['root_pwd'] = 'password'
 
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['username'] = nil
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['password'] = nil
