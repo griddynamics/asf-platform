@@ -1,7 +1,7 @@
 # Encoding: utf-8
 #
 # Cookbook Name:: cicd_infrastructure
-# Recipe:: jira
+# Recipe:: integration_jira_ldap
 #
 # Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
 # Classification level: Public
