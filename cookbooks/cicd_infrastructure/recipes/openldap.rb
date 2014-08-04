@@ -3,7 +3,9 @@
 # Cookbook Name:: cicd_infrastructure
 # Recipe:: openldap
 #
-# Copyright 2014, Grid Dynamics International, Inc.
+# Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
+# Classification level: Public
+# Licensed under the Apache License, Version 2.0.
 #
 
 user 'openldap' do
@@ -18,7 +20,14 @@ group 'openldap' do
 end
 
 include_recipe 'openldap::server'
-include_recipe 'openldap::auth'
+
+template "#{node['openldap']['dir']}/ldap.conf" do
+  source 'openldap/ldap.conf.erb'
+  mode 0644
+  owner 'root'
+  group 'root'
+end
+
 include_recipe 'cicd_infrastructure::openldap_init_root'
 include_recipe 'cicd_infrastructure::openldap_new_users'
 
@@ -35,18 +44,4 @@ unless node['platform'].eql?('ubuntu')
   ldap_server.name('openldap-servers')
   ldap_server.package_name('openldap-servers')
   ldap_server.action(:upgrade)
-
-  libpam_ldap = resources(package: 'libpam-ldap')
-  libpam_ldap.name('pam_ldap')
-  libpam_ldap.package_name('pam_ldap')
-  libpam_ldap.action(:upgrade)
-
-  libnss_ldap = resources(package: 'libnss-ldap')
-  libnss_ldap.name('nss-pam-ldapd')
-  libnss_ldap.package_name('nss-pam-ldapd')
-  libnss_ldap.action(:upgrade)
-
-  ldap_conf = resources(template: "#{node['openldap']['dir']}/ldap.conf")
-  ldap_conf.source 'openldap/ldap.conf.erb'
-  ldap_conf.cookbook('cicd_infrastructure')
 end

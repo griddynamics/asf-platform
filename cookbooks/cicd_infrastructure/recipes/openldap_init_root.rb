@@ -3,7 +3,9 @@
 # Cookbook Name:: cicd_infrastructure
 # Recipe:: openldap_init_root
 #
-# Copyright 2014, Grid Dynamics International, Inc.
+# Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
+# Classification level: Public
+# Licensed under the Apache License, Version 2.0.
 #
 
 template "#{Chef::Config[:file_cache_path]}/initial.ldif" do

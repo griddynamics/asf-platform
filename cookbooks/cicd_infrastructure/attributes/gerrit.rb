@@ -3,7 +3,9 @@
 # Cookbook Name:: cicd-infrastructure
 # Attributes:: gerrit
 #
-# Copyright 2014, Grid Dynamics International, Inc.
+# Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
+# Classification level: Public
+# Licensed under the Apache License, Version 2.0.
 #
 
 default['gerrit']['version'] = "2.8.6"
@@ -21,9 +23,3 @@ default['gerrit']['canonicalWebUrl'] = "http://#{node['gerrit']['hostname']}/"
 
 default['gerrit']['auth']['registerEmailPrivateKey'] = 'gerrit'
 default['gerrit']['auth']['restTokenPrivateKey'] = 'gerrit'
-default['gerrit']['auth']['type'] = 'LDAP'
-
-default['gerrit']['ldap']['server'] = 'ldap://localhost'
-default['gerrit']['ldap']['accountBase'] = 'ou=people,dc=example,dc=com'
-default['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
-default['gerrit']['ldap']['accountFullName'] = 'displayName'
