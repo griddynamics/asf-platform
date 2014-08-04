@@ -121,3 +121,4 @@ default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
   'memberAttr' => 'uniqueMember',
   'memberFormat' => 'uid=${username},ou=people,dc=example,dc=com'
 }
+default['cicd_infrastructure']['nexus']['url'] = 'localhost' # please owerride
