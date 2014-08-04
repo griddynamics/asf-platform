@@ -20,6 +20,7 @@ end
 include_recipe 'openldap::server'
 include_recipe 'openldap::auth'
 include_recipe 'cicd_infrastructure::openldap_init_root'
+include_recipe 'cicd_infrastructure::openldap_new_users'
 
 unless node['platform'].eql?('ubuntu')
   ldap_client = resources(package: 'ldap-utils')

@@ -57,3 +57,25 @@ default['cicd_infrastructure']['nexus']['ldap']['group_mapping'] = {
     'nx-admin'
   ]
 }
+
+default['cicd_infrastructure']['jira']['ldap']['host'] = 'localhost'
+default['cicd_infrastructure']['jira']['ldap']['port'] = '389'
+default['cicd_infrastructure']['jira']['ldap']['basedn'] = 'dc=example,dc=com'
+default['cicd_infrastructure']['jira']['ldap']['rootdn'] = "cn=admin,#{node['cicd_infrastructure']['jira']['ldap']['basedn']}"
+default['cicd_infrastructure']['jira']['ldap']['root_pwd'] = 'password'
+default['cicd_infrastructure']['jira']['ldap']['scheme'] = 'simple'
+default['cicd_infrastructure']['jira']['ldap']['userdn'] = 'ou=people'
+default['cicd_infrastructure']['jira']['ldap']['user_attrs'] = {
+  'userId' => 'uid',
+  'userPwd' => 'userPassword',
+  'objClass' => 'inetorgperson',
+  'mail' => 'mail',
+  'realname' => 'givenName'
+}
+default['cicd_infrastructure']['jira']['ldap']['groupdn'] = 'ou=groups'
+default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
+  'groupId' => 'cn',
+  'objClass' => 'groupOfUniqueNames',
+  'memberAttr' => 'uniqueMember',
+  'memberFormat' => 'uid=${username},ou=people,dc=example,dc=com'
+}
