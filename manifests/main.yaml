@@ -254,69 +254,23 @@ application:
                         runList: [ "recipe[cicd_infrastructure::openldap_new_users]" ]
                         version: "11.8.2"
 
-                  - nexus_openldap:
-                      phase: ldap_integration
-                      precedingPhases: [ openldap_export_users ]
-                      action: chefsolo
-                      parameters:
-                        roles: [ nexus ]
-                        recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::nexus_ldap]" ]
-                        version: "11.8.2"
-                        jattrs:
-                          cicd_infrastructure:
-                            nexus:
-                              ldap:
-                                host: "{$.environment.ldap.ldap_public_ips[0]}"
-
-                  - gerrit_openldap:
-                      phase: ldap_integration
-                      precedingPhases: [ openldap_export_users ]
-                      action: chefsolo
-                      parameters:
-                        roles: [ gerrit ]
-                        recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_ldap]" ]
-                        version: "11.8.2"
-                        jattrs:
-                          cicd_infrastructure:
-                            gerrit:
-                              ldap:
-                                server: "ldap://{$.environment.ldap.ldap_public_ips[0]}"
-
-                  - sonar_openldap:
-                      phase: ldap_integration
-                      precedingPhases: [ openldap_export_users ]
-                      action: chefsolo
-                      parameters:
-                        roles: [ sonar ]
-                        recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_sonar_ldap]" ]
-                        version: "11.8.2"
-                        jattrs:
-                          cicd_infrastructure:
-                            sonar:
-                              ldap:
-                                server: "{$.environment.ldap.ldap_public_ips[0]}"
-
-                  - jenkins_openldap:
-                      phase: ldap_integration
-                      precedingPhases: [ openldap_export_users ]
+                  - add_jenkins_job_generator:
+                      precedingPhases: [ init_component_vms ]
                       action: chefsolo
                       parameters:
                         roles: [ jenkins ]
                         recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_ldap]" ]
+                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_jobs]" ]
                         version: "11.8.2"
                         jattrs:
                           cicd_infrastructure:
                             jenkins:
-                              ldap:
-                                server: "{$.environment.ldap.ldap_public_ips[0]}"
+                              nexus:
+                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
 
                   - jenkins_setup:
-                      phase: jenkins_setup
-                      precedingPhases: [ init_component_vms ]
+                      phase: gerrit_trigger_jenkins_setup
+                      precedingPhases: [ add_jenkins_job_generator, init_component_vms ]
                       action: chefsolo
                       parameters:
                         roles: [ jenkins ]
@@ -333,8 +287,8 @@ application:
                         jenkins_host_state: chefState
 
                   - gerrit_setup:
-                      phase: gerrit_setup
-                      precedingPhases: [ jenkins_setup, ldap_integration ]
+                      phase: gerrit_trigger_gerrit_setup
+                      precedingPhases: [ jenkins_setup ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]
@@ -346,6 +300,66 @@ application:
                             gerrit:
                               jenkins_host: "{$.environment.jenkins.jenkins_public_ips[0]}"
                               jenkins_pubkey: "{$.jenkins_host_state.*.[0].cicd_infrastructure.jenkins.pubkey}"
+
+                  - nexus_openldap:
+                      phase: ldap_integration
+                      precedingPhases: [ openldap_export_users, gerrit_trigger_gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ nexus ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::nexus_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            nexus:
+                              ldap:
+                                host: "{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - gerrit_openldap:
+                      phase: ldap_integration
+                      precedingPhases: [ openldap_export_users, gerrit_trigger_gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ gerrit ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            gerrit:
+                              ldap:
+                                server: "ldap://{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - sonar_openldap:
+                      phase: ldap_integration
+                      precedingPhases: [ openldap_export_users, gerrit_trigger_gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ sonar ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_sonar_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            sonar:
+                              ldap:
+                                server: "{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - jenkins_openldap:
+                      phase: ldap_integration
+                      precedingPhases: [ openldap_export_users, gerrit_trigger_gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jenkins ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            jenkins:
+                              ldap:
+                                server: "{$.environment.ldap.ldap_public_ips[0]}"
 
               .init_vm:
                 parameters:
