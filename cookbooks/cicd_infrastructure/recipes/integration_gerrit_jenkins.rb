@@ -51,7 +51,7 @@ ruby_block 'add_root_user' do
     db.query("INSERT IGNORE INTO `accounts` \
       VALUES (NULL, 'root', NULL, NULL, 'N', NULL, NULL, NULL, NULL, 25, \
         'N', 'N', 'Y', 'N', NULL, 'Y', 'N', NULL,
-        '#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}', 1)")
+        '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}', 1)")
     db.close
   end
   retries 5
@@ -60,33 +60,18 @@ end
 
 # Setup user for jenkins gerrit-trigger
 jenkins_pubkey = node['cicd_infrastructure']['gerrit']['jenkins_pubkey']
-jenkins_host = node['cicd_infrastructure']['gerrit']['jenkins_host']
 
-ruby_block 'add_jenkins_user' do
-  block do
-    require 'mysql'
-    db = Mysql.new(node['gerrit']['database']['host'],
-                   node['gerrit']['database']['username'],
-                   node['gerrit']['database']['password'],
-                   node['gerrit']['database']['name'])
-    db.query("INSERT IGNORE INTO `account_external_ids` \
-      VALUES (2,'jenkins@#{jenkins_host}',NULL,'username:jenkins')")
-    db.query("INSERT IGNORE INTO `account_group_members` \
-      VALUES (2,1)")
-    db.query("INSERT IGNORE INTO `account_group_members_audit` \
-      VALUES (1,NULL,NULL,2,NULL,1)")
-    db.query("INSERT IGNORE INTO `account_id` \
-      VALUES (2)")
-    db.query("INSERT IGNORE INTO `account_ssh_keys` \
-      VALUES ('#{jenkins_pubkey}','Y',2,1)")
-    db.query("INSERT IGNORE INTO `accounts` \
-      VALUES (NULL, 'JenkinsCI', NULL, NULL, 'N', NULL, NULL, NULL, NULL, 25, \
-        'N', 'N', 'Y', 'N', NULL, 'Y', 'N', NULL,
-        '#{Time.now.strftime("%Y-%m-%d %H:%M:%S")}', 2)")
-    db.close
-  end
-  retries 5
-  retry_delay 30
+bash 'add_jenkins_user' do
+  user node['gerrit']['user']
+  code <<-EOH
+  echo #{jenkins_pubkey} | ssh -p #{node['gerrit']['port']} root@localhost\
+  gerrit create-account\
+  --group "'Administrators'"\
+  --full-name JenkinsCI\
+  --email jenkins@localhost\
+  --http-password jenkins\
+  --ssh-key - jenkins
+  EOH
 end
 
 template '/tmp/project.config' do
