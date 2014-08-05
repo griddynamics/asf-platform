@@ -22,19 +22,15 @@ ruby_block "wait for JIRA" do
      block do
          require "net/https"
          require "uri"
-
          port = node['jira']['apache2']['ssl']['port']
          path = "secure/SetupApplicationProperties!default.jspa"
-
          uri = URI.parse("https://#{host}/#{path}")
          http = Net::HTTP.new(uri.host, uri.port)
          http.use_ssl = true
          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
          request = Net::HTTP::Get.new(uri.request_uri)
-
-         10.times {
-             sleep(60)
+	 node['jira']['attempt_count'].times {
+             sleep(node['jira']['sleep_period'])
             break if File.read("/opt/atlassian/jira/logs/catalina.out")
             .include?("You can now access JIRA through your web browser")
          }
@@ -45,9 +41,7 @@ ruby_block "configure database" do
     block do
 	require "net/https"
 	require "uri"
-
 	path = "secure/SetupDatabase.jspa"
-	
 	uri = URI("https://#{host}/#{path}")
 	req = Net::HTTP::Get.new(uri.path)
 	res = Net::HTTP.start(
@@ -56,9 +50,8 @@ ruby_block "configure database" do
 	    :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
 	 https.request(req)
 	end
-
-	10.times {
-             sleep(60)
+	node['jira']['attempt_count'].times {
+             sleep(node['jira']['sleep_period'])
             break if File.read("/opt/atlassian/jira/logs/catalina.out")
             .include?("JIRA has been upgraded to build number")
         }
