@@ -8,6 +8,10 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
+service 'jenkins' do
+  action :nothing
+end
+
 jenkins_ssh_dir = "#{node['jenkins']['master']['home']}/.ssh"
 
 directory jenkins_ssh_dir do
@@ -26,7 +30,7 @@ end
 # Save public key to chef-server as jenkins_pubkey
 ruby_block 'node-save-jenkins-pubkey' do
   block do
-    node.set['cicd_infrastructure']['gerrit']['jenkins_pubkey'] =
+    node.set['cicd_infrastructure']['jenkins']['pubkey'] =
       File.read("#{jenkins_ssh_dir}/id_rsa.pub")
     node.save unless Chef::Config['solo']
   end

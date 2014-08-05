@@ -14,7 +14,7 @@ node.set['gerrit']['auth']['type'] = gerrit_config['auth']['type']
 node.set['gerrit']['ldap'] = gerrit_config['ldap']
 
 service 'gerrit' do
-    action :nothing
+  action :nothing
 end
 
 template "#{node['gerrit']['install_dir']}/etc/gerrit.config" do

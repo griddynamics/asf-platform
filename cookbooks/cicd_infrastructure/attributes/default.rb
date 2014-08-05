@@ -22,6 +22,7 @@ default['cicd_infrastructure']['jenkins']['plugins'] = [
     'parameterized-trigger',
     'gerrit-trigger'
 ]
+default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['ssh_port'] = '29418'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['http_port'] = '80'

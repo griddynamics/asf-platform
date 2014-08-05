@@ -1,3 +1,13 @@
+# Encoding: utf-8
+#
+# Application: Agile Software Factory
+# Component: JIRA
+#
+# Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
+# Classification level: Public
+# Licensed under the Apache License, Version 2.0.
+#
+
 application:
   configuration:
     input.jira_version: "6.1.5"
