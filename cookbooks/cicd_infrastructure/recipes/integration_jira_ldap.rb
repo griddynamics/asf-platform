@@ -9,7 +9,6 @@
 #
 
 jira_ldap_config = node['cicd_infrastructure']['jira']['ldap']
-jira_host = node['jira']['apache2']['virtual_host_name']
 
 execute "configure ldap" do
     user "root"
@@ -17,10 +16,54 @@ execute "configure ldap" do
     action :nothing
 end
 
-execute "configure database" do
-    user "root"
-    command "curl -k https://#{jira_host}/secure/SetupDatabase.jspa"
-    action :nothing
+host = node['jira']['apache2']['virtual_host_name']
+
+ruby_block "wait for JIRA" do
+     block do
+         require "net/https"
+         require "uri"
+
+         port = node['jira']['apache2']['ssl']['port']
+         path = "secure/SetupApplicationProperties!default.jspa"
+
+         uri = URI.parse("https://#{host}/#{path}")
+         http = Net::HTTP.new(uri.host, uri.port)
+         http.use_ssl = true
+         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+         request = Net::HTTP::Get.new(uri.request_uri)
+
+         10.times {
+             sleep(60)
+            break if File.read("/opt/atlassian/jira/logs/catalina.out")
+            .include?("You can now access JIRA through your web browser")
+         }
+     end
+ end
+
+ruby_block "configure database" do
+    block do
+	require "net/https"
+	require "uri"
+
+	path = "secure/SetupDatabase.jspa"
+	
+	uri = URI("https://#{host}/#{path}")
+	req = Net::HTTP::Get.new(uri.path)
+	res = Net::HTTP.start(
+	    uri.host, 
+	    :use_ssl => uri.scheme == 'https', 
+	    :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+	 https.request(req)
+	end
+
+	10.times {
+             sleep(60)
+            break if File.read("/opt/atlassian/jira/logs/catalina.out")
+            .include?("JIRA has been upgraded to build number")
+        }
+    end
+  action :nothing
 end
 
 template "#{node['jira']['work_dir']}/ldap_configure.sql" do
@@ -40,7 +83,8 @@ template "#{node['jira']['work_dir']}/ldap_configure.sql" do
     groupdn:      jira_ldap_config['groupdn'],
     group_attrs:  jira_ldap_config['group_attrs']
   )
-  notifies :restart, "service[jira]", :delayed
-  notifies :run, 'execute[configure database]', :delayed
+  notifies :restart, 'service[jira]', :delayed
+  notifies :run, 'ruby_block[wait for JIRA]', :delayed
+  notifies :run, 'ruby_block[configure database]', :delayed
   notifies :run, 'execute[configure ldap]', :delayed
 end
