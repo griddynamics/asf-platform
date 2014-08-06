@@ -19,23 +19,23 @@ end
 host = node['jira']['apache2']['virtual_host_name']
 
 ruby_block "wait for JIRA" do
-     block do
-         require "net/https"
-         require "uri"
-         port = node['jira']['apache2']['ssl']['port']
-         path = "secure/SetupApplicationProperties!default.jspa"
-         uri = URI.parse("https://#{host}/#{path}")
-         http = Net::HTTP.new(uri.host, uri.port)
-         http.use_ssl = true
-         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-         request = Net::HTTP::Get.new(uri.request_uri)
-	 node['jira']['attempt_count'].times {
-             sleep(node['jira']['sleep_period'])
-            break if File.read("/opt/atlassian/jira/logs/catalina.out")
-            .include?("You can now access JIRA through your web browser")
-         }
-     end
- end
+    block do
+	require "net/https"
+	require "uri"
+	port = node['jira']['apache2']['ssl']['port']
+	path = "secure/SetupApplicationProperties!default.jspa"
+	uri = URI.parse("https://#{host}/#{path}")
+	http = Net::HTTP.new(uri.host, uri.port)
+	http.use_ssl = true
+	http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+	request = Net::HTTP::Get.new(uri.request_uri)
+	node['jira']['attempt_count'].times {
+	    sleep(node['jira']['sleep_period'])
+	    break if File.read("/opt/atlassian/jira/logs/catalina.out")
+	    .include?("You can now access JIRA through your web browser")
+	}
+    end
+end
 
 ruby_block "configure database" do
     block do
@@ -48,15 +48,15 @@ ruby_block "configure database" do
 	    uri.host, 
 	    :use_ssl => uri.scheme == 'https', 
 	    :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
-	 https.request(req)
+	https.request(req)
 	end
 	node['jira']['attempt_count'].times {
-             sleep(node['jira']['sleep_period'])
-            break if File.read("/opt/atlassian/jira/logs/catalina.out")
-            .include?("JIRA has been upgraded to build number")
-        }
+	    sleep(node['jira']['sleep_period'])
+	    break if File.read("/opt/atlassian/jira/logs/catalina.out")
+	    .include?("JIRA has been upgraded to build number")
+	}
     end
-  action :nothing
+    action :nothing
 end
 
 template "#{node['jira']['work_dir']}/ldap_configure.sql" do
