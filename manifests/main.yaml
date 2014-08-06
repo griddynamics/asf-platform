@@ -265,6 +265,8 @@ application:
                         jattrs:
                           cicd_infrastructure:
                             jenkins:
+                              gerrit-trigger:
+                                host: "{$.environment.gerrit.gerrit_public_ips[0]}"
                               nexus:
                                 endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
 
