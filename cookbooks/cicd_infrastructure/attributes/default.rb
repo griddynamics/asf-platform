@@ -9,24 +9,29 @@
 #
 
 default['cicd_infrastructure']['jenkins']['plugins'] = [
-    'mailer',
-    'openid4java',
-    'openid',
-    'promoted-builds',
-    'credentials',
-    'ssh-credentials',
-    'ssh-agent',
-    'git-client',
-    'scm-api',
-    'git',
-    'parameterized-trigger',
-    'gerrit-trigger',
-    'config-file-provider'
+  'mailer',
+  'openid4java',
+  'openid',
+  'promoted-builds',
+  'credentials',
+  'ssh-credentials',
+  'ssh-agent',
+  'git-client',
+  'scm-api',
+  'git',
+  'parameterized-trigger',
+  'gerrit-trigger',
+  'config-file-provider'
+  'gerrit-trigger',
+  'matrix-auth',
+  'cloudbees-folder',
+  'job-dsl'
 ]
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['ssh_port'] = '29418'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['http_port'] = '80'
+
 default['cicd_infrastructure']['jenkins']['auth'] = 'LDAP'
 default['cicd_infrastructure']['jenkins']['ldap']['server'] = nil
 default['cicd_infrastructure']['jenkins']['ldap']['port'] = '389'
@@ -48,6 +53,8 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] =
 v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/\
 jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
 
+default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
+
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
 default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'
@@ -55,6 +62,7 @@ default['cicd_infrastructure']['gerrit']['ldap']['server'] = 'ldap://localhost'
 default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=example,dc=com'
 default['cicd_infrastructure']['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
 default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayName'
+default['cicd_infrastructure']['gerrit']['ldap']['accountEmailAddress'] = 'mail'
 
 default['cicd_infrastructure']['nexus']['auth'] = 'LDAP'
 default['cicd_infrastructure']['nexus']['ldap']['host'] = 'localhost'

@@ -1,0 +1,83 @@
+job(type: Maven) {
+    name "asf-demo-dev-build-review"
+    jdk("/usr/lib/jvm/java/")
+    parameters {
+        stringParam("GERRIT_PROJECT", "<%= @project_name %>", "Gerrit project name")
+        stringParam("GERRIT_BRANCH", "dev", "Gerrit branch")
+        stringParam("GERRIT_REFSPEC", "refs/heads/dev", "Gerrit refspec")
+    }
+    wrappers {
+        toolenv("Maven 3.1", "Git")
+    }
+    scm {
+        git {
+            remote {
+                name("origin")
+                url("ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/<%= @project_name %>")
+                refspec("\${GERRIT_REFSPEC}")
+            }
+            branch("*/\${GERRIT_BRANCH}")
+        }
+    }
+    triggers {
+        gerrit {
+            events {
+                PatchsetCreated
+                DraftPublished
+            }
+            project("<%= @project_name %>", "dev")
+        }
+    }
+    goals("-e")
+    goals("clean")
+    goals("install")
+    goals("-DfailIfNoTests=false")
+    perModuleEmail(false)
+    mavenInstallation("Maven 3.1")
+}
+
+job(type: Maven) {
+    name "asf-demo-dev-build"
+    jdk("/usr/lib/jvm/java/")
+    wrappers {
+        toolenv("Maven 3.1.1")
+    }
+    scm {
+        git {
+            remote {
+                name("origin")
+                url("ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/<%= @project_name %>")
+                refspec("+refs/heads/dev:refs/remotes/origin/dev")
+            }
+            branch("*/dev")
+        }
+    }
+    triggers {
+        gerrit {
+            events {
+                RefUpdated
+            }
+            project("<%= @project_name %>", "plain:dev")
+        }
+    }
+
+    goals("-e")
+    goals("clean")
+    goals("install")
+    goals("-DfailIfNoTests=false")
+    mavenInstallation("Maven 3.1")
+
+    postBuildSteps {
+        maven {
+            goals("""deploy:deploy-file -B
+                -DgroupId=asf-demo
+                -DartifactId=<%= @project_name %>
+                -Dversion=1.0-SNAPSHOT
+                -Dpackaging=war
+                -Dfile=\${WORKSPACE}/asf-webapp-demo.war
+                -DrepositoryId=<%= @nexus_id %>
+                -Durl=<%= @nexus_url %>""")
+            mavenInstallation("Maven 3.1.1")
+        }
+    }
+}

@@ -27,3 +27,16 @@ template "#{node['jenkins']['master']['home']}/config.xml" do
   mode 0644
   notifies :restart, "service[jenkins]"
 end
+
+[
+    'hudson.tasks.Maven.xml'
+].each do |config|
+    template "#{node[:jenkins][:master][:home]}/#{config}" do
+        source "integration/jenkins/#{config}.erb"
+        owner node[:jenkins][:master][:user]
+        group node[:jenkins][:master][:group]
+        mode 0755
+        notifies :restart, 'service[jenkins]'
+    end
+end
+
