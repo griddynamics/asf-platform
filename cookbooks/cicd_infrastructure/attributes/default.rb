@@ -20,7 +20,8 @@ default['cicd_infrastructure']['jenkins']['plugins'] = [
     'scm-api',
     'git',
     'parameterized-trigger',
-    'gerrit-trigger'
+    'gerrit-trigger',
+    'config-file-provider'
 ]
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
@@ -85,6 +86,8 @@ default['cicd_infrastructure']['nexus']['ldap']['group_mapping'] = {
     'nx-admin'
   ]
 }
+default['cicd_infrastructure']['nexus']['login'] = "admin"
+default['cicd_infrastructure']['nexus']['password'] = 'admin123'
 
 default['cicd_infrastructure']['sonar']['auth'] = 'LDAP'
 default['cicd_infrastructure']['sonar']['ldap']['realm'] = 'mydomain.com'

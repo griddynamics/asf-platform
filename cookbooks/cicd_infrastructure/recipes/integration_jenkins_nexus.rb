@@ -22,3 +22,16 @@ service "jenkins" do
 	service_name "jenkins"
 	action :start
 end	
+
+template "#{node['jenkins']['master']['home']}/maven-global-settings-files.xml" do
+  source 'jenkins/maven-global-settings-files.xml.erb'
+  owner node['jenkins']['master']['user']
+  group node['jenkins']['master']['group']
+  mode 0644
+  variables(
+	  nexus_username: node["cicd_infrastructure"]["nexus"]["login"],
+	  nexus_password: node["cicd_infrastructure"]["nexus"]["password"],
+	  nexus_url: node["cicd_infrastructure"]["nexus"]["url"]
+  )
+  notifies :restart, "service[jenkins]"
+end
