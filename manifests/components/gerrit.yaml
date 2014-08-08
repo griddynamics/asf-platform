@@ -17,7 +17,7 @@ application:
       gerrit_version: "bind(workflow#input.gerrit_version)"
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
     output:
-      public_ips: "bind(workflow#result.public_ips)"
+      gerrit_public_ips: "bind(workflow#result.gerrit_public_ips)"
       gerrit_endpoint: "bind(workflow#result.gerrit_endpoint)"
   components:
     workflow:
@@ -31,7 +31,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         result:
-          public_ips:
+          gerrit_public_ips:
             type: publish-signal(list<string>)
             name: Instance IP
           gerrit_endpoint:
@@ -58,8 +58,10 @@ application:
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-d41689bd
                     ec2SecurityGroup: default
+                    providerSettings:
+                      userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                   output:
-                    public_ips: ips
+                    gerrit_public_ips: ips
                     private_ips: privateips
 
               - install_gerrit:
@@ -76,10 +78,10 @@ application:
                   output:
                     chef_attrs: chefState
             return:
-              public_ips:
-                value: "{$.public_ips}"
+              gerrit_public_ips:
+                value: "{$.gerrit_public_ips}"
               gerrit_endpoint:
-                value: "http://{$.public_ips[0]}"
+                value: "http://{$.gerrit_public_ips[0]}"
           destroy:
             steps:
               - destroy:

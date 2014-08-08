@@ -17,7 +17,7 @@ application:
       jira_version: "bind(workflow#input.jira_version)"
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
     output:
-      public_ips: "bind(workflow#result.public_ips)"
+      jira_public_ips: "bind(workflow#result.jira_public_ips)"
       jira_endpoint: "bind(workflow#result.jira_endpoint)"
   components:
     workflow:
@@ -31,7 +31,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         result:
-          public_ips:
+          jira_public_ips:
             type: publish-signal(list<string>)
             name: "Instance IP"
           jira_endpoint:
@@ -62,7 +62,7 @@ application:
                     providerSettings:
                       userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                   output:
-                    public_ips: ips
+                    jira_public_ips: ips
                     private_ips: privateips
 
               - install_jira:
@@ -84,10 +84,10 @@ application:
                     attrs: chefState
 
             return:
-              public_ips:
-                value: "{$.public_ips}"
+              jira_public_ips:
+                value: "{$.jira_public_ips}"
               jira_endpoint:
-                value: "https://{$.public_ips[0]}"
+                value: "https://{$.jira_public_ips[0]}"
           destroy:
             steps:
                 - destroy:

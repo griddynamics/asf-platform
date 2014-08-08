@@ -14,8 +14,8 @@ application:
   interfaces:
     input:
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
-    output: 
-      public_ips: "bind(workflow#result.public_ips)"
+    output:
+      ldap_public_ips: "bind(workflow#result.ldap_public_ips)"
       ldap_endpoint: "bind(workflow#result.ldap_endpoint)"
   components:
     workflow:
@@ -26,7 +26,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         result:
-          public_ips:
+          ldap_public_ips:
             type: publish-signal(list<string>)
             name: "Instance IP: "
           ldap_endpoint:
@@ -53,8 +53,10 @@ application:
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-d41689bd
                     ec2SecurityGroup: default
+                    providerSettings:
+                      userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                   output:
-                    public_ips: ips
+                    ldap_public_ips: ips
                     private_ips: privateips
 
               - install_openldap:
@@ -68,10 +70,10 @@ application:
                   output:
                     chef_attrs: chefState
             return:
-              public_ips:
-                value: "{$.public_ips}"
+              ldap_public_ips:
+                value: "{$.ldap_public_ips}"
               ldap_endpoint:
-                value: "ldap://{$.public_ips}:389"
+                value: "ldap://{$.ldap_public_ips}:389"
           destroy:
             steps:
               - destroy:

@@ -14,18 +14,26 @@ application:
     input.gerrit_version: "2.8.6.1"
     input.jira_version: "6.1.5"
     input.sonar_version: "3.7.4"
+  bindings:
+    - [integration.workflow, sonar]
+    - [integration.workflow, gerrit]
+    - [integration.workflow, jenkins]
+    - [integration.workflow, jira]
+    - [integration.workflow, openldap]
+    - [integration.workflow, nexus]
   interfaces:
     input:
       jira_version: "bind(jira#input.jira_version)"
       gerrit_version: "bind(gerrit#input.gerrit_version)"
       sonar_version: "bind(sonar#input.sonar_version)"
       cookbooks_url: |
-        bind(jira#input.cookbooks_url,
-        openldap#input.cookbooks_url,
-        jenkins#input.cookbooks_url,
+        bind(openldap#input.cookbooks_url,
+        nexus#input.cookbooks_url,
         gerrit#input.cookbooks_url,
         sonar#input.cookbooks_url,
-        nexus#input.cookbooks_url)
+        jenkins#input.cookbooks_url,
+        jira#input.cookbooks_url,
+        integration.workflow#input.cookbooks_url)
     endpoints:
       jira: "bind(jira#output.jira_endpoint)"
       openldap: "bind(openldap#output.ldap_endpoint)"
@@ -34,12 +42,12 @@ application:
       sonar: "bind(sonar#output.sonar_endpoint)"
       nexus: "bind(nexus#output.nexus_endpoint)"
     servers:
-      jira_host: "bind(jira#output.public_ips)"
-      openldap_host: "bind(openldap#output.public_ips)"
-      jenkins_host: "bind(jenkins#output.public_ips)"
-      gerrit_host: "bind(gerrit#output.public_ips)"
-      sonar_host: "bind(sonar#output.public_ips)"
-      nexus_host: "bind(nexus#output.public_ips)"
+      jira_host: "bind(jira#output.jira_public_ips)"
+      openldap_host: "bind(openldap#output.ldap_public_ips)"
+      jenkins_host: "bind(jenkins#output.jenkins_public_ips)"
+      gerrit_host: "bind(gerrit#output.gerrit_public_ips)"
+      sonar_host: "bind(sonar#output.sonar_public_ips)"
+      nexus_host: "bind(nexus#output.nexus_public_ips)"
   components:
     sonar:
       type: reference.Submodule
@@ -54,7 +62,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         output:
-          public_ips:
+          sonar_public_ips:
             type: publish-signal(list<string>)
             name: Sonar
           sonar_endpoint:
@@ -73,7 +81,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         output:
-          public_ips:
+          gerrit_public_ips:
             type: publish-signal(list<string>)
             name: Gerrit
           gerrit_endpoint:
@@ -90,7 +98,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         output:
-          public_ips:
+          jenkins_public_ips:
             type: publish-signal(list<string>)
             name: Jenkins
           jenkins_endpoint:
@@ -110,7 +118,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         output:
-          public_ips:
+          jira_public_ips:
             type: publish-signal(list<string>)
             name: JIRA
           jira_endpoint:
@@ -127,7 +135,7 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         output:
-          public_ips:
+          ldap_public_ips:
             type: publish-signal(list<string>)
             name: OpenLDAP
           ldap_endpoint:
@@ -144,10 +152,236 @@ application:
             type: configuration(string)
             name: Cookbooks tarball URL
         output:
-          public_ips:
+          nexus_public_ips:
             type: publish-signal(list<string>)
             name: Nexus
           nexus_endpoint:
             type: publish-signal(string)
             name: Nexus
 
+    integration:
+      components:
+        workflow:
+          type: workflow.Instance
+          interfaces:
+            input:
+              cookbooks_url:
+                type: configuration(string)
+                name: Cookbooks tarball URL
+            sonar:
+              sonar_public_ips: consume-signal(list<string>)
+            gerrit:
+              gerrit_public_ips: consume-signal(list<string>)
+            jenkins:
+              jenkins_public_ips: consume-signal(list<string>)
+            jira:
+              jira_public_ips: consume-signal(list<string>)
+            ldap:
+              ldap_public_ips: consume-signal(list<string>)
+            nexus:
+              nexus_public_ips: consume-signal(list<string>)
+          required:
+            - sonar
+            - gerrit
+            - jenkins
+            - jira
+            - ldap
+            - nexus
+          configuration:
+            configuration.triggers: {}
+            configuration.workflows:
+              launch:
+                steps:
+                  - get_env_props:
+                      action: getEnvironmentProperties
+                      output:
+                        environment: result
+
+                  - init_nexus_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.nexus.nexus_public_ips}"
+                        role: nexus
+
+                  - init_ldap_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.ldap.ldap_public_ips}"
+                        role: ldap
+
+                  - init_gerrit_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.gerrit.gerrit_public_ips}"
+                        role: gerrit
+
+                  - init_sonar_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.sonar.sonar_public_ips}"
+                        role: sonar
+
+                  - init_jenkins_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.jenkins.jenkins_public_ips}"
+                        role: jenkins
+
+                  - init_jira_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.jira.jira_public_ips}"
+                        role: jira
+
+                  - openldap_export_users:
+                      precedingPhases: [ init_component_vms ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ ldap ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::openldap_new_users]" ]
+                        version: "11.8.2"
+
+                  - add_jenkins_job_generator:
+                      precedingPhases: [ init_component_vms ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jenkins ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_jobs]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            jenkins:
+                              gerrit-trigger:
+                                host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                              nexus:
+                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+
+                  - jenkins_setup:
+                      phase: gerrit_trigger_jenkins_setup
+                      precedingPhases: [ add_jenkins_job_generator, init_component_vms ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jenkins ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_gerrit]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            jenkins:
+                              pubkey: ""
+                              gerrit-trigger:
+                                host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                      output:
+                        jenkins_host_state: chefState
+
+                  - gerrit_setup:
+                      phase: gerrit_trigger_gerrit_setup
+                      precedingPhases: [ jenkins_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ gerrit ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_jenkins]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            gerrit:
+                              jenkins_host: "{$.environment.jenkins.jenkins_public_ips[0]}"
+                              jenkins_pubkey: "{$.jenkins_host_state.*.[0].cicd_infrastructure.jenkins.pubkey}"
+
+                  - nexus_openldap:
+                      phase: ldap_integration
+                      precedingPhases: [ openldap_export_users, gerrit_trigger_gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ nexus ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::nexus_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            nexus:
+                              ldap:
+                                host: "{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - gerrit_openldap:
+                      phase: ldap_integration
+                      precedingPhases: [ openldap_export_users, gerrit_trigger_gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ gerrit ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            gerrit:
+                              ldap:
+                                server: "ldap://{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - sonar_openldap:
+                      phase: ldap_integration
+                      precedingPhases: [ openldap_export_users, gerrit_trigger_gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ sonar ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_sonar_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            sonar:
+                              ldap:
+                                server: "{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - jenkins_openldap:
+                      phase: ldap_integration
+                      precedingPhases: [ openldap_export_users, gerrit_trigger_gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jenkins ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            jenkins:
+                              ldap:
+                                server: "{$.environment.ldap.ldap_public_ips[0]}"
+
+              .init_vm:
+                parameters:
+                  - role:
+                      default: undefined
+                  - static_ips:
+                      default: undefined
+                steps:
+                  - initialization:
+                      action: provisionVms
+                      parameters:
+                        hardwareId: m3.medium
+                        imageId: us-east-1/ami-d41689bd
+                        jcloudsProvider: aws-ec2
+                        jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                        roleName: "{$.role}"
+                        vmIdentity: ec2-user
+                        staticIps: "{$.static_ips}"
+
+              destroy:
+                steps:
+                  - destroy:
+                      action: undeployEnv
