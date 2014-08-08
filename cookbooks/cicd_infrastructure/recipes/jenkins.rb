@@ -19,3 +19,11 @@ node['cicd_infrastructure']['jenkins']['plugins'].each do |plugin|
     notifies :restart, 'service[jenkins]'
   end
 end
+
+template "#{node['jenkins']['master']['home']}/config.xml" do
+  source 'jenkins/config.xml.erb'
+  owner node['jenkins']['master']['user']
+  group node['jenkins']['master']['group']
+  mode 0644
+  notifies :restart, "service[jenkins]"
+end
