@@ -8,7 +8,7 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-default['gerrit']['version'] = "2.8.6"
+default['gerrit']['version'] = "2.8.6.1"
 
 if node['cloud']
   case node['cloud']['provider']
@@ -23,3 +23,4 @@ default['gerrit']['canonicalWebUrl'] = "http://#{node['gerrit']['hostname']}/"
 
 default['gerrit']['auth']['registerEmailPrivateKey'] = 'gerrit'
 default['gerrit']['auth']['restTokenPrivateKey'] = 'gerrit'
+default['gerrit']['sendemail']['enable'] = 'false'

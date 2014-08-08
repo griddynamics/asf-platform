@@ -62,6 +62,7 @@ default['cicd_infrastructure']['gerrit']['ldap']['server'] = 'ldap://localhost'
 default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=example,dc=com'
 default['cicd_infrastructure']['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
 default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayName'
+default['cicd_infrastructure']['gerrit']['ldap']['accountEmailAddress'] = 'mail'
 
 default['cicd_infrastructure']['nexus']['auth'] = 'LDAP'
 default['cicd_infrastructure']['nexus']['ldap']['host'] = 'localhost'

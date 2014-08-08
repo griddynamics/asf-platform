@@ -24,6 +24,8 @@ bash "setup #{node['openldap']['basedn']} database" do
   EOH
   action :run
   only_if { File.exist?("#{Chef::Config[:file_cache_path]}/initial.ldif") }
+  retries 5
+  retry_delay 30
 end
 
 template "#{Chef::Config[:file_cache_path]}/root.ldif" do
