@@ -1,0 +1,36 @@
+kit:
+  name: "Agile Software Factory"
+  link: https://github.com/griddynamics/asf
+  applications:
+    - name: "Agile Software Factory"
+      manifest: http://gd-asf.s3.amazonaws.com/main.yaml
+    - name: "Nexus"
+      manifest: http://gd-asf.s3.amazonaws.com/nexus.yaml
+    - name: "Jenkins"
+      manifest: http://gd-asf.s3.amazonaws.com/jenkins.yaml
+    - name: "Gerrit"
+      manifest: http://gd-asf.s3.amazonaws.com/gerrit.yaml
+    - name: "Sonar"
+      manifest: http://gd-asf.s3.amazonaws.com/sonar.yaml
+    - name: "JIRA"
+      manifest: http://gd-asf.s3.amazonaws.com/jira.yaml
+    - name: "OpenLDAP"
+      manifest: http://gd-asf.s3.amazonaws.com/ldap.yaml
+    - name: "SeleniumGrid"
+      manifest: http://gd-asf.s3.amazonaws.com/mainhttps://raw.github.com/qubell-bazaar/component-selenium-grid/master/component-selenium-grid.yml
+  provider:
+    name: "Grid Dynamics"
+    link: http://www.griddynamics.com/
+  documentation:
+    overview: |
+      This application requires the following items to be configured in your environment:
+        * Amazon EC2 account;
+        * Ports to be open on the security group and firewall
+          - 80
+          - 389
+          - 443
+          - 8080
+          - 8081
+          - 9000
+          - 4444
+          - 29418
