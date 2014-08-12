@@ -14,6 +14,8 @@ application:
     input.gerrit_version: "2.8.6.1"
     input.jira_version: "6.1.5"
     input.sonar_version: "3.7.4"
+    input.selenium_version: "2.42.2"
+    input.selenium_node_count: "1"
   bindings:
     - [integration.workflow, sonar]
     - [integration.workflow, gerrit]
@@ -26,6 +28,8 @@ application:
       jira_version: "bind(jira#input.jira_version)"
       gerrit_version: "bind(gerrit#input.gerrit_version)"
       sonar_version: "bind(sonar#input.sonar_version)"
+      selenium_version: "bind(selenium#conf.selenium-version)"
+      selenium_node_count: "bind(selenium#conf.slave-node-count)"
       cookbooks_url: |
         bind(openldap#input.cookbooks_url,
         nexus#input.cookbooks_url,
@@ -41,6 +45,8 @@ application:
       gerrit: "bind(gerrit#output.gerrit_endpoint)"
       sonar: "bind(sonar#output.sonar_endpoint)"
       nexus: "bind(nexus#output.nexus_endpoint)"
+      selenium_console: "bind(selenium#endpoints.console-url)"
+      selenium_webdriver: "bind(selenium#endpoints.remote-url)"
     servers:
       jira_host: "bind(jira#output.jira_public_ips)"
       openldap_host: "bind(openldap#output.ldap_public_ips)"
@@ -48,6 +54,8 @@ application:
       gerrit_host: "bind(gerrit#output.gerrit_public_ips)"
       sonar_host: "bind(sonar#output.sonar_public_ips)"
       nexus_host: "bind(nexus#output.nexus_public_ips)"
+      selenium_hub_host: "bind(selenium#hosts.hub)"
+      selenium_node_hosts: "bind(selenium#hosts.nodes)"
   components:
     sonar:
       type: reference.Submodule
@@ -158,6 +166,46 @@ application:
           nexus_endpoint:
             type: publish-signal(string)
             name: Nexus
+
+    selenium:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "SeleniumGrid"
+      interfaces:
+        conf:
+          selenium-version:
+            type: configuration(string)
+            name: SeleniumGrid version
+          slave-node-count:
+            type: configuration(string)
+            name: SeleniumGrid node count
+          recipes:
+            type: configuration(string)
+            name: "SeleniumGrid recipes"
+        endpoints:
+          console-url:
+            type: publish-signal(string)
+            name: SeleniumGrid Console
+          remote-url:
+            type: publish-signal(string)
+            name: SeleniumGrid WebDriver
+        hosts:
+          hub:
+            type: publish-signal(string)
+            name: SeleniumGrid Hub
+          nodes:
+            type: publish-signal(list<string>)
+            name: SeleniumGrid Nodes
+        actions:
+          scale:
+            type: receive-command(int node-count => list<string> node-hosts)
+            name: "Scale up SeleniumGrid"
+          re-start:
+            type: receive-command()
+            name: "Restart SeleniumGrid"
+          change-version:
+            type: receive-command(string selenium-version)
+            name: "Change SeleniumGrid version"
 
     integration:
       components:
