@@ -9,7 +9,7 @@
 #
 
 
-define :jenkins_ldap_auth, name: nil, 
+define :jenkins_ldap_auth, name: nil,
 		    auth:       nil,
 		    server:     nil,
 		    port:       nil,
@@ -19,7 +19,7 @@ define :jenkins_ldap_auth, name: nil,
 		    rootdn:     nil,
 		    root_pwd:   nil do
 	ruby_block "jenkins_ldap_auth" do
-		block do 
+		block do
 			unless params[:name].nil?
 				require 'rexml/document'
 				auth = params[:auth]
@@ -29,7 +29,7 @@ define :jenkins_ldap_auth, name: nil,
 				userdn = params[:userdn]
 				user_id = params[:user_id]
 				rootdn = params[:rootdn]
-				root_pwd = Base64.encode64(params[:root_pwd])
+				root_pwd = params[:root_pwd]
 				doc = nil
 				jenkins_config_path = File.join(node["jenkins"]["master"]["home"],"config.xml")
 				File.open(jenkins_config_path, "r") do |jenkins_config|
@@ -52,14 +52,14 @@ define :jenkins_ldap_auth, name: nil,
 					[authorizationStrategy, securityRealm].each do |elem|
 						new_elem = REXML::Document.new(elem)
 						doc.root.add_element(new_elem)
-					end		
+					end
 
-				end	
-			end		
+				end
+			end
 
 			File.open(jenkins_config_path, "r+") do |jenkins_config|
 				jenkins_config << doc
-			end unless doc.nil?	
+			end unless doc.nil?
 		end
 	end
 end

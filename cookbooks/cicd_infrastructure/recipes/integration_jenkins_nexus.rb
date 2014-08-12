@@ -8,20 +8,18 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-service "jenkins" do
-	service_name "jenkins"
-	action :stop
-end	
-
-add_jenkins_global_var 'Add nexus env variables' do
-	key "NEXUS_URL"
-	value node["cicd_infrastructure"]["nexus"]["url"]
+service 'jenkins' do
+  action :stop
 end
 
-service "jenkins" do
-	service_name "jenkins"
-	action :start
-end	
+add_jenkins_global_var 'Add nexus env variables' do
+  key 'NEXUS_URL'
+  value node['cicd_infrastructure']['jenkins']['nexus']['endpoint']
+end
+
+service 'jenkins' do
+  action :start
+end
 
 template "#{node['jenkins']['master']['home']}/maven-global-settings-files.xml" do
   source 'jenkins/maven-global-settings-files.xml.erb'
@@ -29,9 +27,9 @@ template "#{node['jenkins']['master']['home']}/maven-global-settings-files.xml" 
   group node['jenkins']['master']['group']
   mode 0644
   variables(
-	  nexus_username: node["cicd_infrastructure"]["nexus"]["login"],
-	  nexus_password: node["cicd_infrastructure"]["nexus"]["password"],
-	  nexus_url: node["cicd_infrastructure"]["nexus"]["url"]
+    nexus_username: node['cicd_infrastructure']['nexus']['login'],
+    nexus_password: node['cicd_infrastructure']['nexus']['password'],
+    nexus_url: node['cicd_infrastructure']['jenkins']['nexus']['endpoint']
   )
-  notifies :restart, "service[jenkins]"
+  notifies :restart, 'service[jenkins]'
 end
