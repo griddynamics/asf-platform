@@ -9,8 +9,10 @@
 	<securityRealm class='hudson.security.SecurityRealm$None'/>
 	<disableRememberMe>false</disableRememberMe>
 	<projectNamingStrategy class='jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy'/>
-	<workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULLNAME}</workspaceDir>
-	<buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <workspaceDir>${ITEM_ROOTDIR}/workspace</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <markupFormatter class="hudson.markup.EscapedMarkupFormatter"/>
+
   <jdks>
     <jdk>
       <name>Default</name>

@@ -21,7 +21,8 @@ default['cicd_infrastructure']['jenkins']['plugins'] = [
   'git',
   'parameterized-trigger',
   'gerrit-trigger',
-  'config-file-provider'
+  'token-macro',
+  'config-file-provider',
   'gerrit-trigger',
   'matrix-auth',
   'cloudbees-folder',
@@ -132,4 +133,3 @@ default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
   'memberAttr' => 'uniqueMember',
   'memberFormat' => 'uid=${username},ou=people,dc=example,dc=com'
 }
-default['cicd_infrastructure']['nexus']['url'] = 'localhost' # please owerride
