@@ -14,7 +14,7 @@ define :ssh_keys, name: nil,
                   filename: nil,
                   action: :create do
   if params[:action] == :create
-    fail AttributeError, 'definition name isn\'t set' if params[:name].nil?
+    raise 'Ssh key definition name isn\'t set' if params[:name].nil?
 
     dir = params[:name]
     user = params[:user]
