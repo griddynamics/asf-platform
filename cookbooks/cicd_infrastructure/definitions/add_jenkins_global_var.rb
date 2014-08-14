@@ -15,7 +15,7 @@ define :add_jenkins_global_var, name: nil,
 	ruby_block "add_var_to_jenkins" do
 		block do 
 			unless params[:name].nil?
-				fail AttributeError, 'you should specify key and value' if params[:key].nil? or params[:value].nil?
+				raise 'For adding jenkins global var you should specify key and value' if params[:key].nil? or params[:value].nil?
 
 				require 'rexml/document'
 				key = params[:key]
