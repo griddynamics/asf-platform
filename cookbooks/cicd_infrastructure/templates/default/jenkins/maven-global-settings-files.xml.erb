@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<org.jenkinsci.plugins.configfiles.maven.DefaultGlobalMavenSettingsProvider plugin="config-file-provider@2.7.4">
+<org.jenkinsci.plugins.configfiles.maven.DefaultGlobalMavenSettingsProvider plugin="config-file-provider@<%= @cfg_plugin_version %>">
   <configs>
     <entry>
-      <string>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1407402699456</string>
+	    <string><%= @settings_id %></string>
       <org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig>
-        <id>org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1407402699456</id>
+        <id><%= @settings_id %></id>
         <name>maven-global-settings</name>
         <comment>global settings</comment>
         <content>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;

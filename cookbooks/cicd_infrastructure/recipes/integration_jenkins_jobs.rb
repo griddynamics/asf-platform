@@ -25,6 +25,7 @@ template "#{Chef::Config[:file_cache_path]}/asf-jobs.xml" do
   mode 0644
 end
 
+
 jenkins_job 'asf-demo-jobs-generator' do
   config "#{Chef::Config[:file_cache_path]}/asf-jobs.xml"
   action :create
@@ -49,6 +50,8 @@ template "#{dsl_file_path}/asf-demo-jobs.groovy" do
     gerrit_host: gerrit_config['host'],
     gerrit_port: gerrit_config['ssh_port'],
     nexus_id: 'asf-webapp-demo',
-    nexus_url: nexus_config['endpoint']
+    nexus_url: nexus_config['endpoint'],
+    settings_id: node['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'],
+    cfg_plugin_version: node['cicd_infrastructure']['jenkins']['plugins']['config-file-provider']
   )
 end

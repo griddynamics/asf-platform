@@ -8,26 +8,25 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-default['cicd_infrastructure']['jenkins']['plugins'] = [
-  'mailer',
-  'openid4java',
-  'openid',
-  'promoted-builds',
-  'credentials',
-  'ssh-credentials',
-  'ssh-agent',
-  'git-client',
-  'scm-api',
-  'git',
-  'parameterized-trigger',
-  'gerrit-trigger',
-  'token-macro',
-  'config-file-provider',
-  'gerrit-trigger',
-  'matrix-auth',
-  'cloudbees-folder',
-  'job-dsl'
-]
+default['cicd_infrastructure']['jenkins']['plugins'] = {
+  'mailer'=>'',
+  'openid4java'=>'',
+  'openid'=>'',
+  'promoted-builds'=>'',
+  'credentials'=>'',
+  'ssh-credentials'=>'',
+  'ssh-agent'=>'',
+  'git-client'=>'',
+  'scm-api'=>'',
+  'git'=>'',
+  'parameterized-trigger'=>'',
+  'gerrit-trigger'=>'',
+  'token-macro'=>'',
+  'config-file-provider'=>'2.7.5',
+  'gerrit-trigger'=>'',
+  'matrix-auth'=>'',
+  'cloudbees-folder'=>'',
+  'job-dsl'=>''}
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['ssh_port'] = '29418'
