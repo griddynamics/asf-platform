@@ -8,17 +8,10 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-service 'jenkins' do
-  action :stop
-end
-
 add_jenkins_global_var 'Add nexus env variables' do
   key 'NEXUS_URL'
   value node['cicd_infrastructure']['jenkins']['nexus']['endpoint']
-end
-
-service 'jenkins' do
-  action :start
+  notifies :restart, 'service[jenkins]'
 end
 
 template "#{node['jenkins']['master']['home']}/maven-global-settings-files.xml" do
@@ -29,7 +22,9 @@ template "#{node['jenkins']['master']['home']}/maven-global-settings-files.xml" 
   variables(
     nexus_username: node['cicd_infrastructure']['nexus']['login'],
     nexus_password: node['cicd_infrastructure']['nexus']['password'],
-    nexus_url: node['cicd_infrastructure']['jenkins']['nexus']['endpoint']
+    nexus_url: node['cicd_infrastructure']['jenkins']['nexus']['endpoint'],
+    settings_id: node['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'],
+    cfg_plugin_version: node['cicd_infrastructure']['jenkins']['plugins']['config-file-provider']
   )
   notifies :restart, 'service[jenkins]'
 end

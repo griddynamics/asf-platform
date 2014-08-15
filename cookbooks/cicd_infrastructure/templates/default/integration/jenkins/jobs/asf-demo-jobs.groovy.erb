@@ -9,6 +9,11 @@ job(type: Maven) {
     wrappers {
         toolenv("Maven 3.1", "Git")
     }
+    configure { project ->
+	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+		    settingsConfigId('<%= @settings_id %>')
+		}
+    }
     scm {
         git {
             remote {
@@ -41,6 +46,11 @@ job(type: Maven) {
     jdk("/usr/lib/jvm/java/")
     wrappers {
         toolenv("Maven 3.1.1")
+    }
+    configure { project ->
+	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+		    settingsConfigId('<%= @settings_id %>')
+		}
     }
     scm {
         git {
@@ -78,6 +88,11 @@ job(type: Maven) {
                 -DrepositoryId=<%= @nexus_id %>
                 -Durl=<%= @nexus_url %>""")
             mavenInstallation("Maven 3.1.1")
+	    configure { project ->
+		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+			    settingsConfigId('<%= @settings_id %>')
+			}
+	    }
         }
     }
 }
