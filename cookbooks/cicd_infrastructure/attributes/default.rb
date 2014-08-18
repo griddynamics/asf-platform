@@ -54,7 +54,7 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] =
 v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/\
 jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
 
-default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
+default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = 'http://localhost:8081/nexus/content/repositories/'
 
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
@@ -95,8 +95,16 @@ default['cicd_infrastructure']['nexus']['ldap']['group_mapping'] = {
     'nx-admin'
   ]
 }
-default['cicd_infrastructure']['nexus']['login'] = "admin"
+default['cicd_infrastructure']['nexus']['login'] = 'admin'
 default['cicd_infrastructure']['nexus']['password'] = 'admin123'
+default['cicd_infrastructure']['nexus']['repo']['build']['id'] = 'builds'
+default['cicd_infrastructure']['nexus']['repo']['build']['name'] = 'Builds'
+default['cicd_infrastructure']['nexus']['repo']['build']['policy'] = 'SNAPSHOT'
+default['cicd_infrastructure']['nexus']['repo']['build']['ttl'] = '20160'
+default['cicd_infrastructure']['nexus']['repo']['promote']['id'] = 'builds-promoted'
+default['cicd_infrastructure']['nexus']['repo']['promote']['name'] = 'Builds-promoted'
+default['cicd_infrastructure']['nexus']['repo']['promote']['policy'] = 'SNAPSHOT'
+default['cicd_infrastructure']['nexus']['repo']['promote']['ttl'] = '129600'
 
 default['cicd_infrastructure']['sonar']['auth'] = 'LDAP'
 default['cicd_infrastructure']['sonar']['ldap']['realm'] = 'mydomain.com'
