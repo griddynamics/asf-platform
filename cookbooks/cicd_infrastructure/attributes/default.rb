@@ -26,8 +26,9 @@ default['cicd_infrastructure']['jenkins']['plugins'] = {
   'gerrit-trigger'=>'',
   'matrix-auth'=>'',
   'cloudbees-folder'=>'',
-  'job-dsl'=>'', 
-  'rebuild'=>''}
+  'job-dsl'=>'',
+  'rebuild'=>''
+}
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['ssh_port'] = '29418'
