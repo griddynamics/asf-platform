@@ -56,6 +56,8 @@ ruby_block 'add_root_user' do
   end
   retries 5
   retry_delay 30
+  only_if { File.exists?("#{gerrit_ssh_dir}/id_rsa.pub") }
+  notifies :run, 'bash[add_jenkins_user]'
 end
 
 # Setup user for jenkins gerrit-trigger
@@ -72,6 +74,7 @@ bash 'add_jenkins_user' do
   --http-password jenkins\
   --ssh-key - jenkins
   EOH
+  action :nothing
 end
 
 template '/tmp/project.config' do
