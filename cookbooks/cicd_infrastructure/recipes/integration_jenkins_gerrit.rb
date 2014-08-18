@@ -25,6 +25,7 @@ ssh_keys jenkins_ssh_dir do
   user node['jenkins']['master']['user']
   group node['jenkins']['master']['group']
   action :create
+  not_if { File.exists? "#{jenkins_ssh_dir}/id_rsa" }
 end
 
 # Save public key to chef-server as jenkins_pubkey
@@ -38,7 +39,7 @@ end
 
 gerrit_trigger_config = node['cicd_infrastructure']['jenkins']['gerrit-trigger']
 
-Chef::Log.Error 'Gerrit-trigger config failed'if gerrit_trigger_config
+Chef::Log.Error 'Gerrit-trigger config failed' if gerrit_trigger_config
 .values.include? nil
 
 template "#{node['jenkins']['master']['home']}/gerrit-trigger.xml" do
