@@ -302,24 +302,8 @@ application:
                         runList: [ "recipe[cicd_infrastructure::openldap_new_users]" ]
                         version: "11.8.2"
 
-                  - add_jenkins_job_generator:
-                      precedingPhases: [ init_component_vms ]
-                      action: chefsolo
-                      parameters:
-                        roles: [ jenkins ]
-                        recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_jobs]" ]
-                        version: "11.8.2"
-                        jattrs:
-                          cicd_infrastructure:
-                            jenkins:
-                              gerrit-trigger:
-                                host: "{$.environment.gerrit.gerrit_public_ips[0]}"
-                              nexus:
-                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
-
                   - jenkins_gerrit:
-                      precedingPhases: [ add_jenkins_job_generator ]
+                      precedingPhases: [ init_component_vms ]
                       action: chefsolo
                       parameters:
                         roles: [ jenkins ]
@@ -363,6 +347,31 @@ application:
                             gerrit:
                               jenkins_host: "{$.environment.jenkins.jenkins_public_ips[0]}"
                               jenkins_pubkey: "{$.jenkins_host_state.*.[0].cicd_infrastructure.jenkins.pubkey}"
+
+                  - add_asf_jenkins_jobs_project:
+                      precedingPhases: [ gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ gerrit ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_demojobs_project]" ]
+                        version: "11.8.2"
+
+                  - add_asf_jenkins_jobs_generator:
+                      precedingPhases: [ jenkins_nexus, add_asf_jenkins_jobs_project ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jenkins ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_jobs]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            jenkins:
+                              gerrit-trigger:
+                                host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                              nexus:
+                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
 
                   - nexus_openldap:
                       phase: ldap_integration
@@ -411,7 +420,7 @@ application:
 
                   - jenkins_openldap:
                       phase: ldap_integration
-                      precedingPhases: [ openldap_export_users, jenkins_nexus ]
+                      precedingPhases: [ openldap_export_users, add_asf_jenkins_jobs_generator ]
                       action: chefsolo
                       parameters:
                         roles: [ jenkins ]
