@@ -8,6 +8,10 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
+service 'jenkins' do
+  action :nothing
+end
+
 add_jenkins_global_var 'Add nexus env variables' do
   key 'NEXUS_URL'
   value node['cicd_infrastructure']['jenkins']['nexus']['endpoint']

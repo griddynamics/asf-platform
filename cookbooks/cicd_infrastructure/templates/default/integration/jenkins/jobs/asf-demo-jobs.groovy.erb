@@ -75,18 +75,18 @@ job(type: Maven) {
     goals("clean")
     goals("install")
     goals("-DfailIfNoTests=false")
-    mavenInstallation("Maven 3.1")
+    mavenInstallation("Maven-default")
 
     postBuildSteps {
         maven {
             goals("""deploy:deploy-file -B
                 -DgroupId=org.springframework.samples
-                -DartifactId=spring-petclinic
+                -DartifactId=asf-webapp-demo
                 -Dversion=1.0-SNAPSHOT
                 -Dpackaging=war
                 -Dfile=\${WORKSPACE}/target/petclinic.war
-                -Durl=<%= @nexus_url %>build""")
-            mavenInstallation("Maven 3.1.1")
+                -Durl=<%= @nexus_url %>/content/repositories/builds""")
+            mavenInstallation("Maven-default")
 	    configure { project ->
 		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
 			    settingsConfigId('<%= @settings_id %>')
