@@ -13,5 +13,5 @@ override['jenkins']['master']['install_method'] = 'war'
 override['jenkins']['master']['source'] =
     "#{node['jenkins']['master']['mirror']}/war-stable/#{node['jenkins']['master']['version'] || 'latest'}/jenkins.war"
 
-default['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'] = 'global-maven-settings'
+default['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'] = 'org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig1234567890123'
 
