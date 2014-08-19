@@ -55,7 +55,7 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] =
 v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/\
 jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
 
-default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = 'http://localhost:8081/nexus/content/repositories/'
+default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
 
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil

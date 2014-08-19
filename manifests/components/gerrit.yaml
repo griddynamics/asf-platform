@@ -10,7 +10,7 @@
 
 application:
   configuration:
-    input.gerrit_version: "2.8.6"
+    input.gerrit_version: "2.8.6.1"
     input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
   interfaces:
     input:
