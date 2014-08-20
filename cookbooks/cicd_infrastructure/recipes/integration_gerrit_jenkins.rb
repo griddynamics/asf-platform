@@ -34,6 +34,7 @@ end
 ruby_block 'add_root_user' do
   block do
     require 'mysql'
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
     db = Mysql.new(node['gerrit']['database']['host'],
                    node['gerrit']['database']['username'],
                    node['gerrit']['database']['password'],
@@ -48,10 +49,15 @@ ruby_block 'add_root_user' do
       VALUES (1)")
     db.query("INSERT IGNORE INTO `account_ssh_keys` \
       VALUES ('#{File.read("#{gerrit_ssh_dir}/id_rsa.pub")}','Y',1,1)")
-    db.query("INSERT IGNORE INTO `accounts` \
+    if node['gerrit']['version'] < '2.9'
+      db.query("INSERT IGNORE INTO `accounts` \
+        VALUES (NULL, 'root', NULL, NULL, 'N', NULL, NULL, NULL, NULL, 25, \
+          'N', 'N', 'Y', 'N', NULL, 'Y', 'N', NULL, '#{timestamp}', 1)")
+    else
+      db.query("INSERT IGNORE INTO `accounts` \
       VALUES (NULL, 'root', NULL, NULL, 'N', NULL, NULL, NULL, NULL, 25, \
-        'N', 'N', 'Y', 'N', NULL, 'Y', 'N', NULL,
-        '#{Time.now.strftime('%Y-%m-%d %H:%M:%S')}', 1)")
+        'N', 'N', 'Y', 'N', NULL, 'Y', 'N', NULL, 'N', '#{timestamp}', 1)")
+    end
     db.close
   end
   retries 5
