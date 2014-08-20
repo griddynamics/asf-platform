@@ -331,7 +331,7 @@ application:
                           cicd_infrastructure:
                             jenkins:
                               nexus:
-                                endpoint: "{$.environment.nexus.nexus_public_ips[0]}"
+                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
 
                   - gerrit_jenkins:
                       phase: gerrit_setup
