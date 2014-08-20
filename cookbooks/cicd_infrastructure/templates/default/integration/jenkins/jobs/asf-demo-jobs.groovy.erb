@@ -96,3 +96,57 @@ job(type: Maven) {
         }
     }
 }
+
+job(type: Maven) {
+    name "asf-demo-fb-build"
+    jdk("/usr/lib/jvm/java/")
+    wrappers {
+        toolenv("Maven 3.1.1")
+    }
+    configure { project ->
+	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+		    settingsConfigId('<%= @settings_id %>')
+		}
+    }
+    scm {
+        git {
+            remote {
+                name("origin")
+                url("ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/<%= @project_name %>")
+            }
+            branch("*/fb-*")
+        }
+    }
+    triggers {
+        gerrit {
+            events {
+                RefUpdated
+            }
+            project("<%= @project_name %>", "ant:fb-*")
+        }
+    }
+
+    goals("-e")
+    goals("clean")
+    goals("install")
+    goals("-DfailIfNoTests=false")
+    mavenInstallation("Maven 3.1")
+
+    postBuildSteps {
+        maven {
+            goals("""deploy:deploy-file -B
+                -DgroupId=org.springframework.samples
+                -DartifactId=spring-petclinic
+                -Dversion=1.0-SNAPSHOT
+                -Dpackaging=war
+                -Dfile=\${WORKSPACE}/target/petclinic.war
+                -Durl=<%= @nexus_url %>build""")
+            mavenInstallation("Maven 3.1.1")
+	    configure { project ->
+		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+			    settingsConfigId('<%= @settings_id %>')
+			}
+	    }
+        }
+    }
+}
