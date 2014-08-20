@@ -39,7 +39,7 @@ template "/tmp/asf-jenkins-jobs/asf-demo-jobs.groovy" do
     nexus_id: 'asf-webapp-demo',
     nexus_url: nexus_config['endpoint'],
     settings_id: node['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'],
-    cfg_plugin_version: node['cicd_infrastructure']['jenkins']['plugins']['config-file-provider']
+    plugins: node['cicd_infrastructure']['jenkins']['plugins']
   )
 end
 

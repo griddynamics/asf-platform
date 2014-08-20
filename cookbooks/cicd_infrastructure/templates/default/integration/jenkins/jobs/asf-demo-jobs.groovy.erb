@@ -1,27 +1,65 @@
+maven_installation = 'Maven-default'
+groovy_installation = 'Groovy-default'
+git_url = 'ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/<%= @project_name %>'
+version_props_generate = """
+def binaryVersion(env, version) {
+    def buildTime = Date.parse('yyyy-MM-dd_HH-mm-ss', env['BUILD_ID'])
+    def timestamp = buildTime.format('yyyyMMdd.HHmmss', TimeZone.getTimeZone('UTC'))
+    def buildNo = env['BUILD_NUMBER']
+    version.replaceFirst(/-SNAPSHOT\$/, \"-\${timestamp}-\${buildNo}\")
+}
+
+def env = System.getenv()
+def p = new Properties()
+
+def pom = new XmlParser().parse('pom.xml')
+
+p['projectGroupId'] = 'org.asf.demo.webapp'
+p['projectArtifactId'] = 'asf-webapp-demo'
+p['projectVersion'] = pom.version.text() ?: '1.0.0-SNAPSHOT'
+
+p['buildGroupId'] = p['projectGroupId']
+p['buildArtifactId'] = p['projectArtifactId']
+p['buildVersion'] = binaryVersion(env, p['projectVersion'])
+p['buildJob'] = env['JOB_NAME']
+p['buildNumber'] = env['BUILD_NUMBER']
+p['buildBranch'] = env['GIT_BRANCH'].replaceFirst('^[^/]+/', '')
+p['buildCommit'] = env['GIT_COMMIT']
+
+p.store(new FileWriter('version.properties'), env['BUILD_TAG'])"""
+
+set_version = """def version = build.getEnvironment(null)['buildVersion']
+if (version) build.displayName = version"""
+
+qubell_app_params = """{
+    \"input.artifact_url\": \"\${NEXUS_URL}/service/local/artifact/maven/content?r=builds&g=org.asf.demo.webapp&a=asf-webapp-demo&v=\${buildVersion}&e=war\",
+    \"instanceName\": \"asf-webapp-demo-\${buildVersion}\"
+}"""
+
 job(type: Maven) {
-    name "asf-demo-dev-build-review"
-    jdk("/usr/lib/jvm/java/")
+    name 'asf-demo-dev-build-review'
+    jdk('/usr/lib/jvm/java/')
     parameters {
         stringParam("GERRIT_PROJECT", "<%= @project_name %>", "Gerrit project name")
         stringParam("GERRIT_BRANCH", "dev", "Gerrit branch")
         stringParam("GERRIT_REFSPEC", "refs/heads/dev", "Gerrit refspec")
     }
-    wrappers {
-        toolenv("Maven 3.1", "Git")
-    }
     configure { project ->
-	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+	    project << globalSettings(
+            class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+            plugin:'config-file-provider@<%= @cfg_plugin_version %>'
+        ) {
 		    settingsConfigId('<%= @settings_id %>')
 		}
     }
     scm {
         git {
             remote {
-                name("origin")
-                url("ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/<%= @project_name %>")
-                refspec("\${GERRIT_REFSPEC}")
+                name('origin')
+                url(git_url)
+                refspec('\${GERRIT_REFSPEC}')
             }
-            branch("*/\${GERRIT_BRANCH}")
+            branch('*/\${GERRIT_BRANCH}')
         }
     }
     triggers {
@@ -30,36 +68,35 @@ job(type: Maven) {
                 PatchsetCreated
                 DraftPublished
             }
-            project("<%= @project_name %>", "dev")
+            project('<%= @project_name %>', 'dev')
         }
     }
-    goals("-e")
-    goals("clean")
-    goals("install")
-    goals("-DfailIfNoTests=false")
+    goals('-e')
+    goals('clean')
+    goals('install')
     perModuleEmail(false)
-    mavenInstallation("Maven 3.1")
+    mavenInstallation(maven_installation)
 }
 
 job(type: Maven) {
-    name "asf-demo-dev-build"
-    jdk("/usr/lib/jvm/java/")
-    wrappers {
-        toolenv("Maven 3.1.1")
-    }
+    name 'asf-demo-dev-build'
+    jdk('/usr/lib/jvm/java/')
     configure { project ->
-	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+	    project << globalSettings(
+            class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+            plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
+        ) {
 		    settingsConfigId('<%= @settings_id %>')
 		}
     }
     scm {
         git {
             remote {
-                name("origin")
-                url("ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/<%= @project_name %>")
-                refspec("+refs/heads/dev:refs/remotes/origin/dev")
+                name('origin')
+                url(git_url)
+                refspec('+refs/heads/dev:refs/remotes/origin/dev')
             }
-            branch("*/dev")
+            branch('*/dev')
         }
     }
     triggers {
@@ -67,32 +104,87 @@ job(type: Maven) {
             events {
                 RefUpdated
             }
-            project("<%= @project_name %>", "plain:dev")
+            project('<%= @project_name %>', 'plain:dev')
         }
     }
-
-    goals("-e")
-    goals("clean")
-    goals("install")
-    goals("-DfailIfNoTests=false")
-    mavenInstallation("Maven-default")
-
+    preBuildSteps {
+        groovyCommand(version_props_generate, groovy_installation)
+        environmentVariables {
+            propertiesFile('version.properties')
+        }
+        maven {
+            goals('versions:set -DnewVersion=\${buildVersion}')
+            mavenInstallation(maven_installation)
+        }
+    }
+    goals('-e')
+    goals('clean')
+    goals('install')
+    mavenInstallation(maven_installation)
     postBuildSteps {
         maven {
+            mavenInstallation(maven_installation)
             goals("""deploy:deploy-file -B
-                -DgroupId=org.springframework.samples
+                -DgroupId=\${buildGroupId}
                 -DartifactId=asf-webapp-demo
-                -Dversion=1.0-SNAPSHOT
+                -Dversion=\${buildVersion}
                 -Dpackaging=war
                 -DrepositoryId=builds
                 -Dfile=\${WORKSPACE}/target/petclinic.war
-                -Durl=<%= @nexus_url %>/content/repositories/builds""")
-            mavenInstallation("Maven-default")
-	    configure { project ->
-		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
-			    settingsConfigId('<%= @settings_id %>')
-			}
-	    }
+                -Durl=\${NEXUS_URL}/content/repositories/builds""")
+    	    configure { project ->
+    		    project << globalSettings(
+                    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+                    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
+                ) {
+    			    settingsConfigId('<%= @settings_id %>')
+    			}
+    	    }
+        }
+        systemGroovyCommand(set_version)
+        publishers {
+            archiveArtifacts 'version.properties'
+        }
+        downstreamParameterized {
+            trigger('asf-demo-dev-deploy') {
+                currentBuild()
+            }
+        }
+    }
+}
+
+job {
+    name 'asf-demo-dev-deploy'
+    parameters {
+        configure { project ->
+            project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions' << 'hudson.plugins.copyartifact.BuildSelectorParameter'(
+            plugin: 'copyartifact@<%= @plugins['copyartifact'] %>') {
+                name('BUILD_SELECTOR')
+                description('Build to deploy')
+                project << defaultSelector(class: "hudson.plugins.copyartifact.StatusBuildSelector")
+            }
+        }
+        stringParam('QUBELL_APP_ID', '53eb65e9e4b0f24b4a52c0f2', 'Qubell Application ID')
+        stringParam('QUBELL_ENV_ID', '53f5d94ce4b0b03d045f7a13', 'Qubell Env ID')
+    }
+    steps {
+        copyArtifacts('asf-demo-dev-build', 'version.properties') {
+            buildParameter('BUILD_SELECTOR')
+        }
+        environmentVariables {
+            propertiesFile('version.properties')
+        }
+        configure { project ->
+            project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
+            plugin: "qubell@<%= @qubell_plugin_version %>") {
+                expectedStatus('RUNNING')
+                timeout('1200')
+                outputFilePath('qubell_output.json')
+                manifestRelativePath('')
+                environmentId('\${QUBELL_ENV_ID}')
+                applicationId('\${QUBELL_APP_ID}')
+                extraParameters(qubell_app_params)
+            }
         }
     }
 }
@@ -100,9 +192,6 @@ job(type: Maven) {
 job(type: Maven) {
     name "asf-demo-fb-build"
     jdk("/usr/lib/jvm/java/")
-    wrappers {
-        toolenv("Maven 3.1.1")
-    }
     configure { project ->
 	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
 		    settingsConfigId('<%= @settings_id %>')
@@ -111,10 +200,10 @@ job(type: Maven) {
     scm {
         git {
             remote {
-                name("origin")
-                url("ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/<%= @project_name %>")
+                name('origin')
+                url(git_url)
             }
-            branch("*/fb-*")
+            branch('*/fb-*')
         }
     }
     triggers {
@@ -126,11 +215,10 @@ job(type: Maven) {
         }
     }
 
-    goals("-e")
-    goals("clean")
-    goals("install")
-    goals("-DfailIfNoTests=false")
-    mavenInstallation("Maven 3.1")
+    goals('-e')
+    goals('clean')
+    goals('install')
+    mavenInstallation(maven_installation)
 
     postBuildSteps {
         maven {
@@ -141,7 +229,7 @@ job(type: Maven) {
                 -Dpackaging=war
                 -Dfile=\${WORKSPACE}/target/petclinic.war
                 -Durl=<%= @nexus_url %>build""")
-            mavenInstallation("Maven 3.1.1")
+            mavenInstallation(maven_installation)
 	    configure { project ->
 		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
 			    settingsConfigId('<%= @settings_id %>')
