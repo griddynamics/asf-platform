@@ -27,7 +27,7 @@ execute 'Checkout jobs repo' do
   not_if { File.exists?('/tmp/asf-jenkins-jobs') }
 end
 
-template "/tmp/asf-jenkins-jobs/asf-demo-jobs.groovy" do
+template '/tmp/asf-jenkins-jobs/asf-demo-jobs.groovy' do
   source 'integration/jenkins/jobs/asf-demo-jobs.groovy.erb'
   owner node['jenkins']['master']['user']
   group node['jenkins']['master']['group']
@@ -39,7 +39,8 @@ template "/tmp/asf-jenkins-jobs/asf-demo-jobs.groovy" do
     nexus_id: 'asf-webapp-demo',
     nexus_url: nexus_config['endpoint'],
     settings_id: node['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'],
-    plugins: node['cicd_infrastructure']['jenkins']['plugins']
+    plugins: node['cicd_infrastructure']['jenkins']['plugins'],
+    qubell_plugin_version: node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']
   )
 end
 
