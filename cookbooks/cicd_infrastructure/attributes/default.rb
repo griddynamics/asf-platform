@@ -61,6 +61,15 @@ jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin'][
 default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
 default['cicd_infrastructure']['jenkins']['selenium']['endpoint'] = nil
 
+default['cicd_infrastructure']['jenkins']['jira']['endpoint'] = nil
+default['cicd_infrastructure']['jenkins']['jira']['username'] = nil
+default['cicd_infrastructure']['jenkins']['jira']['password'] = nil
+default['cicd_infrastructure']['jenkins']['jira']['plugin']['version'] = '1.4.6.1'
+default['cicd_infrastructure']['jenkins']['jira']['plugin']['url'] = "http://repository.marvelution.org/" +
+"service/local/repositories/releases/content/com/marvelution/jira/plugins/jenkins-jira-plugin/"+
+"#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}/"+
+"jenkins-jira-plugin-#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}.hpi"
+
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
 default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'
@@ -165,3 +174,7 @@ default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
   'memberAttr' => 'uniqueMember',
   'memberFormat' => 'uid=${username},ou=people,dc=example,dc=com'
 }
+default['cicd_infrastructure']['jira']['plugins'] = [
+  "https://marketplace-cdn.atlassian.com/files/artifact/\
+322f8974-980b-4ef0-bbdb-b18eec69ef14/jira-jenkins-plugin-1.4.6.1.obr"
+]
