@@ -12,7 +12,7 @@ include_recipe 'java::default'
 include_recipe 'jenkins::master'
 
 node['cicd_infrastructure']['jenkins']['plugins'].each do |plugin, v|
-  if v.empty? 
+  if v.empty?
 	  jenkins_plugin plugin do
 	    retries 5
 	    retry_delay 30
@@ -27,7 +27,7 @@ node['cicd_infrastructure']['jenkins']['plugins'].each do |plugin, v|
 	    action :install
 	    notifies :restart, 'service[jenkins]'
 	  end
-  end	  
+  end
 end
 
 template "#{node['jenkins']['master']['home']}/config.xml" do
@@ -39,10 +39,11 @@ template "#{node['jenkins']['master']['home']}/config.xml" do
 end
 
 [
-    'hudson.tasks.Maven.xml'
+    'hudson.tasks.Maven.xml',
+    'hudson.plugins.groovy.Groovy.xml'
 ].each do |config|
     template "#{node[:jenkins][:master][:home]}/#{config}" do
-        source "integration/jenkins/#{config}.erb"
+        source "jenkins/#{config}.erb"
         owner node[:jenkins][:master][:user]
         group node[:jenkins][:master][:group]
         mode 0755

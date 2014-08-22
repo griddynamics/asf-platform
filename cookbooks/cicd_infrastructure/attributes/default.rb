@@ -27,7 +27,10 @@ default['cicd_infrastructure']['jenkins']['plugins'] = {
   'matrix-auth'=>'',
   'cloudbees-folder'=>'',
   'job-dsl'=>'',
-  'rebuild'=>''
+  'rebuild'=>'',
+  'copyartifact' => '1.30',
+  'envinject' => '',
+  'groovy' => ''
 }
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'

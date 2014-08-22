@@ -23,6 +23,7 @@ application:
     - [integration.workflow, jira]
     - [integration.workflow, openldap]
     - [integration.workflow, nexus]
+    - [integration.workflow, props]
   interfaces:
     input:
       jira_version: "bind(jira#input.jira_version)"
@@ -57,6 +58,13 @@ application:
       selenium_hub_host: "bind(selenium#hosts.hub)"
       selenium_node_hosts: "bind(selenium#hosts.nodes)"
   components:
+    props:
+      type: reference.Service
+      interfaces:
+        properties:
+          qubell_username: "publish-signal(string)"
+          qubell_password: "publish-signal(string)"
+
     sonar:
       type: reference.Submodule
       configuration:
@@ -216,6 +224,9 @@ application:
               cookbooks_url:
                 type: configuration(string)
                 name: Cookbooks tarball URL
+            properties:
+              qubell_username: consume-signal(string)
+              qubell_password: consume-signal(string)
             sonar:
               sonar_public_ips: consume-signal(list<string>)
             gerrit:
@@ -302,13 +313,16 @@ application:
                         runList: [ "recipe[cicd_infrastructure::openldap_new_users]" ]
                         version: "11.8.2"
 
-                  - jenkins_gerrit:
+                  - jenkins_setup:
                       precedingPhases: [ init_component_vms ]
                       action: chefsolo
                       parameters:
                         roles: [ jenkins ]
                         recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_gerrit]" ]
+                        runList:
+                          - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_gerrit]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_nexus]"
                         version: "11.8.2"
                         jattrs:
                           cicd_infrastructure:
@@ -316,26 +330,17 @@ application:
                               pubkey: ""
                               gerrit-trigger:
                                 host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                              nexus:
+                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+                              qubell-plugin:
+                                username: "{$.environment.properties.qubell_username}"
+                                password: "{$.environment.properties.qubell_password}"
                       output:
                         jenkins_host_state: chefState
 
-                  - jenkins_nexus:
-                      precedingPhases: [ jenkins_gerrit ]
-                      action: chefsolo
-                      parameters:
-                        roles: [ jenkins ]
-                        recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_nexus]" ]
-                        version: "11.8.2"
-                        jattrs:
-                          cicd_infrastructure:
-                            jenkins:
-                              nexus:
-                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
-
                   - gerrit_jenkins:
                       phase: gerrit_setup
-                      precedingPhases: [ jenkins_gerrit ]
+                      precedingPhases: [ jenkins_setup ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]
@@ -358,7 +363,7 @@ application:
                         version: "11.8.2"
 
                   - add_asf_jenkins_jobs_generator:
-                      precedingPhases: [ jenkins_nexus, add_asf_jenkins_jobs_project ]
+                      precedingPhases: [ jenkins_setup, add_asf_jenkins_jobs_project ]
                       action: chefsolo
                       parameters:
                         roles: [ jenkins ]
@@ -390,7 +395,7 @@ application:
 
                   - gerrit_openldap:
                       phase: ldap_integration
-                      precedingPhases: [ openldap_export_users, gerrit_setup ]
+                      precedingPhases: [ openldap_export_users, add_asf_jenkins_jobs_project ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]
