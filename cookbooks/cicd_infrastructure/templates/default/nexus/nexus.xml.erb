@@ -162,12 +162,12 @@
       </externalConfiguration>
     </repository>
      <repository>
-      <id><%= @buid_repo_id %></id>
-      <name><%= @buid_repo_name%></name>
+      <id><%= @buid_main_repo_id %></id>
+      <name><%= @buid_main_repo_name%></name>
       <providerRole>org.sonatype.nexus.proxy.repository.Repository</providerRole>
       <providerHint>maven2</providerHint>
       <localStatus>IN_SERVICE</localStatus>
-      <notFoundCacheTTL>1440</notFoundCacheTTL>
+      <notFoundCacheTTL>1</notFoundCacheTTL>
       <userManaged>true</userManaged>
       <exposed>true</exposed>
       <browseable>true</browseable>
@@ -179,12 +179,38 @@
       </localStorage>
       <externalConfiguration>
         <proxyMode>ALLOW</proxyMode>
-        <artifactMaxAge><%= @buid_repo_ttl %></artifactMaxAge>
-        <itemMaxAge>1440</itemMaxAge>
+        <artifactMaxAge><%= @buid_main_repo_ttl %></artifactMaxAge>
+        <itemMaxAge><%= @buid_main_repo_ttl %></itemMaxAge>
         <cleanseRepositoryMetadata>false</cleanseRepositoryMetadata>
         <downloadRemoteIndex>false</downloadRemoteIndex>
         <checksumPolicy>WARN</checksumPolicy>
-        <repositoryPolicy><%= @buid_repo_policy %></repositoryPolicy>
+        <repositoryPolicy><%= @buid_main_repo_policy %></repositoryPolicy>
+      </externalConfiguration>
+    </repository>
+    <repository>
+      <id><%= @buid_feature_repo_id %></id>
+      <name><%= @buid_feature_repo_name%></name>
+      <providerRole>org.sonatype.nexus.proxy.repository.Repository</providerRole>
+      <providerHint>maven2</providerHint>
+      <localStatus>IN_SERVICE</localStatus>
+      <notFoundCacheTTL>1</notFoundCacheTTL>
+      <userManaged>true</userManaged>
+      <exposed>true</exposed>
+      <browseable>true</browseable>
+      <writePolicy>ALLOW_WRITE</writePolicy>
+      <indexable>true</indexable>
+      <searchable>true</searchable>
+      <localStorage>
+        <provider>file</provider>
+      </localStorage>
+      <externalConfiguration>
+        <proxyMode>ALLOW</proxyMode>
+        <artifactMaxAge><%= @buid_feature_repo_ttl %></artifactMaxAge>
+        <itemMaxAge><%= @buid_feature_repo_ttl %></itemMaxAge>
+        <cleanseRepositoryMetadata>false</cleanseRepositoryMetadata>
+        <downloadRemoteIndex>false</downloadRemoteIndex>
+        <checksumPolicy>WARN</checksumPolicy>
+        <repositoryPolicy><%= @buid_feature_repo_policy %></repositoryPolicy>
       </externalConfiguration>
     </repository>
     <repository>
@@ -193,7 +219,7 @@
       <providerRole>org.sonatype.nexus.proxy.repository.Repository</providerRole>
       <providerHint>maven2</providerHint>
       <localStatus>IN_SERVICE</localStatus>
-      <notFoundCacheTTL>1440</notFoundCacheTTL>
+      <notFoundCacheTTL>1</notFoundCacheTTL>
       <userManaged>true</userManaged>
       <exposed>true</exposed>
       <browseable>true</browseable>
@@ -206,7 +232,7 @@
       <externalConfiguration>
         <proxyMode>ALLOW</proxyMode>
         <artifactMaxAge><%= @promote_repo_ttl %></artifactMaxAge>
-        <itemMaxAge>1440</itemMaxAge>
+        <itemMaxAge><%= @promote_repo_ttl %></itemMaxAge>
         <cleanseRepositoryMetadata>false</cleanseRepositoryMetadata>
         <downloadRemoteIndex>false</downloadRemoteIndex>
         <checksumPolicy>WARN</checksumPolicy>

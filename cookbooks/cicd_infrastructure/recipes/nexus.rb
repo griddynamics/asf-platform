@@ -24,10 +24,14 @@ template '/nexus/sonatype-work/nexus/conf/nexus.xml' do
   group 'root'
   mode 0644
   variables(
-    buid_repo_id:         nexus_config['repo']['build']['id'],
-    buid_repo_name:       nexus_config['repo']['build']['name'],
-    buid_repo_policy:     nexus_config['repo']['build']['policy'],
-    buid_repo_ttl:        nexus_config['repo']['build']['ttl'],
+    buid_main_repo_id:         nexus_config['repo']['build']['main']['id'],
+    buid_main_repo_name:       nexus_config['repo']['build']['main']['name'],
+    buid_main_repo_policy:     nexus_config['repo']['build']['main']['policy'],
+    buid_main_repo_ttl:        nexus_config['repo']['build']['main']['ttl'],
+    buid_feature_repo_id:         nexus_config['repo']['build']['feature']['id'],
+    buid_feature_repo_name:       nexus_config['repo']['build']['feature']['name'],
+    buid_feature_repo_policy:     nexus_config['repo']['build']['feature']['policy'],
+    buid_feature_repo_ttl:        nexus_config['repo']['build']['feature']['ttl'],
     promote_repo_id:      nexus_config['repo']['promote']['id'],
     promote_repo_name:    nexus_config['repo']['promote']['name'],
     promote_repo_policy:  nexus_config['repo']['promote']['policy'],

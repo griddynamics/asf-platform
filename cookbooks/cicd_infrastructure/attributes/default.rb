@@ -101,10 +101,16 @@ default['cicd_infrastructure']['nexus']['ldap']['group_mapping'] = {
 }
 default['cicd_infrastructure']['nexus']['login'] = 'admin'
 default['cicd_infrastructure']['nexus']['password'] = 'admin123'
-default['cicd_infrastructure']['nexus']['repo']['build']['id'] = 'builds'
-default['cicd_infrastructure']['nexus']['repo']['build']['name'] = 'Builds'
-default['cicd_infrastructure']['nexus']['repo']['build']['policy'] = 'SNAPSHOT'
-default['cicd_infrastructure']['nexus']['repo']['build']['ttl'] = '20160'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['id'] = 'builds-main'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['name'] = 'Builds - mainline'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['policy'] = 'SNAPSHOT'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['ttl'] = '20160'
+
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['id'] = 'builds-feature'
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['name'] = 'Builds - feature branches'
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['policy'] = 'SNAPSHOT'
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['ttl'] = '20160'
+
 default['cicd_infrastructure']['nexus']['repo']['promote']['id'] = 'builds-promoted'
 default['cicd_infrastructure']['nexus']['repo']['promote']['name'] = 'Builds-promoted'
 default['cicd_infrastructure']['nexus']['repo']['promote']['policy'] = 'SNAPSHOT'
