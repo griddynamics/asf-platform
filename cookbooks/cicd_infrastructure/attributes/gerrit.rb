@@ -8,7 +8,7 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-default['gerrit']['version'] = "2.8.6.1"
+default['gerrit']['version'] = "2.9"
 
 if node['cloud']
   case node['cloud']['provider']
