@@ -32,6 +32,8 @@ template '/nexus/sonatype-work/nexus/conf/nexus.xml' do
     buid_feature_repo_name:       nexus_config['repo']['build']['feature']['name'],
     buid_feature_repo_policy:     nexus_config['repo']['build']['feature']['policy'],
     buid_feature_repo_ttl:        nexus_config['repo']['build']['feature']['ttl'],
+    build_group_repo_id:	nexus_config['repo']['build']['group']['id'],	
+    build_group_repo_name:	nexus_config['repo']['build']['group']['name'],
     promote_repo_id:      nexus_config['repo']['promote']['id'],
     promote_repo_name:    nexus_config['repo']['promote']['name'],
     promote_repo_policy:  nexus_config['repo']['promote']['policy'],

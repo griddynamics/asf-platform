@@ -309,6 +309,29 @@
         </memberRepositories>
       </externalConfiguration>
     </repository>
+    <repository>
+      <id><%= @build_group_repo_id%></id>
+      <name><%= @build_group_repo_name%></name>
+      <providerRole>org.sonatype.nexus.proxy.repository.GroupRepository</providerRole>
+      <providerHint>maven2</providerHint>
+      <localStatus>IN_SERVICE</localStatus>
+      <notFoundCacheTTL>15</notFoundCacheTTL>
+      <userManaged>true</userManaged>
+      <exposed>true</exposed>
+      <browseable>true</browseable>
+      <writePolicy>READ_ONLY</writePolicy>
+      <indexable>true</indexable>
+      <localStorage>
+        <provider>file</provider>
+      </localStorage>
+      <externalConfiguration>
+        <mergeMetadata>true</mergeMetadata>
+        <memberRepositories>
+          <memberRepository><%= @buid_main_repo_id %></memberRepository>
+          <memberRepository><%= @buid_feature_repo_id %></memberRepository>
+        </memberRepositories>
+      </externalConfiguration>
+    </repository>
   </repositories>
   <repositoryGrouping>
     <pathMappings>

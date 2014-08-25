@@ -116,6 +116,9 @@ default['cicd_infrastructure']['nexus']['repo']['promote']['name'] = 'Builds-pro
 default['cicd_infrastructure']['nexus']['repo']['promote']['policy'] = 'SNAPSHOT'
 default['cicd_infrastructure']['nexus']['repo']['promote']['ttl'] = '129600'
 
+default['cicd_infrastructure']['nexus']['repo']['build']['group']['id'] = 'builds-all'
+default['cicd_infrastructure']['nexus']['repo']['build']['group']['name'] = 'Builds - all'
+
 default['cicd_infrastructure']['sonar']['auth'] = 'LDAP'
 default['cicd_infrastructure']['sonar']['ldap']['realm'] = 'mydomain.com'
 default['cicd_infrastructure']['sonar']['ldap']['security']['realm'] = 'LDAP'
