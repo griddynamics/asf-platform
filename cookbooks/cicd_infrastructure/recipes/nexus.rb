@@ -14,6 +14,10 @@ include_recipe 'nexus::default'
 
 nexus_config = node['cicd_infrastructure']['nexus']
 
+service 'nexus' do
+  action :nothing
+end
+
 template '/nexus/sonatype-work/nexus/conf/nexus.xml' do
   source 'nexus/nexus.xml.erb'
   owner 'root'
@@ -29,4 +33,5 @@ template '/nexus/sonatype-work/nexus/conf/nexus.xml' do
     promote_repo_policy:  nexus_config['repo']['promote']['policy'],
     promote_repo_ttl:     nexus_config['repo']['promote']['ttl']
   )
+  notifies :restart, 'service[nexus]'
 end
