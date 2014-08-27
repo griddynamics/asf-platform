@@ -179,8 +179,8 @@
       </localStorage>
       <externalConfiguration>
         <proxyMode>ALLOW</proxyMode>
-        <artifactMaxAge><%= @buid_main_repo_ttl %></artifactMaxAge>
-        <itemMaxAge><%= @buid_main_repo_ttl %></itemMaxAge>
+        <artifactMaxAge>1440</artifactMaxAge>
+        <itemMaxAge>1440</itemMaxAge>
         <cleanseRepositoryMetadata>false</cleanseRepositoryMetadata>
         <downloadRemoteIndex>false</downloadRemoteIndex>
         <checksumPolicy>WARN</checksumPolicy>
@@ -205,8 +205,8 @@
       </localStorage>
       <externalConfiguration>
         <proxyMode>ALLOW</proxyMode>
-        <artifactMaxAge><%= @buid_feature_repo_ttl %></artifactMaxAge>
-        <itemMaxAge><%= @buid_feature_repo_ttl %></itemMaxAge>
+        <artifactMaxAge>1440</artifactMaxAge>
+        <itemMaxAge>1440</itemMaxAge>
         <cleanseRepositoryMetadata>false</cleanseRepositoryMetadata>
         <downloadRemoteIndex>false</downloadRemoteIndex>
         <checksumPolicy>WARN</checksumPolicy>
@@ -231,8 +231,8 @@
       </localStorage>
       <externalConfiguration>
         <proxyMode>ALLOW</proxyMode>
-        <artifactMaxAge><%= @promote_repo_ttl %></artifactMaxAge>
-        <itemMaxAge><%= @promote_repo_ttl %></itemMaxAge>
+        <artifactMaxAge>1440</artifactMaxAge>
+        <itemMaxAge>1440</itemMaxAge>
         <cleanseRepositoryMetadata>false</cleanseRepositoryMetadata>
         <downloadRemoteIndex>false</downloadRemoteIndex>
         <checksumPolicy>WARN</checksumPolicy>
@@ -411,6 +411,134 @@
       </patterns>
     </repositoryTarget>
   </repositoryTargets>
+  <tasks>
+    <task>
+      <id>2</id>
+      <name>Delete old <%= @buid_feature_repo_id %> snapshots</name>
+      <enabled>true</enabled>
+      <type>SnapshotRemoverTask</type>
+      <status>RUNNING</status>
+      <nextRun>1409081400</nextRun>
+      <schedule>
+        <type>hourly</type>
+        <startDate>1409081400</startDate>
+      </schedule>
+      <properties>
+        <property>
+          <key>removeOlderThanDays</key>
+          <value><%= @buid_feature_repo_ttl %></value>
+        </property>
+        <property>
+          <key>graceDaysAfterRelease</key>
+          <value></value>
+        </property>
+        <property>
+          <key>deleteImmediately</key>
+          <value>false</value>
+        </property>
+        <property>
+          <key>minSnapshotsToKeep</key>
+          <value><%= @buid_feature_min_snapshots %></value>
+        </property>
+        <property>
+          <key>removeIfReleaseExists</key>
+          <value>false</value>
+        </property>
+        <property>
+          <key>.name</key>
+          <value>Delete old <%= @buid_feature_repo_id %> snapshots</value>
+        </property>
+        <property>
+          <key>repositoryId</key>
+          <value><%= @buid_feature_repo_id %></value>
+        </property>
+      </properties>
+    </task>
+    <task>
+      <id>1</id>
+      <name>Delete old <%= @buid_main_repo_id %> snapshots</name>
+      <enabled>true</enabled>
+      <type>SnapshotRemoverTask</type>
+      <status>RUNNING</status>
+      <nextRun>1409081400</nextRun>
+      <schedule>
+        <type>hourly</type>
+        <startDate>1409081400</startDate>
+      </schedule>
+      <properties>
+        <property>
+          <key>removeOlderThanDays</key>
+          <value><%= @buid_main_repo_ttl %></value>
+        </property>
+        <property>
+          <key>graceDaysAfterRelease</key>
+          <value></value>
+        </property>
+        <property>
+          <key>deleteImmediately</key>
+          <value>false</value>
+        </property>
+        <property>
+          <key>minSnapshotsToKeep</key>
+          <value><%= @buid_main_min_snapshots %></value>
+        </property>
+        <property>
+          <key>removeIfReleaseExists</key>
+          <value>false</value>
+        </property>
+        <property>
+          <key>.name</key>
+          <value>Delete old <%= @buid_main_repo_id %> snapshots</value>
+        </property>
+        <property>
+          <key>repositoryId</key>
+          <value><%= @buid_main_repo_id %></value>
+        </property>
+      </properties>
+    </task>
+    <task>
+      <id>3</id>
+      <name>Delete old <%= @promote_repo_id %> snapshots</name>
+      <enabled>true</enabled>
+      <type>SnapshotRemoverTask</type>
+      <status>RUNNING</status>
+      <nextRun>1409081400</nextRun>
+      <schedule>
+        <type>hourly</type>
+        <startDate>1409081400</startDate>
+      </schedule>
+      <properties>
+        <property>
+          <key>removeOlderThanDays</key>
+          <value><%= @promote_repo_ttl %></value>
+        </property>
+        <property>
+          <key>graceDaysAfterRelease</key>
+          <value></value>
+        </property>
+        <property>
+          <key>deleteImmediately</key>
+          <value>false</value>
+        </property>
+        <property>
+          <key>minSnapshotsToKeep</key>
+          <value><%= @promote_repo_min_snapshots %></value>
+        </property>
+        <property>
+          <key>removeIfReleaseExists</key>
+          <value>false</value>
+        </property>
+        <property>
+          <key>.name</key>
+          <value>Delete old <%= @promote_repo_id %> snapshots</value>
+        </property>
+        <property>
+          <key>repositoryId</key>
+          <value><%= @promote_repo_id %></value>
+        </property>
+      </properties>
+    </task>
+  </tasks>
   <smtpConfiguration>
     <hostname>smtp-host</hostname>
     <port>25</port>
