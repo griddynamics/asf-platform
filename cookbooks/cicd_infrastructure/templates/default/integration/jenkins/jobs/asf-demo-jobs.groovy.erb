@@ -1,32 +1,34 @@
+//NOTE: project_name is parameter of seed job it's available as variable in dsl scope
 maven_installation = 'Maven-default'
 groovy_installation = 'Groovy-default'
-git_url = 'ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/<%= @project_name %>'
+git_url = "ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/${project_name}"
 version_props_generate = """
-def binaryVersion(env, version) {
-    def buildTime = Date.parse('yyyy-MM-dd_HH-mm-ss', env['BUILD_ID'])
-    def timestamp = buildTime.format('yyyyMMdd.HHmmss', TimeZone.getTimeZone('UTC'))
-    def buildNo = env['BUILD_NUMBER']
-    version.replaceFirst(/-SNAPSHOT\$/, \"-\${timestamp}-\${buildNo}\")
-}
+	def binaryVersion(env, version) {
+	    def buildTime = Date.parse('yyyy-MM-dd_HH-mm-ss', env['BUILD_ID'])
+	    def timestamp = buildTime.format('yyyyMMdd.HHmmss', TimeZone.getTimeZone('UTC'))
+	    def buildNo = env['BUILD_NUMBER']
+	    version.replaceFirst(/-SNAPSHOT\$/, \"-\${timestamp}-\${buildNo}\")
+	}
 
-def env = System.getenv()
-def p = new Properties()
+	def env = System.getenv()
+	def p = new Properties()
 
-def pom = new XmlParser().parse('pom.xml')
+	def pom = new XmlParser().parse('pom.xml')
 
-p['projectGroupId'] = 'org.asf.demo.webapp'
-p['projectArtifactId'] = 'asf-webapp-demo'
-p['projectVersion'] = pom.version.text() ?: '1.0.0-SNAPSHOT'
+	p['projectGroupId'] = 'org.asf.demo.webapp'
+	p['projectArtifactId'] = 'asf-webapp-demo'
+	p['projectVersion'] = pom.version.text() ?: '1.0.0-SNAPSHOT'
 
-p['buildGroupId'] = p['projectGroupId']
-p['buildArtifactId'] = p['projectArtifactId']
-p['buildVersion'] = binaryVersion(env, p['projectVersion'])
-p['buildJob'] = env['JOB_NAME']
-p['buildNumber'] = env['BUILD_NUMBER']
-p['buildBranch'] = env['GIT_BRANCH'].replaceFirst('^[^/]+/', '')
-p['buildCommit'] = env['GIT_COMMIT']
+	p['buildGroupId'] = p['projectGroupId']
+	p['buildArtifactId'] = p['projectArtifactId']
+	p['buildVersion'] = binaryVersion(env, p['projectVersion'])
+	p['buildJob'] = env['JOB_NAME']
+	p['buildNumber'] = env['BUILD_NUMBER']
+	p['buildBranch'] = env['GIT_BRANCH'].replaceFirst('^[^/]+/', '')
+	p['buildCommit'] = env['GIT_COMMIT']
 
-p.store(new FileWriter('version.properties'), env['BUILD_TAG'])"""
+	p.store(new FileWriter('version.properties'), env['BUILD_TAG'])
+"""
 
 set_version = """def version = build.getEnvironment(null)['buildVersion']
 if (version) build.displayName = version"""
@@ -36,18 +38,23 @@ qubell_app_params = """{
     \"instanceName\": \"asf-webapp-demo-\${buildVersion}\"
 }"""
 
+folder {
+    name "${project_name}"
+}
+
+
 job(type: Maven) {
-    name 'asf-demo-dev-build-review'
+    name "${project_name}/dev-build-review"
     jdk('/usr/lib/jvm/java/')
     parameters {
-        stringParam("GERRIT_PROJECT", "<%= @project_name %>", "Gerrit project name")
+	stringParam("GERRIT_PROJECT", "${project_name}", "Gerrit project name")
         stringParam("GERRIT_BRANCH", "dev", "Gerrit branch")
         stringParam("GERRIT_REFSPEC", "refs/heads/dev", "Gerrit refspec")
     }
     configure { project ->
 	    project << globalSettings(
             class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-            plugin:'config-file-provider@<%= @cfg_plugin_version %>'
+            plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>'
         ) {
 		    settingsConfigId('<%= @settings_id %>')
 		}
@@ -68,7 +75,7 @@ job(type: Maven) {
                 PatchsetCreated
                 DraftPublished
             }
-            project('<%= @project_name %>', 'dev')
+	    project('${project_name}', 'dev')
         }
     }
     goals('-e')
@@ -79,7 +86,7 @@ job(type: Maven) {
 }
 
 job(type: Maven) {
-    name 'asf-demo-dev-build'
+    name "${project_name}/dev-build"
     jdk('/usr/lib/jvm/java/')
     configure { project ->
 	    project << globalSettings(
@@ -104,7 +111,7 @@ job(type: Maven) {
             events {
                 RefUpdated
             }
-            project('<%= @project_name %>', 'plain:dev')
+	    project("${project_name}", 'plain:dev')
         }
     }
     preBuildSteps {
@@ -146,7 +153,7 @@ job(type: Maven) {
             archiveArtifacts 'version.properties'
         }
         downstreamParameterized {
-            trigger('asf-demo-dev-deploy') {
+            trigger('dev-deploy') {
                 currentBuild()
             }
         }
@@ -154,7 +161,7 @@ job(type: Maven) {
 }
 
 job {
-    name 'asf-demo-dev-deploy'
+    name "${project_name}/dev-deploy"
     parameters {
         configure { project ->
             project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions' << 'hudson.plugins.copyartifact.BuildSelectorParameter'(
@@ -168,7 +175,7 @@ job {
         stringParam('QUBELL_ENV_ID', '53f5d94ce4b0b03d045f7a13', 'Qubell Env ID')
     }
     steps {
-        copyArtifacts('asf-demo-dev-build', 'version.properties') {
+        copyArtifacts('dev-build', 'version.properties') {
             buildParameter('BUILD_SELECTOR')
         }
         environmentVariables {
@@ -190,10 +197,10 @@ job {
 }
 
 job(type: Maven) {
-    name "asf-demo-fb-build"
+    name "${project_name}/fb-build"
     jdk("/usr/lib/jvm/java/")
     configure { project ->
-	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
 		    settingsConfigId('<%= @settings_id %>')
 		}
     }
@@ -211,7 +218,7 @@ job(type: Maven) {
             events {
                 RefUpdated
             }
-            project("<%= @project_name %>", "ant:fb-*")
+	    project("${project_name}", "ant:fb-*")
         }
     }
 
@@ -231,7 +238,7 @@ job(type: Maven) {
                 -Durl=<%= @nexus_url %>build""")
             mavenInstallation(maven_installation)
 	    configure { project ->
-		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @cfg_plugin_version %>') {
+		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
 			    settingsConfigId('<%= @settings_id %>')
 			}
 	    }

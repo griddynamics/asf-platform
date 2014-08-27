@@ -9,7 +9,7 @@
 #
 
 execute 'Create jenkins jobs repo' do
-  command 'ssh -p 29418 root@localhost gerrit create-project --name "asf-jenkins-jobs"'
+  command 'ssh -p 29418 root@localhost gerrit create-project --name "asf-webapp-jenkins-jobs"'
   user node['gerrit']['user']
   action :run
 end

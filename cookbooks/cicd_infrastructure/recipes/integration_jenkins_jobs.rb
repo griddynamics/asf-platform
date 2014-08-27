@@ -20,14 +20,14 @@ gerrit_config = node['cicd_infrastructure']['jenkins']['gerrit-trigger']
 nexus_config = node['cicd_infrastructure']['jenkins']['nexus']
 
 execute 'Checkout jobs repo' do
-  command "git clone ssh://jenkins@#{gerrit_config['host']}:#{gerrit_config['ssh_port']}/asf-jenkins-jobs"
+  command "git clone ssh://jenkins@#{gerrit_config['host']}:#{gerrit_config['ssh_port']}/asf-webapp-jenkins-jobs"
   cwd '/tmp'
   user node['jenkins']['master']['user']
   action :run
-  not_if { File.exists?('/tmp/asf-jenkins-jobs') }
+  not_if { File.exists?('/tmp/asf-webapp-jenkins-jobs') }
 end
 
-template '/tmp/asf-jenkins-jobs/asf-demo-jobs.groovy' do
+template '/tmp/asf-webapp-jenkins-jobs/asf-demo-jobs.groovy' do
   source 'integration/jenkins/jobs/asf-demo-jobs.groovy.erb'
   owner node['jenkins']['master']['user']
   group node['jenkins']['master']['group']
@@ -46,7 +46,7 @@ end
 
 bash 'Push jobs to repo' do
   user node['jenkins']['master']['user']
-  cwd '/tmp/asf-jenkins-jobs'
+  cwd '/tmp/asf-webapp-jenkins-jobs'
   code <<-EOH
   git add asf-demo-jobs.groovy
   git commit -m 'Add asf-webapp-demo jobs'
