@@ -101,14 +101,26 @@ default['cicd_infrastructure']['nexus']['ldap']['group_mapping'] = {
 }
 default['cicd_infrastructure']['nexus']['login'] = 'admin'
 default['cicd_infrastructure']['nexus']['password'] = 'admin123'
-default['cicd_infrastructure']['nexus']['repo']['build']['id'] = 'builds'
-default['cicd_infrastructure']['nexus']['repo']['build']['name'] = 'Builds'
-default['cicd_infrastructure']['nexus']['repo']['build']['policy'] = 'SNAPSHOT'
-default['cicd_infrastructure']['nexus']['repo']['build']['ttl'] = '20160'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['id'] = 'builds-main'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['name'] = 'Builds - mainline'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['policy'] = 'SNAPSHOT'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['ttl'] = '14'
+default['cicd_infrastructure']['nexus']['repo']['build']['main']['snapshots'] = '0'
+
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['id'] = 'builds-feature'
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['name'] = 'Builds - feature branches'
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['policy'] = 'SNAPSHOT'
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['ttl'] = '14'
+default['cicd_infrastructure']['nexus']['repo']['build']['feature']['snapshots'] = '0'
+
 default['cicd_infrastructure']['nexus']['repo']['promote']['id'] = 'builds-promoted'
 default['cicd_infrastructure']['nexus']['repo']['promote']['name'] = 'Builds-promoted'
 default['cicd_infrastructure']['nexus']['repo']['promote']['policy'] = 'SNAPSHOT'
-default['cicd_infrastructure']['nexus']['repo']['promote']['ttl'] = '129600'
+default['cicd_infrastructure']['nexus']['repo']['promote']['ttl'] = '99'
+default['cicd_infrastructure']['nexus']['repo']['promote']['snapshots'] = '0'
+
+default['cicd_infrastructure']['nexus']['repo']['build']['group']['id'] = 'builds-all'
+default['cicd_infrastructure']['nexus']['repo']['build']['group']['name'] = 'Builds - all'
 
 default['cicd_infrastructure']['sonar']['auth'] = 'LDAP'
 default['cicd_infrastructure']['sonar']['ldap']['realm'] = 'mydomain.com'
