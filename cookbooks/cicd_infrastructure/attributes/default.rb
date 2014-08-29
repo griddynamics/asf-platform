@@ -121,6 +121,13 @@ default['cicd_infrastructure']['nexus']['repo']['promote']['snapshots'] = '0'
 
 default['cicd_infrastructure']['nexus']['repo']['build']['group']['id'] = 'builds-all'
 default['cicd_infrastructure']['nexus']['repo']['build']['group']['name'] = 'Builds - all'
+default['cicd_infrastructure']['nexus']['repo']['jbehave']['id'] = 'gd_jbehave_framework-snapshots'
+default['cicd_infrastructure']['nexus']['repo']['jbehave']['name'] = 'GD JBehave framework - snapshots'
+default['cicd_infrastructure']['nexus']['repo']['jbehave']['policy'] = 'Snapshot'
+default['cicd_infrastructure']['nexus']['repo']['jbehave']['location'] = 'https://nexus.griddynamics.net/nexus/content/repositories/gd_jbehave_framework-snapshots/'
+default['cicd_infrastructure']['nexus']['repo']['jbehave']['username'] = 'gd-jbehave'
+default['cicd_infrastructure']['nexus']['repo']['jbehave']['password'] = '{LX48QCkpKT48fi1+PEApKSk+PH4tfjxAKSkpPjx+LQo=}'
+default['cicd_infrastructure']['nexus']['repo']['jbehave']['use'] = 'true'
 
 default['cicd_infrastructure']['sonar']['auth'] = 'LDAP'
 default['cicd_infrastructure']['sonar']['ldap']['realm'] = 'mydomain.com'

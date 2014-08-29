@@ -332,6 +332,9 @@
         </memberRepositories>
       </externalConfiguration>
     </repository>
+    <% if @use_jbehave_proxy == 'true' %>
+        <%= render 'nexus/jbehave_proxy.xml.erb' %>
+    <% end %>
   </repositories>
   <repositoryGrouping>
     <pathMappings>

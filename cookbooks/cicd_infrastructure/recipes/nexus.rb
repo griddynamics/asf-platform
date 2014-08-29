@@ -40,7 +40,14 @@ template '/nexus/sonatype-work/nexus/conf/nexus.xml' do
     promote_repo_name:		nexus_config['repo']['promote']['name'],
     promote_repo_policy:	nexus_config['repo']['promote']['policy'],
     promote_repo_ttl:		nexus_config['repo']['promote']['ttl'],
-    promote_repo_min_snapshots:	nexus_config['repo']['promote']['snapshots']
+    promote_repo_min_snapshots:	nexus_config['repo']['promote']['snapshots'],
+    jbehave_framework_repo_id:        nexus_config['repo']['jbehave']['id'],
+    jbehave_framework_repo_name:      nexus_config['repo']['jbehave']['name'],
+    jbehave_framework_repo_policy:    nexus_config['repo']['jbehave']['policy'],
+    jbehave_framework_repo_location:  nexus_config['repo']['jbehave']['location'],
+    jbehave_framework_repo_username:  nexus_config['repo']['jbehave']['username'],
+    jbehave_framework_repo_password:  nexus_config['repo']['jbehave']['password'],
+    use_jbehave_proxy:		nexus_config['repo']['jbehave']['use']
   )
   notifies :restart, 'service[nexus]'
 end
