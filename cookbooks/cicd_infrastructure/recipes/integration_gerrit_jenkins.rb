@@ -76,7 +76,7 @@ bash 'add_jenkins_user' do
   gerrit create-account\
   --group "'Administrators'"\
   --full-name JenkinsCI\
-  --email jenkins@localhost\
+  --email jenkins-asf@griddynamics.com\
   --http-password jenkins\
   --ssh-key - jenkins
   EOH
