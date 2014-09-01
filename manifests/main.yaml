@@ -23,6 +23,7 @@ application:
     - [integration.workflow, jira]
     - [integration.workflow, openldap]
     - [integration.workflow, nexus]
+    - [integration.workflow, selenium]
     - [integration.workflow, props]
   interfaces:
     input:
@@ -239,6 +240,8 @@ application:
               ldap_public_ips: consume-signal(list<string>)
             nexus:
               nexus_public_ips: consume-signal(list<string>)
+            selenium:
+              remote-url: consume-signal(string)
           required:
             - sonar
             - gerrit
@@ -246,6 +249,7 @@ application:
             - jira
             - ldap
             - nexus
+            - selenium
           configuration:
             configuration.triggers: {}
             configuration.workflows:
@@ -323,6 +327,7 @@ application:
                           - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
                           - "recipe[cicd_infrastructure::integration_jenkins_gerrit]"
                           - "recipe[cicd_infrastructure::integration_jenkins_nexus]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_selenium]"
                         version: "11.8.2"
                         jattrs:
                           cicd_infrastructure:
@@ -332,6 +337,8 @@ application:
                                 host: "{$.environment.gerrit.gerrit_public_ips[0]}"
                               nexus:
                                 endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+                              selenium:
+                                endpoint: "{$.environment.selenium.remote-url}"
                               qubell-plugin:
                                 username: "{$.environment.properties.qubell_username}"
                                 password: "{$.environment.properties.qubell_password}"
