@@ -24,6 +24,8 @@ execute 'Checkout jobs repo' do
   cwd '/tmp'
   user node['jenkins']['master']['user']
   action :run
+  retries 5
+  retry_delay 30
   not_if { File.exists?('/tmp/asf-webapp-jenkins-jobs') }
 end
 
