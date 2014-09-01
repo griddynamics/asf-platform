@@ -1,0 +1,30 @@
+        <!-- Accessing GD JBehave framework -->
+        <profile>
+            <id><%= @jbehave_framework_repo_id %></id>
+            <repositories>
+                <repository>
+                    <id><%= @jbehave_framework_repo_id %></id>
+                    <name><%= @jbehave_framework_repo_name %></name>
+                    <url>${env.NEXUS_URL}/content/repositories/<%= @jbehave_framework_repo_id %>/</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                 <pluginRepository>
+                    <id><%= @jbehave_framework_repo_id %></id>
+                    <name><%= @jbehave_framework_repo_name %></name>
+                    <url>${env.NEXUS_URL}/content/repositories/<%= @jbehave_framework_repo_id %>/</url>
+                    <releases>
+                        <enabled>false</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>true</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>

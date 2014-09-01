@@ -1,0 +1,20 @@
+    <mirrors>
+        <mirror>
+            <id><%= @jbehave_framework_repo_id %></id>
+            <url>${env.NEXUS_URL}/content/repositories/<%= @jbehave_framework_repo_id %>/</url>
+            <mirrorOf><%= @jbehave_framework_repo_id %></mirrorOf>
+        </mirror>
+    </mirrors>
+
+    <servers>
+        <server>
+            <id><%= @jbehave_framework_repo_id %></id>
+            <username><%= @nexus_username %></username>
+            <password><%= @nexus_password %></password>
+        </server>
+    </servers>
+
+
+    <activeProfiles>
+        <activeProfile><%= @jbehave_framework_repo_id %></activeProfile>
+    </activeProfiles>

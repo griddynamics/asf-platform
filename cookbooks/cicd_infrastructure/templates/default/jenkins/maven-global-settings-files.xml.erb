@@ -132,7 +132,32 @@ under the License.
     &lt;/server&gt;
     --&gt;
     &lt;server&gt;
-      &lt;id&gt;builds&lt;/id&gt;
+      &lt;id&gt;builds-all&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;builds-main&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;builds-feature&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;builds-promoted&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;central&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;gd_jbehave_framework-snapshots&lt;/id&gt;
       &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
       &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
     &lt;/server&gt;
@@ -169,6 +194,12 @@ under the License.
       &lt;url&gt;http://my.repository.com/repo/path&lt;/url&gt;
     &lt;/mirror&gt;
      --&gt;
+    &lt;mirror&gt;
+      &lt;id&gt;central&lt;/id&gt;
+      &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+      &lt;name&gt;Macen Central Mirror.&lt;/name&gt;
+      &lt;url&gt;${env.NEXUS_URL}/content/repositories/central&lt;/url&gt;
+    &lt;/mirror&gt;
   &lt;/mirrors&gt;
   
   &lt;!-- profiles

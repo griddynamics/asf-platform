@@ -60,6 +60,7 @@ jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin'][
 
 default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
 default['cicd_infrastructure']['jenkins']['selenium']['endpoint'] = nil
+default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
 
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
