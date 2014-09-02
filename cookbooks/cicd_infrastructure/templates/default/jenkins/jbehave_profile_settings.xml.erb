@@ -1,30 +1,30 @@
-        <!-- Accessing GD JBehave framework -->
-        <profile>
-            <id><%= @jbehave_framework_repo_id %></id>
-            <repositories>
-                <repository>
-                    <id><%= @jbehave_framework_repo_id %></id>
-                    <name><%= @jbehave_framework_repo_name %></name>
-                    <url>${env.NEXUS_URL}/content/repositories/<%= @jbehave_framework_repo_id %>/</url>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                 <pluginRepository>
-                    <id><%= @jbehave_framework_repo_id %></id>
-                    <name><%= @jbehave_framework_repo_name %></name>
-                    <url>${env.NEXUS_URL}/content/repositories/<%= @jbehave_framework_repo_id %>/</url>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
+        &lt;!-- Accessing GD JBehave framework --&gt;
+        &lt;profile&gt;
+            &lt;id&gt;<%= @jbehave_framework_repo_id %>&lt;/id&gt;
+            &lt;repositories&gt;
+                &lt;repository&gt;
+                    &lt;id&gt;<%= @jbehave_framework_repo_id %>&lt;/id&gt;
+                    &lt;name&gt;<%= @jbehave_framework_repo_name %>&lt;/name&gt;
+                    &lt;url&gt;${env.NEXUS_URL}/content/repositories/<%= @jbehave_framework_repo_id %>/&lt;/url&gt;
+                    &lt;releases&gt;
+                        &lt;enabled&gt;false&lt;/enabled&gt;
+                    &lt;/releases&gt;
+                    &lt;snapshots&gt;
+                        &lt;enabled&gt;true&lt;/enabled&gt;
+                    &lt;/snapshots&gt;
+                &lt;/repository&gt;
+            &lt;/repositories&gt;
+            &lt;pluginRepositories&gt;
+                 &lt;pluginRepository&gt;
+                    &lt;id&gt;<%= @jbehave_framework_repo_id %>&lt;/id&gt;
+                    &lt;name&gt;<%= @jbehave_framework_repo_name %>&lt;/name&gt;
+                    &lt;url&gt;${env.NEXUS_URL}/content/repositories/<%= @jbehave_framework_repo_id %>/&lt;/url&gt;
+                    &lt;releases&gt;
+                        &lt;enabled&gt;false&lt;/enabled&gt;
+                    &lt;/releases&gt;
+                    &lt;snapshots&gt;
+                        &lt;enabled&gt;true&lt;/enabled&gt;
+                    &lt;/snapshots&gt;
+                &lt;/pluginRepository&gt;
+            &lt;/pluginRepositories&gt;
+        &lt;/profile&gt;
