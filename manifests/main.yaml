@@ -65,7 +65,8 @@ application:
         properties:
           qubell_username: "publish-signal(string)"
           qubell_password: "publish-signal(string)"
-
+          jira_username: "publish-signal(string)"
+          jira_password: "publish-signal(string)"
     sonar:
       type: reference.Submodule
       configuration:
@@ -228,6 +229,8 @@ application:
             properties:
               qubell_username: consume-signal(string)
               qubell_password: consume-signal(string)
+              jira_username: consume-signal(string)
+              jira_password: consume-signal(string)
             sonar:
               sonar_public_ips: consume-signal(list<string>)
             gerrit:
@@ -317,6 +320,16 @@ application:
                         runList: [ "recipe[cicd_infrastructure::openldap_new_users]" ]
                         version: "11.8.2"
 
+                  - jira_setup:
+                      phase: jira_setup
+                      precedingPhases: [ init_jira_vm ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jira ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_jira_jenkins]" ]
+                        version: "11.8.2"
+
                   - jenkins_setup:
                       precedingPhases: [ init_component_vms ]
                       action: chefsolo
@@ -328,6 +341,7 @@ application:
                           - "recipe[cicd_infrastructure::integration_jenkins_gerrit]"
                           - "recipe[cicd_infrastructure::integration_jenkins_nexus]"
                           - "recipe[cicd_infrastructure::integration_jenkins_selenium]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_jira]"
                         version: "11.8.2"
                         jattrs:
                           cicd_infrastructure:
@@ -342,6 +356,10 @@ application:
                               qubell-plugin:
                                 username: "{$.environment.properties.qubell_username}"
                                 password: "{$.environment.properties.qubell_password}"
+                              jira:
+                                host: "{$.environment.jira.jira_public_ips[0]}"
+                                username: "{$.environment.properties.jira_username}"
+                                password: "{$.environment.properties.jira_password}"
                       output:
                         jenkins_host_state: chefState
 
