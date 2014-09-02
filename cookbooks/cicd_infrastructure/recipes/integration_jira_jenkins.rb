@@ -12,17 +12,28 @@ package 'unzip'
 
 Chef::Config[:file_cache_path] = '/tmp'
 
-node['cicd_infrastructure']['jira']['plugins'].each do |plugin_url|
-  remote_file "#{Chef::Config[:file_cache_path]}/#{File.basename(plugin_url)}" do
-    owner node['jira']['user']
-    mode 0644
-    source plugin_url
-  end
+node['cicd_infrastructure']['jira']['plugins'].each do |plugin_name, plugin_attrs|
+  download_dir = if plugin_attrs['type'] == 'jar'
+                   "#{node['jira']['home_path']}/plugins/installed-plugins"
+                 else
+                   Chef::Config[:file_cache_path]
+                 end
 
-  execute "unzip -j #{Chef::Config[:file_cache_path]}/#{File.basename(plugin_url)} #{File.basename(plugin_url, '.*')}.jar" do
+  execute "unpacking #{plugin_name}" do
+    command "unzip -j #{download_dir}/#{plugin_name}.obr *.jar"
     user 'root'
     cwd "#{node['jira']['home_path']}/plugins/installed-plugins"
-    creates "#{File.basename(plugin_url, '.*')}.jar"
+    creates "#{plugin_name}.jar"
+    not_if { plugin_attrs['type'] == 'jar' }
+    action :nothing
+  end
+
+  remote_file "#{download_dir}/#{plugin_name}.#{plugin_attrs['type']}" do
+    owner node['jira']['user']
+    mode 0755
+    source plugin_attrs['url']
+    only_if { Dir["#{download_dir}/*#{plugin_name}*.jar"].empty? }
+    notifies :run, "execute[unpacking #{plugin_name}]",:immediately
   end
 end
 

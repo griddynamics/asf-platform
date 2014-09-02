@@ -174,7 +174,14 @@ default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
   'memberAttr' => 'uniqueMember',
   'memberFormat' => 'uid=${username},ou=people,dc=example,dc=com'
 }
-default['cicd_infrastructure']['jira']['plugins'] = [
-  "https://marketplace-cdn.atlassian.com/files/artifact/\
-322f8974-980b-4ef0-bbdb-b18eec69ef14/jira-jenkins-plugin-1.4.6.1.obr"
-]
+default['cicd_infrastructure']['jira']['plugins'] = {
+  'jira-jenkins-plugin' => {
+    'type' => 'orb',
+    'url' => 'https://marketplace-cdn.atlassian.com/files/artifact/' +
+    '322f8974-980b-4ef0-bbdb-b18eec69ef14/jira-jenkins-plugin-1.4.6.1.obr',
+  },
+  'rest-api-browser' => {
+    'type' => 'jar',
+    'url' => 'https://marketplace.atlassian.com/download/plugins/com.atlassian.labs.rest-api-browser/version/3110'
+  }
+}
