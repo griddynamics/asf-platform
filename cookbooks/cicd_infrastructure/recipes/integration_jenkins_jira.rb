@@ -27,9 +27,10 @@ template "#{node['jenkins']['master']['home']}/hudson.plugins.jira.JiraProjectPr
   group node['jenkins']['master']['group']
   mode 0644
   variables(
-    jira_url: jira_config['endpoint'],
+    jira_host: jira_config['host'],
     jira_username: jira_config['username'],
     jira_password: jira_config['password']
   )
   notifies :restart, 'service[jenkins]'
 end
+

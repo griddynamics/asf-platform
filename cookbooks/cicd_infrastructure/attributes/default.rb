@@ -61,7 +61,7 @@ jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin'][
 default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
 default['cicd_infrastructure']['jenkins']['selenium']['endpoint'] = nil
 
-default['cicd_infrastructure']['jenkins']['jira']['endpoint'] = nil
+default['cicd_infrastructure']['jenkins']['jira']['host'] = nil
 default['cicd_infrastructure']['jenkins']['jira']['username'] = nil
 default['cicd_infrastructure']['jenkins']['jira']['password'] = nil
 default['cicd_infrastructure']['jenkins']['jira']['plugin']['version'] = '1.4.6.1'
