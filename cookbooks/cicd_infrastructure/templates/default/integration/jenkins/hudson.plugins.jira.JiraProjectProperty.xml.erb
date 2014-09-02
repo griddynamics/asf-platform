@@ -3,10 +3,11 @@
   <sites>
     <hudson.plugins.jira.JiraSite>
       <url>http://<%= @jira_host %></url>
+      <alternativeUrl>https://<%= @jira_host %></alternativeUrl>
       <useHTTPAuth>true</useHTTPAuth>
       <userName><%= @jira_username %></userName>
       <password><%= @jira_password %></password>
-      <supportsWikiStyleComment>false</supportsWikiStyleComment>
+      <supportsWikiStyleComment>true</supportsWikiStyleComment>
       <recordScmChanges>false</recordScmChanges>
       <updateJiraIssueForAllStatus>true</updateJiraIssueForAllStatus>
     </hudson.plugins.jira.JiraSite>

@@ -8,7 +8,8 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-jira_config = node['cicd_infrastructure']['jenkins']['jira']
+jira = node['cicd_infrastructure']['jenkins']['jira']
+jenkins = node['jenkins']['master']
 
 # jenkins_plugin 'jira-plugin' do
 #   source jira_config['plugin']['url']
@@ -16,21 +17,20 @@ jira_config = node['cicd_infrastructure']['jenkins']['jira']
 #   retry_delay 30
 #   action :install
 # end
-#
 
 service 'jenkins' do
   action :nothing
 end
 
-template "#{node['jenkins']['master']['home']}/hudson.plugins.jira.JiraProjectProperty.xml" do
-  source 'integration/jenkins/hudson.plugins.jira.JiraProjectProperty.xml'
-  owner node['jenkins']['master']['user']
-  group node['jenkins']['master']['group']
+template "#{jenkins['home']}/hudson.plugins.jira.JiraProjectProperty.xml" do
+  source 'integration/jenkins/hudson.plugins.jira.JiraProjectProperty.xml.erb'
+  owner jenkins['user']
+  group jenkins['group']
   mode 0644
   variables(
-    jira_host: jira_config['host'],
-    jira_username: jira_config['username'],
-    jira_password: jira_config['password']
+    jira_host: jira['host'],
+    jira_username: jira['username'],
+    jira_password: jira['password']
   )
   notifies :restart, 'service[jenkins]'
 end
