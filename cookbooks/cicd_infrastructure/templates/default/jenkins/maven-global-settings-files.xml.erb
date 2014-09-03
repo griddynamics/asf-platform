@@ -132,7 +132,32 @@ under the License.
     &lt;/server&gt;
     --&gt;
     &lt;server&gt;
-      &lt;id&gt;builds&lt;/id&gt;
+      &lt;id&gt;builds-all&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;builds-main&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;builds-feature&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;builds-promoted&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;central&lt;/id&gt;
+      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
+      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
+    &lt;/server&gt;
+    &lt;server&gt;
+      &lt;id&gt;<%= @jbehave_framework_repo_id %>&lt;/id&gt;
       &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
       &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
     &lt;/server&gt;
@@ -169,6 +194,15 @@ under the License.
       &lt;url&gt;http://my.repository.com/repo/path&lt;/url&gt;
     &lt;/mirror&gt;
      --&gt;
+    &lt;mirror&gt;
+      &lt;id&gt;central&lt;/id&gt;
+      &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+      &lt;name&gt;Macen Central Mirror.&lt;/name&gt;
+      &lt;url&gt;${env.NEXUS_URL}/content/repositories/central&lt;/url&gt;
+    &lt;/mirror&gt;
+<% if @use_jbehave_proxy == 'true' %>
+<%= render 'jenkins/jbehave_mirrors_settings.xml.erb' %>
+<% end %>
   &lt;/mirrors&gt;
   
   &lt;!-- profiles
@@ -226,14 +260,18 @@ under the License.
       &lt;id&gt;nexus-profile&lt;/id&gt;
       &lt;repositories&gt;
         &lt;repository&gt;
-          &lt;id&gt;builds&lt;/id&gt;
+          &lt;id&gt;builds-all&lt;/id&gt;
           &lt;name&gt;Corp nexus&lt;/name&gt;
-	  &lt;url&gt;<%= @nexus_url %>&lt;/url&gt;
+	  &lt;url&gt;<%= @nexus_url %>/content/repositories/builds-all&lt;/url&gt;
           &lt;layout&gt;default&lt;/layout&gt;
           &lt;snapshotPolicy&gt;always&lt;/snapshotPolicy&gt;
         &lt;/repository&gt;
       &lt;/repositories&gt;
     &lt;/profile&gt;
+
+<% if @use_jbehave_proxy == 'true' %>
+<%= render 'jenkins/jbehave_profile_settings.xml.erb' %>
+<% end %>
 
 
     &lt;!--
@@ -282,6 +320,9 @@ under the License.
   --&gt;
   &lt;activeProfiles&gt;
     &lt;activeProfile&gt;nexus-profile&lt;/activeProfile&gt;
+<% if @use_jbehave_proxy == 'true' %>
+    &lt;activeProfile&gt;<%= @jbehave_framework_repo_id %>&lt;/activeProfile&gt;
+<% end %>
   &lt;/activeProfiles&gt;
 &lt;/settings&gt;</content>
         <serverCredentialMappings/>
