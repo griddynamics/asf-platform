@@ -78,11 +78,26 @@ job(type: Maven) {
 	    project('${project_name}', 'dev')
         }
     }
-    goals('-e')
-    goals('clean')
-    goals('install')
+	    goals('-e')
+	    goals('clean')
+	    goals('install')
+	    mavenInstallation(maven_installation)
+    postBuildSteps {	    
+	maven {
+	    rootPOM("spring-petclinic-test/pom.xml")
+	    goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
+	    mavenInstallation(maven_installation)
+    	    configure { project ->
+    		    project << globalSettings(
+                    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+                    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
+                ) {
+    			    settingsConfigId('<%= @settings_id %>')
+    			}
+    	    }
+	}
+    }
     perModuleEmail(false)
-    mavenInstallation(maven_installation)
 }
 
 job(type: Maven) {
@@ -136,9 +151,9 @@ job(type: Maven) {
                 -DartifactId=asf-webapp-demo
                 -Dversion=\${buildVersion}
                 -Dpackaging=war
-                -DrepositoryId=builds
-                -Dfile=\${WORKSPACE}/target/petclinic.war
-                -Durl=\${NEXUS_URL}/content/repositories/builds""")
+                -DrepositoryId=builds-main
+		-Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
+		-Durl=\${NEXUS_URL}/content/repositories/builds-main""")
     	    configure { project ->
     		    project << globalSettings(
                     class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
@@ -148,52 +163,100 @@ job(type: Maven) {
     			}
     	    }
         }
+	maven {
+	    rootPOM("spring-petclinic-test/pom.xml")
+	    goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
+	    mavenInstallation(maven_installation)
+    	    configure { project ->
+    		    project << globalSettings(
+                    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+                    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
+                ) {
+    			    settingsConfigId('<%= @settings_id %>')
+    			}
+    	    }
+	}
         systemGroovyCommand(set_version)
-        publishers {
-            archiveArtifacts 'version.properties'
-        }
         downstreamParameterized {
-            trigger('dev-deploy') {
+            trigger('integration-tests') {
                 currentBuild()
+		propertiesFile('version.properties')
             }
         }
     }
 }
 
-job {
-    name "${project_name}/dev-deploy"
+job(type: Maven) {
+    name "${project_name}/integration-tests"
+    jdk('/usr/lib/jvm/java/')
     parameters {
-        configure { project ->
-            project / 'properties' / 'hudson.model.ParametersDefinitionProperty' / 'parameterDefinitions' << 'hudson.plugins.copyartifact.BuildSelectorParameter'(
-            plugin: 'copyartifact@<%= @plugins['copyartifact'] %>') {
-                name('BUILD_SELECTOR')
-                description('Build to deploy')
-                project << defaultSelector(class: "hudson.plugins.copyartifact.StatusBuildSelector")
-            }
-        }
         stringParam('QUBELL_APP_ID', '53eb65e9e4b0f24b4a52c0f2', 'Qubell Application ID')
         stringParam('QUBELL_ENV_ID', '53f5d94ce4b0b03d045f7a13', 'Qubell Env ID')
     }
-    steps {
-        copyArtifacts('dev-build', 'version.properties') {
-            buildParameter('BUILD_SELECTOR')
-        }
-        environmentVariables {
-            propertiesFile('version.properties')
-        }
-        configure { project ->
-            project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
-            plugin: "qubell@<%= @qubell_plugin_version %>") {
-                expectedStatus('RUNNING')
-                timeout('1200')
-                outputFilePath('qubell_output.json')
-                manifestRelativePath('')
-                environmentId('\${QUBELL_ENV_ID}')
-                applicationId('\${QUBELL_APP_ID}')
-                extraParameters(qubell_app_params)
+    configure { project ->
+	    project << globalSettings(
+            class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+            plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>'
+        ) {
+		    settingsConfigId('<%= @settings_id %>')
+		}
+    }
+    scm {
+        git {
+            remote {
+                name('origin')
+                url(git_url)
             }
+            branch('\${buildCommit}')
         }
     }
+    preBuildSteps {
+	    configure { project ->
+		    project / prebuilders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
+			    plugin: "qubell@2.5") {
+		    expectedStatus('RUNNING')
+		    timeout('1200')
+		    outputFilePath('qubell_output.json')
+		    manifestRelativePath('')
+		    environmentId('\${QUBELL_ENV_ID}')
+		    applicationId('\${QUBELL_APP_ID}')
+		    extraParameters(qubell_app_params)
+		    }
+	    }
+    configure { // It's hack because for some reasone DSL does not add qubell plugin into job
+	    it / prebuilders << "hudson.plugins.groovy.SystemGroovy"(plugin: "groovy@1.20") {
+		    scriptSource(class : "hudson.plugins.groovy.StringScriptSource") {
+			    command """
+import groovy.json.JsonSlurper;
+import hudson.model.*;
+
+def qubellOutputFile = new File('qubell_output.json')
+def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
+
+def build = Thread.currentThread().executable;
+def pa = new ParametersAction([
+new StringParameterValue('PETCLINIC_URL', userJson.'output.webapp_endpoint')
+]);
+build.addAction(pa);
+"""
+			    }
+		    }
+	    }
+    }
+
+    rootPOM("spring-petclinic-test/pom.xml")
+    goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dpetclinic.url=${PETCLINIC_URL}')
+    perModuleEmail(false)
+    mavenInstallation(maven_installation)
+    configure { project ->
+	    project << globalSettings(
+	    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+	    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
+	) {
+		    settingsConfigId('<%= @settings_id %>')
+		}
+    }
+    
 }
 
 job(type: Maven) {
@@ -230,12 +293,13 @@ job(type: Maven) {
     postBuildSteps {
         maven {
             goals("""deploy:deploy-file -B
-                -DgroupId=org.springframework.samples
-                -DartifactId=spring-petclinic
-                -Dversion=1.0-SNAPSHOT
-                -Dpackaging=war
-                -Dfile=\${WORKSPACE}/target/petclinic.war
-                -Durl=<%= @nexus_url %>build""")
+	    	-DgroupId=\${buildGroupId}
+                -DartifactId=asf-webapp-demo
+		-Dversion=\${buildVersion}
+		-Dpackaging=war
+		-DrepositoryId=builds-feature
+		-Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
+		-Durl=\${NEXUS_URL}/content/repositories/builds-feature""")
             mavenInstallation(maven_installation)
 	    configure { project ->
 		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
@@ -243,5 +307,18 @@ job(type: Maven) {
 			}
 	    }
         }
+	maven {
+	    rootPOM("spring-petclinic-test/pom.xml")
+	    goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
+	    mavenInstallation(maven_installation)
+    	    configure { project ->
+    		    project << globalSettings(
+                    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+                    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
+                ) {
+    			    settingsConfigId('<%= @settings_id %>')
+    			}
+    	    }
+	}
     }
 }
