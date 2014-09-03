@@ -53,10 +53,10 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['environment_id'] = '
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['endpoint'] = 'https://express.qubell.com/'
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['version'] = '2.5'
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['checksum'] = '7dc571813114ce521bc22580c8b0e0b3'
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] =
-  "https://github.com/qubell/contrib-jenkins-qubell-plugin/releases/download/\
-v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/\
-jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
+default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] = "https://github.com/qubell/" +
+    "contrib-jenkins-qubell-plugin/releases/download/" +
+    "v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/" +
+    "jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
 
 default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
 default['cicd_infrastructure']['jenkins']['selenium']['endpoint'] = nil
@@ -66,9 +66,9 @@ default['cicd_infrastructure']['jenkins']['jira']['username'] = nil
 default['cicd_infrastructure']['jenkins']['jira']['password'] = nil
 default['cicd_infrastructure']['jenkins']['jira']['plugin']['version'] = '1.4.6.1'
 default['cicd_infrastructure']['jenkins']['jira']['plugin']['url'] = "http://repository.marvelution.org/" +
-"service/local/repositories/releases/content/com/marvelution/jira/plugins/jenkins-jira-plugin/"+
-"#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}/"+
-"jenkins-jira-plugin-#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}.hpi"
+  "service/local/repositories/releases/content/com/marvelution/jira/plugins/jenkins-jira-plugin/" +
+  "#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}/" +
+  "jenkins-jira-plugin-#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}.hpi"
 
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
@@ -176,9 +176,8 @@ default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
 }
 default['cicd_infrastructure']['jira']['plugins'] = {
   'jira-jenkins-plugin' => {
-    'type' => 'orb',
-    'url' => 'https://marketplace-cdn.atlassian.com/files/artifact/' +
-    '322f8974-980b-4ef0-bbdb-b18eec69ef14/jira-jenkins-plugin-1.4.6.1.obr',
+    'type' => 'obr',
+    'url' => 'https://marketplace.atlassian.com/download/plugins/com.marvelution.jira.plugins.jenkins/version/212'
   },
   'rest-api-browser' => {
     'type' => 'jar',
