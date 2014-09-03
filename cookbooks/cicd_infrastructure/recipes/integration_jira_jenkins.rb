@@ -37,6 +37,15 @@ node['cicd_infrastructure']['jira']['plugins'].each do |plugin_name, plugin_attr
   end
 end
 
+bash "Enable Remote API Calls" do
+  user "root"
+  code <<-EOH
+  mysql -u jira -pchangeit jira -e \
+  "update propertynumber set propertyvalue=1 where id=(
+    select id from propertyentry where PROPERTY_KEY='jira.option.rpc.allow')"
+  EOH
+end
+
 service 'jira' do
   action :restart
 end
