@@ -18,13 +18,6 @@ add_jenkins_global_var 'Add nexus env variables' do
   notifies :restart, 'service[jenkins]'
 end
 
-directory "#{node['jenkins']['master']['home']}/.m2/" do
-  owner node['jenkins']['master']['user']
-  group node['jenkins']['master']['group']
-  mode 0755
-  action :create
-end
-
 nexus_config = node['cicd_infrastructure']['nexus']
 
 template "#{node['jenkins']['master']['home']}/maven-global-settings-files.xml" do
