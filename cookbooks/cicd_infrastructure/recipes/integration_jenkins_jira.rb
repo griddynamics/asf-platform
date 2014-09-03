@@ -10,12 +10,13 @@
 
 jira_config = node['cicd_infrastructure']['jenkins']['jira']
 
-jenkins_plugin 'jira-plugin' do
-  source jira_config['plugin']['url']
-  retries 5
-  retry_delay 30
-  action :install
-end
+# jenkins_plugin 'jira-plugin' do
+#   source jira_config['plugin']['url']
+#   retries 5
+#   retry_delay 30
+#   action :install
+# end
+#
 
 service 'jenkins' do
   action :nothing

@@ -30,7 +30,8 @@ default['cicd_infrastructure']['jenkins']['plugins'] = {
   'rebuild'=>'',
   'copyartifact' => '1.30',
   'envinject' => '',
-  'groovy' => ''
+  'groovy' => '',
+  'jira' => '1.39'
 }
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
@@ -175,12 +176,12 @@ default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
   'memberFormat' => 'uid=${username},ou=people,dc=example,dc=com'
 }
 default['cicd_infrastructure']['jira']['plugins'] = {
-  'jira-jenkins-plugin' => {
-    'type' => 'obr',
-    'url' => 'https://marketplace.atlassian.com/download/plugins/com.marvelution.jira.plugins.jenkins/version/212'
-  },
-  'rest-api-browser' => {
-    'type' => 'jar',
-    'url' => 'https://marketplace.atlassian.com/download/plugins/com.atlassian.labs.rest-api-browser/version/3110'
-  }
+#   'jira-jenkins-plugin' => {
+#     'type' => 'obr',
+#     'url' => 'https://marketplace.atlassian.com/download/plugins/com.marvelution.jira.plugins.jenkins/version/212'
+#   },
+#   'rest-api-browser' => {
+#     'type' => 'jar',
+#     'url' => 'https://marketplace.atlassian.com/download/plugins/com.atlassian.labs.rest-api-browser/version/3110'
+#   }
 }
