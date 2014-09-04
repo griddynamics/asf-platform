@@ -94,6 +94,9 @@ job(type: Maven) {
       }
     }
   }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
   perModuleEmail(false)
 }
 
@@ -178,6 +181,9 @@ job(type: Maven) {
       }
     }
   }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
 }
 
 job() {
@@ -249,6 +255,9 @@ build.addAction(pa);
 		    }
 	    }
     }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
 }
 
 job(type: Maven) {
@@ -323,5 +332,8 @@ job(type: Maven) {
           }
       }
     }
+  }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
 }
