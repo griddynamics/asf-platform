@@ -22,6 +22,12 @@ service 'jenkins' do
   action :nothing
 end
 
+add_jenkins_global_var 'Add Jenkins_URL env variables' do
+  key 'Jenkins_URL'
+  value node['jenkins']['master']['endpoint']
+  notifies :restart, 'service[jenkins]'
+end
+
 template "#{jenkins['home']}/hudson.plugins.jira.JiraProjectProperty.xml" do
   source 'integration/jenkins/hudson.plugins.jira.JiraProjectProperty.xml.erb'
   owner jenkins['user']
