@@ -18,5 +18,10 @@ default['openldap']['users'] = [
     'username' => 'sample',
     'password' => 'samplepassword',
     'group' => 'developers'
+  },
+  {
+    'username' => 'jenkins-ci-bot',
+    'password' => 'jenkin$CiB0t',
+    'group' => 'developers'
   }
 ]
