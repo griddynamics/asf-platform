@@ -237,7 +237,7 @@ def qubellOutputFile = new File("\${envVarsMap.get("WORKSPACE")}/qubell_output.j
 def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
 
 def pa = new ParametersAction([
-new StringParameterValue('PETCLINIC_URL', userJson.'output.webapp_endpoint')
+new StringParameterValue('PETCLINIC_URL', userJson.returnValues.'output.webapp_endpoint')
 ]);
 build.addAction(pa);
 """
