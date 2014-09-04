@@ -34,7 +34,7 @@ set_version = """def version = build.getEnvironment(null)['buildVersion']
 if (version) build.displayName = version"""
 
 qubell_app_params = """{
-    \"input.artifact_url\": \"\${NEXUS_URL}/service/local/artifact/maven/content?r=builds&g=org.asf.demo.webapp&a=asf-webapp-demo&v=\${buildVersion}&e=war\",
+    \"input.artifact_url\": \"\${NEXUS_URL}/service/local/artifact/maven/content?r=builds-all&g=org.asf.demo.webapp&a=asf-webapp-demo&v=\${buildVersion}&e=war\",
     \"instanceName\": \"asf-webapp-demo-\${buildVersion}\"
 }"""
 
@@ -230,10 +230,12 @@ job(type: Maven) {
 import groovy.json.JsonSlurper;
 import hudson.model.*;
 
-def qubellOutputFile = new File('qubell_output.json')
+def build = Thread.currentThread().executable;
+def envVarsMap = build.parent.builds[0].properties.get("envVars")
+
+def qubellOutputFile = new File("${envVarsMap.get("WORKSPACE")}/qubell_output.json")
 def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
 
-def build = Thread.currentThread().executable;
 def pa = new ParametersAction([
 new StringParameterValue('PETCLINIC_URL', userJson.'output.webapp_endpoint')
 ]);
@@ -285,6 +287,16 @@ job(type: Maven) {
         }
     }
 
+    preBuildSteps {
+        groovyCommand(version_props_generate, groovy_installation)
+        environmentVariables {
+            propertiesFile('version.properties')
+        }
+        maven {
+            goals('versions:set -DnewVersion=\${buildVersion}')
+            mavenInstallation(maven_installation)
+        }
+    }
     goals('-e')
     goals('clean')
     goals('install')
