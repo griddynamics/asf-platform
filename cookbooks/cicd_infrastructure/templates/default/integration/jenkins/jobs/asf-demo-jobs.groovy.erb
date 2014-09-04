@@ -186,7 +186,7 @@ job(type: Maven) {
     }
 }
 
-job(type: Maven) {
+job() {
     name "${project_name}/integration-tests"
     jdk('/usr/lib/jvm/java/')
     parameters {
@@ -210,9 +210,9 @@ job(type: Maven) {
             branch('\${buildCommit}')
         }
     }
-    preBuildSteps {
+    steps {
 	    configure { project ->
-		    project / prebuilders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
+		    project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
 			    plugin: "qubell@2.5") {
 		    expectedStatus('RUNNING')
 		    timeout('1200')
@@ -224,7 +224,7 @@ job(type: Maven) {
 		    }
 	    }
     configure { // It's hack because for some reasone DSL does not add qubell plugin into job
-	    it / prebuilders << "hudson.plugins.groovy.SystemGroovy"(plugin: "groovy@1.20") {
+	    it / builders << "hudson.plugins.groovy.SystemGroovy"(plugin: "groovy@1.20") {
 		    scriptSource(class : "hudson.plugins.groovy.StringScriptSource") {
 			    command """
 import groovy.json.JsonSlurper;
@@ -244,21 +244,20 @@ build.addAction(pa);
 			    }
 		    }
 	    }
+	    maven {
+		    rootPOM("spring-petclinic-test/pom.xml")
+		    goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dpetclinic.url=${PETCLINIC_URL}')
+		    mavenInstallation(maven_installation)
+		    configure { project ->
+			    project << globalSettings(
+			    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+			    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
+			) {
+				    settingsConfigId('<%= @settings_id %>')
+				}
+		    }
+	    }
     }
-
-    rootPOM("spring-petclinic-test/pom.xml")
-    goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dpetclinic.url=${PETCLINIC_URL}')
-    perModuleEmail(false)
-    mavenInstallation(maven_installation)
-    configure { project ->
-	    project << globalSettings(
-	    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-	    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
-	) {
-		    settingsConfigId('<%= @settings_id %>')
-		}
-    }
-    
 }
 
 job(type: Maven) {
