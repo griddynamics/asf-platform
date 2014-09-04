@@ -233,7 +233,7 @@ import hudson.model.*;
 def build = Thread.currentThread().executable;
 def envVarsMap = build.parent.builds[0].properties.get("envVars")
 
-def qubellOutputFile = new File("${envVarsMap.get("WORKSPACE")}/qubell_output.json")
+def qubellOutputFile = new File("\${envVarsMap.get("WORKSPACE")}/qubell_output.json")
 def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
 
 def pa = new ParametersAction([
