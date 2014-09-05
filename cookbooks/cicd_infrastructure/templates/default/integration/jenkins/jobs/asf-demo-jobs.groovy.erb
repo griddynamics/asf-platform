@@ -259,6 +259,7 @@ build.addAction(pa);
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
 }
+}
 
 job(type: Maven) {
   name "${project_name}/fb-build"
