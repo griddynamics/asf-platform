@@ -1,6 +1,33 @@
-insert into cwd_directory (ID,directory_name,lower_directory_name,created_date,updated_date,active,description,impl_class,lower_impl_class,directory_type,directory_position) values (10000,'Delegated LDAP Authentication','delegated ldap authentication','2014-07-22 13:58:31','2014-07-22 14:13:29',1,'TEST DIRECTORY','com.atlassian.crowd.directory.DelegatedAuthenticationDirectory','com.atlassian.crowd.directory.delegatedauthenticationdirectory','DELEGATING',1);
+INSERT INTO cwd_directory (
+  ID,
+  directory_name,
+  lower_directory_name,
+  created_date,
+  updated_date,
+  active,
+  description,
+  impl_class,
+  lower_impl_class,
+  directory_type,
+  directory_position)
+VALUES
+  (10000,
+  'Delegated LDAP Authentication',
+  'delegated ldap authentication',
+  '2014-07-22 13:58:31',
+  '2014-07-22 14:13:29',
+  1,
+  'TEST DIRECTORY',
+  'com.atlassian.crowd.directory.DelegatedAuthenticationDirectory',
+  'com.atlassian.crowd.directory.delegatedauthenticationdirectory',
+  'DELEGATING',
+  1);
 
-insert into cwd_directory_operation (directory_id,operation_type) values (10000,'CREATE_GROUP'),
+INSERT INTO cwd_directory_operation (
+  directory_id,
+  operation_type
+) values
+(10000,'CREATE_GROUP'),
 (10000,'CREATE_ROLE'),
 (10000,'CREATE_USER'),
 (10000,'DELETE_GROUP'),
@@ -13,8 +40,14 @@ insert into cwd_directory_operation (directory_id,operation_type) values (10000,
 (10000,'UPDATE_USER'),
 (10000,'UPDATE_USER_ATTRIBUTE');
 
-insert into cwd_directory_attribute (directory_id,attribute_name,attribute_value) values (10000,'autoAddGroups','jira-users');
-insert into cwd_directory_attribute (directory_id,attribute_name,attribute_value) values (10000,'crowd.delegated.directory.auto.create.user','true'),
+INSERT INTO cwd_directory_attribute (
+  directory_id,attribute_name,attribute_value)
+VALUES (10000,'autoAddGroups','jira-developers');
+
+INSERT INTO cwd_directory_attribute (
+  directory_id,attribute_name,attribute_value)
+VALUES
+(10000,'crowd.delegated.directory.auto.create.user','true'),
 (10000,'crowd.delegated.directory.auto.update.user','true'),
 (10000,'crowd.delegated.directory.importGroups','false'),
 (10000,'crowd.delegated.directory.type','com.atlassian.crowd.directory.OpenLDAP'),
@@ -46,4 +79,28 @@ insert into cwd_directory_attribute (directory_id,attribute_name,attribute_value
 (10000,'ldap.usermembership.use','false'),
 (10000,'ldap.usermembership.use.for.groups','false');
 
-insert into cwd_group (ID,group_name,lower_group_name,active,local,created_date,updated_date,description,lower_description,group_type,directory_id) values (10010,'jira-users','jira-users',1,1,'2014-08-04 09:41:36','2014-08-04 09:41:36',NULL,NULL,'GROUP',10000);
+INSERT INTO cwd_group (
+  ID,
+  group_name,
+  lower_group_name,
+  active,
+  local,
+  created_date,
+  updated_date,
+  description,
+  lower_description,
+  group_type,
+  directory_id)
+VALUES (
+  10010,
+  'jira-users',
+  'jira-users',
+  1,
+  1,
+  '2014-08-04 09:41:36',
+  '2014-08-04 09:41:36',
+  NULL,
+  NULL,
+  'GROUP',
+  10000);
+
