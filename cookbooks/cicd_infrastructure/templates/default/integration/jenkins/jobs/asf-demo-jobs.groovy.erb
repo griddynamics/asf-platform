@@ -3,31 +3,31 @@ maven_installation = 'Maven-default'
 groovy_installation = 'Groovy-default'
 git_url = "ssh://jenkins@<%= @gerrit_host %>:<%= @gerrit_port %>/${project_name}"
 version_props_generate = """
-	def binaryVersion(env, version) {
-	    def buildTime = Date.parse('yyyy-MM-dd_HH-mm-ss', env['BUILD_ID'])
-	    def timestamp = buildTime.format('yyyyMMdd.HHmmss', TimeZone.getTimeZone('UTC'))
-	    def buildNo = env['BUILD_NUMBER']
-	    version.replaceFirst(/-SNAPSHOT\$/, \"-\${timestamp}-\${buildNo}\")
-	}
+  def binaryVersion(env, version) {
+      def buildTime = Date.parse('yyyy-MM-dd_HH-mm-ss', env['BUILD_ID'])
+      def timestamp = buildTime.format('yyyyMMdd.HHmmss', TimeZone.getTimeZone('UTC'))
+      def buildNo = env['BUILD_NUMBER']
+      version.replaceFirst(/-SNAPSHOT\$/, \"-\${timestamp}-\${buildNo}\")
+  }
 
-	def env = System.getenv()
-	def p = new Properties()
+  def env = System.getenv()
+  def p = new Properties()
 
-	def pom = new XmlParser().parse('pom.xml')
+  def pom = new XmlParser().parse('pom.xml')
 
-	p['projectGroupId'] = 'org.asf.demo.webapp'
-	p['projectArtifactId'] = 'asf-webapp-demo'
-	p['projectVersion'] = pom.version.text() ?: '1.0.0-SNAPSHOT'
+  p['projectGroupId'] = 'org.asf.demo.webapp'
+  p['projectArtifactId'] = 'asf-webapp-demo'
+  p['projectVersion'] = pom.version.text() ?: '1.0.0-SNAPSHOT'
 
-	p['buildGroupId'] = p['projectGroupId']
-	p['buildArtifactId'] = p['projectArtifactId']
-	p['buildVersion'] = binaryVersion(env, p['projectVersion'])
-	p['buildJob'] = env['JOB_NAME']
-	p['buildNumber'] = env['BUILD_NUMBER']
-	p['buildBranch'] = env['GIT_BRANCH'].replaceFirst('^[^/]+/', '')
-	p['buildCommit'] = env['GIT_COMMIT']
+  p['buildGroupId'] = p['projectGroupId']
+  p['buildArtifactId'] = p['projectArtifactId']
+  p['buildVersion'] = binaryVersion(env, p['projectVersion'])
+  p['buildJob'] = env['JOB_NAME']
+  p['buildNumber'] = env['BUILD_NUMBER']
+  p['buildBranch'] = env['GIT_BRANCH'].replaceFirst('^[^/]+/', '')
+  p['buildCommit'] = env['GIT_COMMIT']
 
-	p.store(new FileWriter('version.properties'), env['BUILD_TAG'])
+  p.store(new FileWriter('version.properties'), env['BUILD_TAG'])
 """
 
 set_version = """def version = build.getEnvironment(null)['buildVersion']
@@ -42,186 +42,185 @@ folder {
     name "${project_name}"
 }
 
-
 job(type: Maven) {
-    name "${project_name}/dev-build-review"
-    jdk('/usr/lib/jvm/java/')
-    parameters {
-	stringParam("GERRIT_PROJECT", "${project_name}", "Gerrit project name")
-        stringParam("GERRIT_BRANCH", "dev", "Gerrit branch")
-        stringParam("GERRIT_REFSPEC", "refs/heads/dev", "Gerrit refspec")
+  name "${project_name}/dev-build-review"
+  jdk('/usr/lib/jvm/java/')
+  parameters {
+    stringParam("GERRIT_PROJECT", "${project_name}", "Gerrit project name")
+    stringParam("GERRIT_BRANCH", "dev", "Gerrit branch")
+    stringParam("GERRIT_REFSPEC", "refs/heads/dev", "Gerrit refspec")
+  }
+  configure { project ->
+    project << globalSettings(
+      class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+      plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+        settingsConfigId('<%= @settings_id %>')
+      }
+  }
+  scm {
+    git {
+      remote {
+        name('origin')
+        url(git_url)
+        refspec('\${GERRIT_REFSPEC}')
+      }
+      branch('*/\${GERRIT_BRANCH}')
     }
-    configure { project ->
-	    project << globalSettings(
-            class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-            plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>'
-        ) {
-		    settingsConfigId('<%= @settings_id %>')
-		}
+  }
+  triggers {
+    gerrit {
+      events {
+        PatchsetCreated
+        DraftPublished
+      }
+      project('${project_name}', 'dev')
     }
-    scm {
-        git {
-            remote {
-                name('origin')
-                url(git_url)
-                refspec('\${GERRIT_REFSPEC}')
-            }
-            branch('*/\${GERRIT_BRANCH}')
-        }
+  }
+  goals('-e')
+  goals('clean')
+  goals('install')
+  mavenInstallation(maven_installation)
+  postBuildSteps {
+    maven {
+      rootPOM("spring-petclinic-test/pom.xml")
+      goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
+      mavenInstallation(maven_installation)
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
     }
-    triggers {
-        gerrit {
-            events {
-                PatchsetCreated
-                DraftPublished
-            }
-	    project('${project_name}', 'dev')
-        }
-    }
-	    goals('-e')
-	    goals('clean')
-	    goals('install')
-	    mavenInstallation(maven_installation)
-    postBuildSteps {	    
-	maven {
-	    rootPOM("spring-petclinic-test/pom.xml")
-	    goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
-	    mavenInstallation(maven_installation)
-    	    configure { project ->
-    		    project << globalSettings(
-                    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-                    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
-                ) {
-    			    settingsConfigId('<%= @settings_id %>')
-    			}
-    	    }
-	}
-    }
-    perModuleEmail(false)
+  }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
+  perModuleEmail(false)
 }
 
 job(type: Maven) {
-    name "${project_name}/dev-build"
-    jdk('/usr/lib/jvm/java/')
-    configure { project ->
-	    project << globalSettings(
-            class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-            plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
-        ) {
-		    settingsConfigId('<%= @settings_id %>')
-		}
+  name "${project_name}/dev-build"
+  jdk('/usr/lib/jvm/java/')
+  configure { project ->
+    project << globalSettings(
+      class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+      plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
+        settingsConfigId('<%= @settings_id %>')
+      }
+  }
+  scm {
+    git {
+      remote {
+        name('origin')
+        url(git_url)
+        refspec('+refs/heads/dev:refs/remotes/origin/dev')
+      }
+      branch('*/dev')
     }
-    scm {
-        git {
-            remote {
-                name('origin')
-                url(git_url)
-                refspec('+refs/heads/dev:refs/remotes/origin/dev')
-            }
-            branch('*/dev')
-        }
+  }
+  triggers {
+    gerrit {
+      events {
+        RefUpdated
+      }
+      project("${project_name}", 'plain:dev')
     }
-    triggers {
-        gerrit {
-            events {
-                RefUpdated
-            }
-	    project("${project_name}", 'plain:dev')
-        }
+  }
+  preBuildSteps {
+    groovyCommand(version_props_generate, groovy_installation)
+    environmentVariables {
+        propertiesFile('version.properties')
     }
-    preBuildSteps {
-        groovyCommand(version_props_generate, groovy_installation)
-        environmentVariables {
-            propertiesFile('version.properties')
-        }
-        maven {
-            goals('versions:set -DnewVersion=\${buildVersion}')
-            mavenInstallation(maven_installation)
-        }
+    maven {
+      goals('versions:set -DnewVersion=\${buildVersion}')
+      mavenInstallation(maven_installation)
     }
-    goals('-e')
-    goals('clean')
-    goals('install')
-    mavenInstallation(maven_installation)
-    postBuildSteps {
-        maven {
-            mavenInstallation(maven_installation)
-            goals("""deploy:deploy-file -B
-                -DgroupId=\${buildGroupId}
-                -DartifactId=asf-webapp-demo
-                -Dversion=\${buildVersion}
-                -Dpackaging=war
-                -DrepositoryId=builds-main
-		-Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
-		-Durl=\${NEXUS_URL}/content/repositories/builds-main""")
-    	    configure { project ->
-    		    project << globalSettings(
-                    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-                    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
-                ) {
-    			    settingsConfigId('<%= @settings_id %>')
-    			}
-    	    }
-        }
-	maven {
-	    rootPOM("spring-petclinic-test/pom.xml")
-	    goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
-	    mavenInstallation(maven_installation)
-    	    configure { project ->
-    		    project << globalSettings(
-                    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-                    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
-                ) {
-    			    settingsConfigId('<%= @settings_id %>')
-    			}
-    	    }
-	}
-        systemGroovyCommand(set_version)
-        downstreamParameterized {
-            trigger('integration-tests') {
-                currentBuild()
-		propertiesFile('version.properties')
-            }
-        }
+  }
+  goals('-e')
+  goals('clean')
+  goals('install')
+  mavenInstallation(maven_installation)
+  postBuildSteps {
+    maven {
+      mavenInstallation(maven_installation)
+      goals("""deploy:deploy-file -B
+          -DgroupId=\${buildGroupId}
+          -DartifactId=asf-webapp-demo
+          -Dversion=\${buildVersion}
+          -Dpackaging=war
+          -DrepositoryId=builds-main
+-Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
+-Durl=\${NEXUS_URL}/content/repositories/builds-main""")
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
     }
+    maven {
+      rootPOM("spring-petclinic-test/pom.xml")
+      goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
+      mavenInstallation(maven_installation)
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
+    }
+    systemGroovyCommand(set_version)
+    downstreamParameterized {
+      trigger('integration-tests') {
+        currentBuild()
+        propertiesFile('version.properties')
+      }
+    }
+  }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
 }
 
 job() {
     name "${project_name}/integration-tests"
     jdk('/usr/lib/jvm/java/')
     parameters {
-        stringParam('QUBELL_APP_ID', '53eb65e9e4b0f24b4a52c0f2', 'Qubell Application ID')
-        stringParam('QUBELL_ENV_ID', '53f5d94ce4b0b03d045f7a13', 'Qubell Env ID')
+      stringParam('QUBELL_APP_ID', '53eb65e9e4b0f24b4a52c0f2', 'Qubell Application ID')
+      stringParam('QUBELL_ENV_ID', '53f5d94ce4b0b03d045f7a13', 'Qubell Env ID')
     }
     configure { project ->
 	    project << globalSettings(
-            class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-            plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>'
-        ) {
-		    settingsConfigId('<%= @settings_id %>')
-		}
+        class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+        plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+		      settingsConfigId('<%= @settings_id %>')
+		    }
     }
     scm {
-        git {
-            remote {
-                name('origin')
-                url(git_url)
-            }
-            branch('\${buildCommit}')
+      git {
+        remote {
+          name('origin')
+          url(git_url)
         }
+        branch('\${buildCommit}')
+      }
     }
     steps {
 	    configure { project ->
 		    project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
 			    plugin: "qubell@2.5") {
-		    expectedStatus('RUNNING')
-		    timeout('1200')
-		    outputFilePath('qubell_output.json')
-		    manifestRelativePath('')
-		    environmentId('\${QUBELL_ENV_ID}')
-		    applicationId('\${QUBELL_APP_ID}')
-		    extraParameters(qubell_app_params)
-		    }
+    		    expectedStatus('RUNNING')
+    		    timeout('1200')
+    		    outputFilePath('qubell_output.json')
+    		    manifestRelativePath('')
+    		    environmentId('\${QUBELL_ENV_ID}')
+    		    applicationId('\${QUBELL_APP_ID}')
+    		    extraParameters(qubell_app_params)
+		      }
 	    }
     configure { // It's hack because for some reasone DSL does not add qubell plugin into job
 	    it / builders << "hudson.plugins.groovy.SystemGroovy"(plugin: "groovy@1.20") {
@@ -233,7 +232,7 @@ import hudson.model.*;
 def build = Thread.currentThread().executable;
 def envVarsMap = build.parent.builds[0].properties.get("envVars")
 
-def qubellOutputFile = new File("\${envVarsMap.get("WORKSPACE")}/qubell_output.json")
+def qubellOutputFile = new File("\${envVarsMap.get('WORKSPACE')}/qubell_output.json")
 def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
 
 def pa = new ParametersAction([
@@ -241,9 +240,8 @@ new StringParameterValue('PETCLINIC_URL', userJson.returnValues.'output.webapp_e
 ]);
 build.addAction(pa);
 """
-			    }
-		    }
-	    }
+        }
+      }
 	    maven {
 		    rootPOM("spring-petclinic-test/pom.xml")
 		    goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dpetclinic.url=${PETCLINIC_URL}')
@@ -251,85 +249,91 @@ build.addAction(pa);
 		    configure { project ->
 			    project << globalSettings(
 			    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-			    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
-			) {
+			    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
 				    settingsConfigId('<%= @settings_id %>')
-				}
+				  }
 		    }
 	    }
     }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
 }
 
 job(type: Maven) {
-    name "${project_name}/fb-build"
-    jdk("/usr/lib/jvm/java/")
-    configure { project ->
-	    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
-		    settingsConfigId('<%= @settings_id %>')
-		}
+  name "${project_name}/fb-build"
+  jdk("/usr/lib/jvm/java/")
+  configure { project ->
+    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+      settingsConfigId('<%= @settings_id %>')
     }
-    scm {
-        git {
-            remote {
-                name('origin')
-                url(git_url)
-            }
-            branch('*/fb-*')
-        }
+  }
+  scm {
+    git {
+      remote {
+        name('origin')
+        url(git_url)
+      }
+      branch('*/fb-*')
     }
-    triggers {
-        gerrit {
-            events {
-                RefUpdated
-            }
-	    project("${project_name}", "ant:fb-*")
-        }
+  }
+  triggers {
+    gerrit {
+      events {
+        RefUpdated
+      }
+      project("${project_name}", "ant:fb-*")
     }
+  }
 
-    preBuildSteps {
-        groovyCommand(version_props_generate, groovy_installation)
-        environmentVariables {
-            propertiesFile('version.properties')
-        }
-        maven {
-            goals('versions:set -DnewVersion=\${buildVersion}')
-            mavenInstallation(maven_installation)
-        }
+  preBuildSteps {
+    groovyCommand(version_props_generate, groovy_installation)
+    environmentVariables {
+        propertiesFile('version.properties')
     }
-    goals('-e')
-    goals('clean')
-    goals('install')
-    mavenInstallation(maven_installation)
+    maven {
+        goals('versions:set -DnewVersion=\${buildVersion}')
+        mavenInstallation(maven_installation)
+    }
+  }
+  goals('-e')
+  goals('clean')
+  goals('install')
+  mavenInstallation(maven_installation)
 
-    postBuildSteps {
-        maven {
-            goals("""deploy:deploy-file -B
-	    	-DgroupId=\${buildGroupId}
-                -DartifactId=asf-webapp-demo
-		-Dversion=\${buildVersion}
-		-Dpackaging=war
-		-DrepositoryId=builds-feature
-		-Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
-		-Durl=\${NEXUS_URL}/content/repositories/builds-feature""")
-            mavenInstallation(maven_installation)
-	    configure { project ->
-		    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
-			    settingsConfigId('<%= @settings_id %>')
-			}
-	    }
-        }
-	maven {
-	    rootPOM("spring-petclinic-test/pom.xml")
-	    goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
-	    mavenInstallation(maven_installation)
-    	    configure { project ->
-    		    project << globalSettings(
-                    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-                    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>"
-                ) {
-    			    settingsConfigId('<%= @settings_id %>')
-    			}
-    	    }
-	}
+  postBuildSteps {
+    maven {
+      goals("""deploy:deploy-file -B
+  -DgroupId=\${buildGroupId}
+          -DartifactId=asf-webapp-demo
+-Dversion=\${buildVersion}
+-Dpackaging=war
+-DrepositoryId=builds-feature
+-Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
+-Durl=\${NEXUS_URL}/content/repositories/builds-feature""")
+      mavenInstallation(maven_installation)
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
     }
+    maven {
+      rootPOM("spring-petclinic-test/pom.xml")
+      goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
+      mavenInstallation(maven_installation)
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
+    }
+  }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
 }

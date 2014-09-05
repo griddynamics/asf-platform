@@ -40,10 +40,12 @@ end
 bash "Enable Remote API Calls" do
   user "root"
   code <<-EOH
-  mysql -u jira -pchangeit jira -e \
-  "update propertynumber set propertyvalue=1 where id=(
-    select id from propertyentry where PROPERTY_KEY='jira.option.rpc.allow')"
-  EOH
+  mysql -u jira -pchangeit jira -e "
+  SET @new_id = (select max(id) + 1 FROM propertyentry);
+  INSERT INTO propertyentry VALUES(
+    @new_id ,'jira.properties', '1', 'jira.option.rpc.allow', '1');
+  INSERT INTO propertynumber VALUES(@new_id, '1');"
+ EOH
 end
 
 service 'jira' do
