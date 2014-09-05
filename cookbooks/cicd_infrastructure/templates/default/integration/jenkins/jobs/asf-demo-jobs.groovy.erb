@@ -73,27 +73,13 @@ job(type: Maven) {
         PatchsetCreated
         DraftPublished
       }
-      project('${project_name}', 'dev')
+      project("${project_name}", "dev")
     }
   }
   goals('-e')
   goals('clean')
   goals('install')
   mavenInstallation(maven_installation)
-  postBuildSteps {
-    maven {
-      rootPOM("spring-petclinic-test/pom.xml")
-      goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
-      mavenInstallation(maven_installation)
-      configure { project ->
-        project << globalSettings(
-          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-          plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
-            settingsConfigId('<%= @settings_id %>')
-          }
-      }
-    }
-  }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
