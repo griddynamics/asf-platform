@@ -230,7 +230,7 @@ build.addAction(pa);
       }
 	    maven {
 		    rootPOM("spring-petclinic-test/pom.xml")
-		    goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dpetclinic.url=${PETCLINIC_URL}')
+		    goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dbrowser.version= -Dpetclinic.url=${PETCLINIC_URL}')
 		    mavenInstallation(maven_installation)
 		    configure { project ->
 			    project << globalSettings(
