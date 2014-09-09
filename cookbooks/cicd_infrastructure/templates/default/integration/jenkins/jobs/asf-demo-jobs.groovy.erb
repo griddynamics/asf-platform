@@ -76,6 +76,7 @@ job(type: Maven) {
       project("${project_name}", "dev")
     }
   }
+  concurrentBuild(true)
   goals('-e')
   goals('clean')
   goals('install')
@@ -283,6 +284,7 @@ job(type: Maven) {
         mavenInstallation(maven_installation)
     }
   }
+  concurrentBuild(true)
   goals('-e')
   goals('clean')
   goals('install')
