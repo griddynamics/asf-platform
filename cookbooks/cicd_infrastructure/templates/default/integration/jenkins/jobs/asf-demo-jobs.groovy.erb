@@ -76,6 +76,7 @@ job(type: Maven) {
       project("${project_name}", "dev")
     }
   }
+  logRotator(30, 50, -1, -1)
   concurrentBuild(true)
   goals('-e')
   goals('clean')
@@ -125,6 +126,7 @@ job(type: Maven) {
       mavenInstallation(maven_installation)
     }
   }
+  logRotator(30, 50, -1, -1)
   goals('-e')
   goals('clean')
   goals('install')
@@ -196,6 +198,7 @@ job() {
         branch('\${buildCommit}')
       }
     }
+    logRotator(30, 50, -1, -1)
     steps {
 	    configure { project ->
 		    project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
@@ -285,6 +288,7 @@ job(type: Maven) {
     }
   }
   concurrentBuild(true)
+  logRotator(30, 50, -1, -1)
   goals('-e')
   goals('clean')
   goals('install')
