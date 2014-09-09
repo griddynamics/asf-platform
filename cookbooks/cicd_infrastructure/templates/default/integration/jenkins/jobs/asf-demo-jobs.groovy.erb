@@ -82,6 +82,7 @@ job(type: Maven) {
   goals('clean')
   goals('install')
   mavenInstallation(maven_installation)
+  localRepository(LocalToWorkspace)
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
@@ -124,6 +125,7 @@ job(type: Maven) {
     maven {
       goals('versions:set -DnewVersion=\${buildVersion}')
       mavenInstallation(maven_installation)
+      localRepository(LocalToWorkspace)
     }
   }
   logRotator(30, 50, -1, -1)
@@ -131,9 +133,11 @@ job(type: Maven) {
   goals('clean')
   goals('install')
   mavenInstallation(maven_installation)
+  localRepository(LocalToWorkspace)
   postBuildSteps {
     maven {
       mavenInstallation(maven_installation)
+      localRepository(LocalToWorkspace)
       goals("""deploy:deploy-file -B
           -DgroupId=\${buildGroupId}
           -DartifactId=asf-webapp-demo
@@ -154,6 +158,7 @@ job(type: Maven) {
       rootPOM("spring-petclinic-test/pom.xml")
       goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
       mavenInstallation(maven_installation)
+      localRepository(LocalToWorkspace)
       configure { project ->
         project << globalSettings(
           class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
@@ -236,6 +241,7 @@ build.addAction(pa);
 		    rootPOM("spring-petclinic-test/pom.xml")
 		    goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dbrowser.version= -Dpetclinic.url=${PETCLINIC_URL}')
 		    mavenInstallation(maven_installation)
+            localRepository(LocalToWorkspace)
 		    configure { project ->
 			    project << globalSettings(
 			    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
@@ -285,6 +291,7 @@ job(type: Maven) {
     maven {
         goals('versions:set -DnewVersion=\${buildVersion}')
         mavenInstallation(maven_installation)
+        localRepository(LocalToWorkspace)
     }
   }
   concurrentBuild(true)
@@ -293,6 +300,7 @@ job(type: Maven) {
   goals('clean')
   goals('install')
   mavenInstallation(maven_installation)
+  localRepository(LocalToWorkspace)
 
   postBuildSteps {
     maven {
@@ -305,6 +313,7 @@ job(type: Maven) {
 -Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
 -Durl=\${NEXUS_URL}/content/repositories/builds-feature""")
       mavenInstallation(maven_installation)
+      localRepository(LocalToWorkspace)
       configure { project ->
         project << globalSettings(
           class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
@@ -317,6 +326,7 @@ job(type: Maven) {
       rootPOM("spring-petclinic-test/pom.xml")
       goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
       mavenInstallation(maven_installation)
+      localRepository(LocalToWorkspace)
       configure { project ->
         project << globalSettings(
           class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
