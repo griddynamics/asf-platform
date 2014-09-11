@@ -22,7 +22,7 @@ template "#{node['nexus']['work_dir']}/conf/ldap.xml" do
   group node['nexus']['group']
   mode 0644
   variables(
-    host:         nexus_ldap_config['host'],
+    host:         nexus_ldap_config['server'],
     port:         nexus_ldap_config['port'],
     basedn:       nexus_ldap_config['basedn'],
     rootdn:       nexus_ldap_config['rootdn'],

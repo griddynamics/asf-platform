@@ -81,7 +81,7 @@ default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayNa
 default['cicd_infrastructure']['gerrit']['ldap']['accountEmailAddress'] = 'mail'
 
 default['cicd_infrastructure']['nexus']['auth'] = 'LDAP'
-default['cicd_infrastructure']['nexus']['ldap']['host'] = 'localhost'
+default['cicd_infrastructure']['nexus']['ldap']['server'] = 'localhost'
 default['cicd_infrastructure']['nexus']['ldap']['port'] = '389'
 default['cicd_infrastructure']['nexus']['ldap']['basedn'] = 'dc=example,dc=com'
 default['cicd_infrastructure']['nexus']['ldap']['rootdn'] = "cn=admin,#{node['cicd_infrastructure']['nexus']['ldap']['basedn']}"
@@ -154,7 +154,7 @@ default['cicd_infrastructure']['sonar']['ldap']['userdn'] = "ou=people,\
 default['cicd_infrastructure']['sonar']['ldap']['groupdn'] = "ou=groups,\
 #{node['cicd_infrastructure']['sonar']['ldap']['basedn']}"
 
-default['cicd_infrastructure']['jira']['ldap']['host'] = 'localhost'
+default['cicd_infrastructure']['jira']['ldap']['server'] = 'localhost'
 default['cicd_infrastructure']['jira']['ldap']['port'] = '389'
 default['cicd_infrastructure']['jira']['ldap']['basedn'] = 'dc=example,dc=com'
 default['cicd_infrastructure']['jira']['ldap']['rootdn'] = "cn=admin,#{node['cicd_infrastructure']['jira']['ldap']['basedn']}"
