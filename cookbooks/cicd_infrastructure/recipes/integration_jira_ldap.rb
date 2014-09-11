@@ -69,7 +69,7 @@ template "#{node['jira']['work_dir']}/ldap_configure.sql" do
   group node['jira']['group']
   mode 0644
   variables(
-    host:         jira_ldap_config['host'],
+    host:         jira_ldap_config['server'],
     port:         jira_ldap_config['port'],
     basedn:       jira_ldap_config['basedn'],
     rootdn:       jira_ldap_config['rootdn'],
