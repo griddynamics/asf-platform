@@ -1,0 +1,16 @@
+{
+  "dev": {
+    "app_mapping" : {
+    },
+    "bucket": "gd-asf",
+    "components": [
+      "gerrit",
+      "jenkins",
+      "ldap",
+      "selenium",
+      "sonar",
+      "jira",
+      "nexus"
+    ]
+  }
+}

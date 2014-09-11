@@ -1,0 +1,406 @@
+# Encoding: utf-8
+#
+# Application: Agile Software Factory
+# Component: Main
+#
+# Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
+# Classification level: Public
+# Licensed under the Apache License, Version 2.0.
+#
+# All hope abandon ye who enter here
+#
+
+application:
+  configuration:
+    input.cookbooks_url: "http://<%= config['bucket'] %>.s3.amazonaws.com/cookbooks.tar.gz"
+    <% if config['components'].include? 'gerrit'   -%>input.gerrit_version: "2.9"<% end %>
+    <% if config['components'].include? 'jira'     -%>input.jira_version: "6.1.5"<% end %>
+    <% if config['components'].include? 'sonar'    -%>input.sonar_version: "3.7.4"<% end %>
+    <% if config['components'].include? 'selenium' -%>input.selenium_version: "2.42.2"
+    input.selenium_node_count: "1"<% end %>
+  bindings:
+  <% config['components'].each do |mod| -%>
+    - [integration.workflow, <%= mod %>]
+  <% end -%>
+    - [integration.workflow, props]
+  interfaces:
+    input:
+      <% if config['components'].include? 'jira' %>jira_version: "bind(jira#input.jira_version)"<% end %>
+      <% if config['components'].include? 'gerrit' %>gerrit_version: "bind(gerrit#input.gerrit_version)"<% end %>
+      <% if config['components'].include? 'sonar' %>sonar_version: "bind(sonar#input.sonar_version)"<% end %>
+      <% if config['components'].include? 'selenium' %>selenium_version: "bind(selenium#conf.selenium-version)"
+      selenium_node_count: "bind(selenium#conf.slave-node-count)"<% end %>
+      cookbooks_url: |
+        bind(
+    <% (config['components'] - ['selenium']).each do |mod| -%>
+      <%= mod %>#input.cookbooks_url,
+    <% end -%>
+      integration.workflow#input.cookbooks_url)
+    endpoints:
+  <% (config['components'] - ['selenium']).each do |mod| -%>
+    <%= mod %>: "bind(<%= mod %>#output.<%= mod %>_endpoint)"
+  <% end -%>
+    <% if config['components'].include? 'selenium' -%>selenium_console: "bind(selenium#endpoints.console-url)"
+      selenium_webdriver: "bind(selenium#endpoints.remote-url)"
+    <% end %>
+    servers:
+  <% (config['components'] - ['selenium']).each do |mod| -%>
+    <%= mod %>_host: "bind(<%= mod %>#output.<%= mod %>_public_ips)"
+  <% end -%>
+    <% if config['components'].include? 'selenium' -%>selenium_hub_host: "bind(selenium#hosts.hub)"
+      selenium_node_hosts: "bind(selenium#hosts.nodes)"
+    <% end -%>
+
+  components:
+    props:
+      type: reference.Service
+      interfaces:
+        properties:
+          qubell_username: "publish-signal(string)"
+          qubell_password: "publish-signal(string)"
+          jira_username: "publish-signal(string)"
+          jira_password: "publish-signal(string)"
+
+  <% if config['components'].include? 'sonar' %>
+    sonar:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Sonar"
+      interfaces:
+        input:
+          sonar_version:
+            type: configuration(string)
+            name: Sonar version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          sonar_public_ips:
+            type: publish-signal(list<string>)
+            name: Sonar
+          sonar_endpoint:
+            type: publish-signal(list<string>)
+            name: Sonar
+  <% end -%>
+  <% if config['components'].include? 'gerrit' %>
+    gerrit:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Gerrit"
+      interfaces:
+        input:
+          gerrit_version:
+            type: configuration(string)
+            name: Gerrit version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          gerrit_public_ips:
+            type: publish-signal(list<string>)
+            name: Gerrit
+          gerrit_endpoint:
+            type: publish-signal(string)
+            name: Gerrit
+  <% end -%>
+  <% if config['components'].include? 'jenkins' %>
+    jenkins:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Jenkins"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          jenkins_public_ips:
+            type: publish-signal(list<string>)
+            name: Jenkins
+          jenkins_endpoint:
+            type: publish-signal(string)
+            name: Jenkins
+  <% end -%>
+  <% if config['components'].include? 'jira' %>
+    jira:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "JIRA"
+      interfaces:
+        input:
+          jira_version:
+            type: configuration(string)
+            name: JIRA version
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          jira_public_ips:
+            type: publish-signal(list<string>)
+            name: JIRA
+          jira_endpoint:
+            type: publish-signal(string)
+            name: JIRA
+  <% end -%>
+  <% if config['components'].include? 'ldap' %>
+    ldap:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "OpenLDAP"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          ldap_public_ips:
+            type: publish-signal(list<string>)
+            name: LDAP
+          ldap_endpoint:
+            type: publish-signal(list<string>)
+            name: LDAP
+  <% end -%>
+  <% if config['components'].include? 'nexus' %>
+    nexus:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "Nexus"
+      interfaces:
+        input:
+          cookbooks_url:
+            type: configuration(string)
+            name: Cookbooks tarball URL
+        output:
+          nexus_public_ips:
+            type: publish-signal(list<string>)
+            name: Nexus
+          nexus_endpoint:
+            type: publish-signal(string)
+            name: Nexus
+  <% end -%>
+  <% if config['components'].include? 'selenium' %>
+    selenium:
+      type: reference.Submodule
+      configuration:
+        __locator.application-id: "SeleniumGrid"
+      interfaces:
+        conf:
+          selenium-version:
+            type: configuration(string)
+            name: SeleniumGrid version
+          slave-node-count:
+            type: configuration(string)
+            name: SeleniumGrid node count
+          recipes:
+            type: configuration(string)
+            name: "SeleniumGrid recipes"
+        endpoints:
+          console-url:
+            type: publish-signal(string)
+            name: SeleniumGrid Console
+          remote-url:
+            type: publish-signal(string)
+            name: SeleniumGrid WebDriver
+        hosts:
+          hub:
+            type: publish-signal(string)
+            name: SeleniumGrid Hub
+          nodes:
+            type: publish-signal(list<string>)
+            name: SeleniumGrid Nodes
+        actions:
+          scale:
+            type: receive-command(int node-count => list<string> node-hosts)
+            name: "Scale up SeleniumGrid"
+          re-start:
+            type: receive-command()
+            name: "Restart SeleniumGrid"
+          change-version:
+            type: receive-command(string selenium-version)
+            name: "Change SeleniumGrid version"
+  <% end -%>
+  <% unless config['components'].empty? %>
+    integration:
+      components:
+        workflow:
+          type: workflow.Instance
+          interfaces:
+            input:
+              cookbooks_url:
+                type: configuration(string)
+                name: Cookbooks tarball URL
+            properties:
+              qubell_username: consume-signal(string)
+              qubell_password: consume-signal(string)
+              jira_username: consume-signal(string)
+              jira_password: consume-signal(string)
+        <% (config['components'] - ['selenium']).each do |mod| %>
+            <%= mod -%>:
+              <%= mod %>_public_ips: consume-signal(list<string>)<% end -%>
+          <% if config['components'].include? 'selenium' %>
+            selenium:
+              remote-url: consume-signal(string)
+          <% end %>
+          required:<% config['components'].each do |mod| %>
+            - <%= mod -%>
+          <% end %>
+          configuration:
+            configuration.triggers: {}
+            configuration.workflows:
+              launch:
+                steps:
+                  - get_env_props:
+                      action: getEnvironmentProperties
+                      output:
+                        environment: result
+                <% (config['components'] - ['selenium']).each do |mod| %>
+                  - init_<%= mod %>_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.<%= mod %>.<%= mod %>_public_ips}"
+                        role: <%= mod %>
+                <% end -%>
+                <% if config['components'].include? 'ldap' %>
+                  - ldap_export_users:
+                      precedingPhases: [ init_component_vms ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ ldap ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::openldap_new_users]" ]
+                        version: "11.8.2"
+                <% end -%>
+                <% if config['components'].include? 'jira' %>
+                  - jira_setup:
+                      phase: jira_setup
+                      precedingPhases: [ init_jira_vm ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jira ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_jira_jenkins]" ]
+                        version: "11.8.2"
+                <% end -%>
+                <% if config['components'].include? 'jenkins' %>
+                  - jenkins_setup:
+                      precedingPhases: [ init_component_vms ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jenkins ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList:<% (config['components'] - ['selenium', 'sonar', 'jenkins', 'ldap']).each do |mod| %>
+                          - "recipe[cicd_infrastructure::integration_jenkins_<%= mod %>]"<% end %>
+                          - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            jenkins:
+                              pubkey: ""
+                              <% if config['components'].include? 'jenkins' %>
+                              gerrit-trigger:
+                                host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                              <% end -%>
+                              <% if config['components'].include? 'nexus' %>
+                              nexus:
+                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+                              <% end -%>
+                              <% if config['components'].include? 'selenium' %>
+                              selenium:
+                                endpoint: "{$.environment.selenium.remote-url}"
+                              <% end %>
+                              qubell-plugin:
+                                username: "{$.environment.properties.qubell_username}"
+                                password: "{$.environment.properties.qubell_password}"
+                              <% if config['components'].include? 'jira' %>
+                              jira:
+                                host: "{$.environment.jira.jira_public_ips[0]}"
+                                username: "{$.environment.properties.jira_username}"
+                                password: "{$.environment.properties.jira_password}"
+                              <% end %>
+                      output:
+                        jenkins_host_state: chefState
+                <% end %>
+                <% if (['jenkins', 'gerrit'] - config['components']).empty? %>
+                  - gerrit_jenkins:
+                      phase: gerrit_setup
+                      precedingPhases: [ jenkins_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ gerrit ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_jenkins]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            gerrit:
+                              jenkins_host: "{$.environment.jenkins.jenkins_public_ips[0]}"
+                              jenkins_pubkey: "{$.jenkins_host_state.*.[0].cicd_infrastructure.jenkins.pubkey}"
+
+                  - add_asf_jenkins_jobs_project:
+                      precedingPhases: [ gerrit_setup ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ gerrit ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_demojobs_project]" ]
+                        version: "11.8.2"
+
+                  - add_asf_jenkins_jobs_generator:
+                      precedingPhases: [ jenkins_setup, add_asf_jenkins_jobs_project ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ jenkins ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_jenkins_jobs]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            jenkins:
+                              gerrit-trigger:
+                                host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                              nexus:
+                                endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+                <% end -%>
+                <% config['components'].include? 'ldap' -%>
+                  <% (config['components'] - ['selenium', 'ldap']).each do |mod| %>
+                  - <%= mod %>_ldap:
+                      phase: ldap_integration
+                      precedingPhases: [ ldap_export_users, add_asf_jenkins_jobs_generator ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ <%= mod %> ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_<%= mod %>_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            <%= mod %>:
+                              ldap:
+                                server: "{$.environment.ldap.ldap_public_ips[0]}"
+                  <% end -%>
+                <% end -%>
+
+              .init_vm:
+                parameters:
+                  - role:
+                      default: undefined
+                  - static_ips:
+                      default: undefined
+                steps:
+                  - initialization:
+                      action: provisionVms
+                      parameters:
+                        hardwareId: m3.medium
+                        imageId: us-east-1/ami-d41689bd
+                        jcloudsProvider: aws-ec2
+                        jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                        roleName: "{$.role}"
+                        vmIdentity: ec2-user
+                        staticIps: "{$.static_ips}"
+
+              destroy:
+                steps:
+                  - destroy:
+                      action: undeployEnv
