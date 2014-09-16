@@ -204,6 +204,13 @@ under the License.
 <%= render 'jenkins/jbehave_mirrors_settings.xml.erb' %>
 <% end %>
   &lt;/mirrors&gt;
+
+  &lt;activeProfiles&gt;
+    &lt;activeProfile&gt;nexus-profile&lt;/activeProfile&gt;
+<% if @use_jbehave_proxy == 'true' %>
+    &lt;activeProfile&gt;<%= @jbehave_framework_repo_id %>&lt;/activeProfile&gt;
+<% end %>
+  &lt;/activeProfiles&gt;
   
   &lt;!-- profiles
    | This is a list of profiles which can be activated in a variety of ways, and which can modify
@@ -269,10 +276,56 @@ under the License.
       &lt;/repositories&gt;
     &lt;/profile&gt;
 
+    &lt;!--
+            CI build profiles - separate for each development stream
+            - feature branches, mainline and release branches.
+        --&gt;
+ 
+        &lt;!-- Deployment configuration for CI builds for mainline --&gt;
+        &lt;profile&gt;
+            &lt;id&gt;build&lt;/id&gt;
+ 
+            &lt;properties&gt;
+                &lt;!-- For deploy:deploy-file and &lt;distributionManagement&gt; --&gt;
+                &lt;repositoryId/&gt;
+                &lt;repositoryUrl/&gt;
+                &lt;snapshotsRepositoryId&gt;builds-main&lt;/snapshotsRepositoryId&gt;
+                &lt;snapshotsUrl&gt;${env.NEXUS_URL}/content/repositories/builds-main&lt;/snapshotsUrl&gt;
+            &lt;/properties&gt;
+            &lt;repositories&gt;
+                &lt;repository&gt;
+                    &lt;id&gt;builds-all&lt;/id&gt;
+                    &lt;url&gt;${env.NEXUS_URL}/content/repositories/builds-all/&lt;/url&gt;
+                    &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;
+                &lt;/repository&gt;
+            &lt;/repositories&gt;
+        &lt;/profile&gt;
+ 
+        &lt;!-- Deployment configuration for CI builds from feature branches --&gt;
+        &lt;profile&gt;
+            &lt;id&gt;build-fb&lt;/id&gt;
+ 
+            &lt;properties&gt;
+                &lt;!-- For deploy:deploy-file and &lt;distributionManagement&gt; --&gt;
+                &lt;repositoryId/&gt;
+                &lt;repositoryUrl/&gt;
+                &lt;snapshotsRepositoryId&gt;builds-feature&lt;/snapshotsRepositoryId&gt;
+                &lt;snapshotsUrl&gt;${env.NEXUS_URL}/content/repositories/builds-feature&lt;/snapshotsUrl&gt;
+            &lt;/properties&gt;
+            &lt;repositories&gt;
+                &lt;repository&gt;
+                    &lt;id&gt;builds-all&lt;/id&gt;
+                    &lt;url&gt;${env.NEXUS_URL}/content/repositories/builds-all/&lt;/url&gt;
+                    &lt;updatePolicy&gt;always&lt;/updatePolicy&gt;
+                &lt;/repository&gt;
+            &lt;/repositories&gt;
+        &lt;/profile&gt;
+
 <% if @use_jbehave_proxy == 'true' %>
 <%= render 'jenkins/jbehave_profile_settings.xml.erb' %>
 <% end %>
 
+&lt;/profiles&gt;
 
     &lt;!--
      | Here is another profile, activated by the system property &apos;target-env&apos; with a value of &apos;dev&apos;,
@@ -308,7 +361,6 @@ under the License.
       &lt;/properties&gt;
     &lt;/profile&gt;
     --&gt;
-  &lt;/profiles&gt;
 
   &lt;!-- activeProfiles
    | List of profiles that are active for all builds.
@@ -318,12 +370,6 @@ under the License.
     &lt;activeProfile&gt;anotherAlwaysActiveProfile&lt;/activeProfile&gt;
   &lt;/activeProfiles&gt;
   --&gt;
-  &lt;activeProfiles&gt;
-    &lt;activeProfile&gt;nexus-profile&lt;/activeProfile&gt;
-<% if @use_jbehave_proxy == 'true' %>
-    &lt;activeProfile&gt;<%= @jbehave_framework_repo_id %>&lt;/activeProfile&gt;
-<% end %>
-  &lt;/activeProfiles&gt;
 &lt;/settings&gt;</content>
         <serverCredentialMappings/>
       </org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig>
