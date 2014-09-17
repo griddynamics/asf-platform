@@ -74,7 +74,7 @@ default['cicd_infrastructure']['jenkins']['jira']['plugin']['url'] = "http://rep
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
 default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'
-default['cicd_infrastructure']['gerrit']['ldap']['server'] = 'ldap://localhost'
+default['cicd_infrastructure']['gerrit']['ldap']['server'] = 'localhost'
 default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=example,dc=com'
 default['cicd_infrastructure']['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
 default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayName'
