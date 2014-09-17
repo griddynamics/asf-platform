@@ -131,45 +131,12 @@ job(type: Maven) {
   logRotator(30, 50, -1, -1)
   goals('-e')
   goals('clean')
-  goals('install')
+  goals('deploy -P build')
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
   postBuildSteps {
-    maven {
-      mavenInstallation(maven_installation)
-      localRepository(LocalToWorkspace)
-      goals("""deploy:deploy-file -B
-          -DgroupId=\${buildGroupId}
-          -DartifactId=asf-webapp-demo
-          -Dversion=\${buildVersion}
-          -Dpackaging=war
-          -DrepositoryId=builds-main
--Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
--Durl=\${NEXUS_URL}/content/repositories/builds-main""")
-      configure { project ->
-        project << globalSettings(
-          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-          plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
-            settingsConfigId('<%= @settings_id %>')
-          }
-      }
-    }
-    maven {
-      rootPOM("spring-petclinic-test/pom.xml")
-      goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
-      mavenInstallation(maven_installation)
-      localRepository(LocalToWorkspace)
-      configure { project ->
-        project << globalSettings(
-          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-          plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
-            settingsConfigId('<%= @settings_id %>')
-          }
-      }
-    }
-    systemGroovyCommand(set_version)
     downstreamParameterized {
-      trigger('integration-tests') {
+      trigger('functional-tests') {
         currentBuild()
         propertiesFile('version.properties')
       }
@@ -181,27 +148,10 @@ job(type: Maven) {
 }
 
 job() {
-    name "${project_name}/integration-tests"
     jdk('/usr/lib/jvm/java/')
     parameters {
       stringParam('QUBELL_APP_ID', '53eb65e9e4b0f24b4a52c0f2', 'Qubell Application ID')
       stringParam('QUBELL_ENV_ID', '53f5d94ce4b0b03d045f7a13', 'Qubell Env ID')
-    }
-    configure { project ->
-	    project << globalSettings(
-        class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-        plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
-		      settingsConfigId('<%= @settings_id %>')
-		    }
-    }
-    scm {
-      git {
-        remote {
-          name('origin')
-          url(git_url)
-        }
-        branch('\${buildCommit}')
-      }
     }
     logRotator(30, 50, -1, -1)
     steps {
@@ -237,24 +187,60 @@ build.addAction(pa);
 """
         }
       }
-	    maven {
-		    rootPOM("spring-petclinic-test/pom.xml")
-		    goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dbrowser.version= -Dpetclinic.url=${PETCLINIC_URL}')
-		    mavenInstallation(maven_installation)
-            localRepository(LocalToWorkspace)
-		    configure { project ->
-			    project << globalSettings(
-			    class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-			    plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
-				    settingsConfigId('<%= @settings_id %>')
-				  }
-		    }
-	    }
     }
+
+
+    configure {
+        it / builders << "hudson.plugins.parameterizedtrigger.TriggerBuilder"(plugin:"parameterized-trigger@2.25") {
+            configs{
+                    "hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig" {
+                        projects("integration-tests")
+                        condition("UNSTABLE_OR_BETTER")
+                        triggerWithNoParameters(false)
+                        buildAllNodesWithLabel(false)
+                    configs {
+                        "hudson.plugins.parameterizedtrigger.PredefinedBuildParameters" {
+                        properties("buildCommit=\${buildCommit}\nPETCLINIC_URL=\${PETCLINIC_URL}")
+                        }
+                    }
+                    block{
+                        buildStepFailureThreshold {
+                            name("FAILURE")
+                            ordinal(2)
+                            color("RED")
+                        }
+                        failureThreshold {
+                            name("FAILURE")
+                            ordinal(2)
+                            color("RED")
+                        }
+                        unstableThreshold {
+                            name("UNSTABLE")
+                            ordinal(1)
+                            color("YELLOW")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+	    configure { project ->
+		    project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.DestroyInstanceBuilder"(
+			    plugin: "qubell@2.5") {
+    		    expectedStatus('DESTROYED')
+                timeout('1')
+                commandName('destroy')
+		      }
+	    }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
 }
+    // Workaround because dsl plugin bind function into context
+    configure { project ->
+        name ("${project_name}/deploy-integration-tests")
+    }
 }
 
 job(type: Maven) {
@@ -298,41 +284,124 @@ job(type: Maven) {
   logRotator(30, 50, -1, -1)
   goals('-e')
   goals('clean')
-  goals('install')
+  goals('deploy -P build-fb')
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
 
   postBuildSteps {
-    maven {
-      goals("""deploy:deploy-file -B
-  -DgroupId=\${buildGroupId}
-          -DartifactId=asf-webapp-demo
--Dversion=\${buildVersion}
--Dpackaging=war
--DrepositoryId=builds-feature
--Dfile=\${WORKSPACE}/spring-petclinic/target/petclinic.war
--Durl=\${NEXUS_URL}/content/repositories/builds-feature""")
-      mavenInstallation(maven_installation)
-      localRepository(LocalToWorkspace)
-      configure { project ->
-        project << globalSettings(
-          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-          plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
-            settingsConfigId('<%= @settings_id %>')
-          }
+    downstreamParameterized {
+      trigger('fb-functional-tests') {
+        currentBuild()
+        propertiesFile('version.properties')
       }
     }
-    maven {
-      rootPOM("spring-petclinic-test/pom.xml")
-      goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
-      mavenInstallation(maven_installation)
-      localRepository(LocalToWorkspace)
-      configure { project ->
-        project << globalSettings(
-          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
-          plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
-            settingsConfigId('<%= @settings_id %>')
-          }
+  }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
+}
+
+job(type: Maven) {
+  name "${project_name}/fb-functional-tests"
+  jdk("/usr/lib/jvm/java/")
+  configure { project ->
+    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+      settingsConfigId('<%= @settings_id %>')
+    }
+  }
+  scm {
+    git {
+      remote {
+        name('origin')
+        url(git_url)
+      }
+      branch('\${buildCommit}')
+    }
+  }
+
+  rootPOM("spring-petclinic-test/pom.xml")
+  goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
+  mavenInstallation(maven_installation)
+  localRepository(LocalToWorkspace)
+  configure { project ->
+    project << globalSettings(
+      class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+      plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
+        settingsConfigId('<%= @settings_id %>')
+      }
+  }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
+}
+job(type: Maven) {
+  name "${project_name}/integration-tests"
+  jdk("/usr/lib/jvm/java/")
+  configure { project ->
+    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+      settingsConfigId('<%= @settings_id %>')
+    }
+  }
+  scm {
+    git {
+      remote {
+        name('origin')
+        url(git_url)
+      }
+      branch('\${buildCommit}')
+    }
+  }
+
+  rootPOM("spring-petclinic-test/pom.xml")
+  goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dbrowser.version= -Dpetclinic.url=${PETCLINIC_URL}')
+  mavenInstallation(maven_installation)
+  localRepository(LocalToWorkspace)
+  configure { project ->
+      project << globalSettings(
+      class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+      plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
+          settingsConfigId('<%= @settings_id %>')
+        }
+  }
+  configure { project ->
+    project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
+}
+
+job(type: Maven) {
+  name "${project_name}/functional-tests"
+  jdk("/usr/lib/jvm/java/")
+  configure { project ->
+    project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+      settingsConfigId('<%= @settings_id %>')
+    }
+  }
+  scm {
+    git {
+      remote {
+        name('origin')
+        url(git_url)
+      }
+      branch('\${buildCommit}')
+    }
+  }
+
+  rootPOM("spring-petclinic-test/pom.xml")
+  goals('-P functional-test clean verify -Dpetclinic.version=${projectVersion}')
+  mavenInstallation(maven_installation)
+  localRepository(LocalToWorkspace)
+  configure { project ->
+    project << globalSettings(
+      class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+      plugin:"config-file-provider@<%= @plugins['config-file-provider'] %>") {
+        settingsConfigId('<%= @settings_id %>')
+      }
+  }
+  postBuildSteps {
+    downstreamParameterized {
+      trigger('deploy-integration-tests') {
+        currentBuild()
+        predefinedProp("buildCommit", '${buildCommit}')
       }
     }
   }
