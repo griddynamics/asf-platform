@@ -12,7 +12,7 @@ gerrit_config = node['cicd_infrastructure']['gerrit']
 
 node.set['gerrit']['auth']['type'] = gerrit_config['auth']['type']
 node.set['gerrit']['ldap'] = gerrit_config['ldap']
-
+node.set['gerrit']['ldap']['server'] = "ldap://#{node['gerrit']['ldap']['server']}"
 service 'gerrit' do
   action :nothing
 end
