@@ -34,7 +34,7 @@ set_version = """def version = build.getEnvironment(null)['buildVersion']
 if (version) build.displayName = version"""
 
 qubell_app_params = """{
-    \"input.artifact_url\": \"\${NEXUS_URL}/service/local/artifact/maven/content?r=builds-all&g=org.asf.demo.webapp&a=asf-webapp-demo&v=\${buildVersion}&e=war\",
+    \"input.artifact_url\": \"\${NEXUS_URL}/service/local/artifact/maven/content?r=builds-all&g=com.griddynamics.asf.webapp-demo&a=spring-petclinic&v=\${buildVersion}&e=war\",
     \"instanceName\": \"asf-webapp-demo-\${buildVersion}\"
 }"""
 
@@ -229,7 +229,7 @@ build.addAction(pa);
 		    project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.DestroyInstanceBuilder"(
 			    plugin: "qubell@2.5") {
     		    expectedStatus('DESTROYED')
-                timeout('1')
+                timeout('600')
                 commandName('destroy')
 		      }
 	    }
