@@ -32,5 +32,12 @@ include_recipe 'jira::default'
 #            break if File.read("/opt/atlassian/jira/logs/catalina.out")
 #            .include?("You can now access JIRA through your web browser")
 #         }
+template "#{node['jira']['home_path']}/jira-config.properties" do
+  source 'jira/jira-config.properties'
+  owner node['jira']['user']
+  group node['jira']['group']
+  mode 0644
+  notifies :restart, 'service[jira]'
+end
 #     end
 # end
