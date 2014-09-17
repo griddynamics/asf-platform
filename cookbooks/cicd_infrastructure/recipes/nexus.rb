@@ -41,6 +41,8 @@ template '/nexus/sonatype-work/nexus/conf/nexus.xml' do
     promote_repo_policy:	nexus_config['repo']['promote']['policy'],
     promote_repo_ttl:		nexus_config['repo']['promote']['ttl'],
     promote_repo_min_snapshots:	nexus_config['repo']['promote']['snapshots'],
+    build_promoted_group_repo_id:   nexus_config['repo']['build']['promote']['group']['id'],
+    build_promoted_group_repo_name: nexus_config['repo']['build']['promote']['group']['name'],
     jbehave_framework_repo_id:        nexus_config['repo']['jbehave']['id'],
     jbehave_framework_repo_name:      nexus_config['repo']['jbehave']['name'],
     jbehave_framework_repo_policy:    nexus_config['repo']['jbehave']['policy'],
