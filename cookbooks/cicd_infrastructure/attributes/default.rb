@@ -124,14 +124,16 @@ default['cicd_infrastructure']['nexus']['repo']['build']['feature']['policy'] = 
 default['cicd_infrastructure']['nexus']['repo']['build']['feature']['ttl'] = '14'
 default['cicd_infrastructure']['nexus']['repo']['build']['feature']['snapshots'] = '0'
 
-default['cicd_infrastructure']['nexus']['repo']['promote']['id'] = 'builds-promoted'
-default['cicd_infrastructure']['nexus']['repo']['promote']['name'] = 'Builds-promoted'
+default['cicd_infrastructure']['nexus']['repo']['promote']['id'] = 'builds-main-promoted'
+default['cicd_infrastructure']['nexus']['repo']['promote']['name'] = 'Builds-main-promoted'
 default['cicd_infrastructure']['nexus']['repo']['promote']['policy'] = 'SNAPSHOT'
 default['cicd_infrastructure']['nexus']['repo']['promote']['ttl'] = '99'
 default['cicd_infrastructure']['nexus']['repo']['promote']['snapshots'] = '0'
 
 default['cicd_infrastructure']['nexus']['repo']['build']['group']['id'] = 'builds-all'
 default['cicd_infrastructure']['nexus']['repo']['build']['group']['name'] = 'Builds - all'
+default['cicd_infrastructure']['nexus']['repo']['build']['promote']['group']['id'] = 'builds-promoted'
+default['cicd_infrastructure']['nexus']['repo']['build']['promote']['group']['name'] = 'Builds - promoted'
 default['cicd_infrastructure']['nexus']['repo']['jbehave']['id'] = 'gd_jbehave_framework-snapshots'
 default['cicd_infrastructure']['nexus']['repo']['jbehave']['name'] = 'GD JBehave framework - snapshots'
 default['cicd_infrastructure']['nexus']['repo']['jbehave']['policy'] = 'Snapshot'
