@@ -7,6 +7,8 @@
 # Classification level: Public
 # Licensed under the Apache License, Version 2.0.
 #
+# All hope abandon ye who enter here
+#
 
 application:
   configuration:
@@ -17,14 +19,14 @@ application:
     input.selenium_version: "2.42.2"
     input.selenium_node_count: "1"
   bindings:
-    - [integration.workflow, sonar]
-    - [integration.workflow, gerrit]
-    - [integration.workflow, jenkins]
-    - [integration.workflow, jira]
-    - [integration.workflow, openldap]
-    - [integration.workflow, nexus]
-    - [integration.workflow, selenium]
-    - [integration.workflow, props]
+      - [integration.workflow, gerrit]
+      - [integration.workflow, jenkins]
+      - [integration.workflow, ldap]
+      - [integration.workflow, selenium]
+      - [integration.workflow, sonar]
+      - [integration.workflow, jira]
+      - [integration.workflow, nexus]
+      - [integration.workflow, props]
   interfaces:
     input:
       jira_version: "bind(jira#input.jira_version)"
@@ -33,31 +35,34 @@ application:
       selenium_version: "bind(selenium#conf.selenium-version)"
       selenium_node_count: "bind(selenium#conf.slave-node-count)"
       cookbooks_url: |
-        bind(openldap#input.cookbooks_url,
-        nexus#input.cookbooks_url,
-        gerrit#input.cookbooks_url,
-        sonar#input.cookbooks_url,
-        jenkins#input.cookbooks_url,
-        jira#input.cookbooks_url,
-        integration.workflow#input.cookbooks_url)
+        bind(
+          gerrit#input.cookbooks_url,
+          jenkins#input.cookbooks_url,
+          ldap#input.cookbooks_url,
+          sonar#input.cookbooks_url,
+          jira#input.cookbooks_url,
+          nexus#input.cookbooks_url,
+          integration.workflow#input.cookbooks_url)
     endpoints:
-      jira: "bind(jira#output.jira_endpoint)"
-      openldap: "bind(openldap#output.ldap_endpoint)"
-      jenkins: "bind(jenkins#output.jenkins_endpoint)"
       gerrit: "bind(gerrit#output.gerrit_endpoint)"
+      jenkins: "bind(jenkins#output.jenkins_endpoint)"
+      ldap: "bind(ldap#output.ldap_endpoint)"
       sonar: "bind(sonar#output.sonar_endpoint)"
+      jira: "bind(jira#output.jira_endpoint)"
       nexus: "bind(nexus#output.nexus_endpoint)"
       selenium_console: "bind(selenium#endpoints.console-url)"
       selenium_webdriver: "bind(selenium#endpoints.remote-url)"
+
     servers:
-      jira_host: "bind(jira#output.jira_public_ips)"
-      openldap_host: "bind(openldap#output.ldap_public_ips)"
-      jenkins_host: "bind(jenkins#output.jenkins_public_ips)"
       gerrit_host: "bind(gerrit#output.gerrit_public_ips)"
+      jenkins_host: "bind(jenkins#output.jenkins_public_ips)"
+      ldap_host: "bind(ldap#output.ldap_public_ips)"
       sonar_host: "bind(sonar#output.sonar_public_ips)"
+      jira_host: "bind(jira#output.jira_public_ips)"
       nexus_host: "bind(nexus#output.nexus_public_ips)"
       selenium_hub_host: "bind(selenium#hosts.hub)"
       selenium_node_hosts: "bind(selenium#hosts.nodes)"
+
   components:
     props:
       type: reference.Service
@@ -67,6 +72,8 @@ application:
           qubell_password: "publish-signal(string)"
           jira_username: "publish-signal(string)"
           jira_password: "publish-signal(string)"
+
+
     sonar:
       type: reference.Submodule
       configuration:
@@ -86,6 +93,7 @@ application:
           sonar_endpoint:
             type: publish-signal(list<string>)
             name: Sonar
+
     gerrit:
       type: reference.Submodule
       configuration:
@@ -143,7 +151,7 @@ application:
             type: publish-signal(string)
             name: JIRA
 
-    openldap:
+    ldap:
       type: reference.Submodule
       configuration:
         __locator.application-id: "OpenLDAP"
@@ -155,10 +163,10 @@ application:
         output:
           ldap_public_ips:
             type: publish-signal(list<string>)
-            name: OpenLDAP
+            name: LDAP
           ldap_endpoint:
             type: publish-signal(list<string>)
-            name: OpenLDAP
+            name: LDAP
 
     nexus:
       type: reference.Submodule
@@ -231,28 +239,30 @@ application:
               qubell_password: consume-signal(string)
               jira_username: consume-signal(string)
               jira_password: consume-signal(string)
-            sonar:
-              sonar_public_ips: consume-signal(list<string>)
+
             gerrit:
               gerrit_public_ips: consume-signal(list<string>)
             jenkins:
               jenkins_public_ips: consume-signal(list<string>)
-            jira:
-              jira_public_ips: consume-signal(list<string>)
             ldap:
               ldap_public_ips: consume-signal(list<string>)
+            sonar:
+              sonar_public_ips: consume-signal(list<string>)
+            jira:
+              jira_public_ips: consume-signal(list<string>)
             nexus:
               nexus_public_ips: consume-signal(list<string>)
             selenium:
               remote-url: consume-signal(string)
+
           required:
-            - sonar
             - gerrit
             - jenkins
-            - jira
             - ldap
-            - nexus
             - selenium
+            - sonar
+            - jira
+            - nexus
           configuration:
             configuration.triggers: {}
             configuration.workflows:
@@ -263,22 +273,6 @@ application:
                       output:
                         environment: result
 
-                  - init_nexus_vm:
-                      phase: init_component_vms
-                      precedingPhases: [ get_env_props ]
-                      action: .init_vm
-                      parameters:
-                        static_ips: "{$.environment.nexus.nexus_public_ips}"
-                        role: nexus
-
-                  - init_ldap_vm:
-                      phase: init_component_vms
-                      precedingPhases: [ get_env_props ]
-                      action: .init_vm
-                      parameters:
-                        static_ips: "{$.environment.ldap.ldap_public_ips}"
-                        role: ldap
-
                   - init_gerrit_vm:
                       phase: init_component_vms
                       precedingPhases: [ get_env_props ]
@@ -286,14 +280,6 @@ application:
                       parameters:
                         static_ips: "{$.environment.gerrit.gerrit_public_ips}"
                         role: gerrit
-
-                  - init_sonar_vm:
-                      phase: init_component_vms
-                      precedingPhases: [ get_env_props ]
-                      action: .init_vm
-                      parameters:
-                        static_ips: "{$.environment.sonar.sonar_public_ips}"
-                        role: sonar
 
                   - init_jenkins_vm:
                       phase: init_component_vms
@@ -303,6 +289,22 @@ application:
                         static_ips: "{$.environment.jenkins.jenkins_public_ips}"
                         role: jenkins
 
+                  - init_ldap_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.ldap.ldap_public_ips}"
+                        role: ldap
+
+                  - init_sonar_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.sonar.sonar_public_ips}"
+                        role: sonar
+
                   - init_jira_vm:
                       phase: init_component_vms
                       precedingPhases: [ get_env_props ]
@@ -311,7 +313,15 @@ application:
                         static_ips: "{$.environment.jira.jira_public_ips}"
                         role: jira
 
-                  - openldap_export_users:
+                  - init_nexus_vm:
+                      phase: init_component_vms
+                      precedingPhases: [ get_env_props ]
+                      action: .init_vm
+                      parameters:
+                        static_ips: "{$.environment.nexus.nexus_public_ips}"
+                        role: nexus
+
+                  - ldap_export_users:
                       precedingPhases: [ init_component_vms ]
                       action: chefsolo
                       parameters:
@@ -337,31 +347,37 @@ application:
                         roles: [ jenkins ]
                         recipeUrl: "{$.cookbooks_url}"
                         runList:
-                          - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
                           - "recipe[cicd_infrastructure::integration_jenkins_gerrit]"
-                          - "recipe[cicd_infrastructure::integration_jenkins_nexus]"
-                          - "recipe[cicd_infrastructure::integration_jenkins_selenium]"
                           - "recipe[cicd_infrastructure::integration_jenkins_jira]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_nexus]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
                         version: "11.8.2"
                         jattrs:
                           cicd_infrastructure:
                             jenkins:
                               pubkey: ""
+
                               gerrit-trigger:
                                 host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+
                               nexus:
                                 endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+
                               selenium:
                                 endpoint: "{$.environment.selenium.remote-url}"
+
                               qubell-plugin:
                                 username: "{$.environment.properties.qubell_username}"
                                 password: "{$.environment.properties.qubell_password}"
+
                               jira:
                                 host: "{$.environment.jira.jira_public_ips[0]}"
                                 username: "{$.environment.properties.jira_username}"
                                 password: "{$.environment.properties.jira_password}"
+
                       output:
                         jenkins_host_state: chefState
+
 
                   - gerrit_jenkins:
                       phase: gerrit_setup
@@ -403,24 +419,9 @@ application:
                               nexus:
                                 endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
 
-                  - nexus_openldap:
+                  - gerrit_ldap:
                       phase: ldap_integration
-                      precedingPhases: [ openldap_export_users ]
-                      action: chefsolo
-                      parameters:
-                        roles: [ nexus ]
-                        recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::nexus_ldap]" ]
-                        version: "11.8.2"
-                        jattrs:
-                          cicd_infrastructure:
-                            nexus:
-                              ldap:
-                                host: "{$.environment.ldap.ldap_public_ips[0]}"
-
-                  - gerrit_openldap:
-                      phase: ldap_integration
-                      precedingPhases: [ openldap_export_users, add_asf_jenkins_jobs_project ]
+                      precedingPhases: [ ldap_export_users, add_asf_jenkins_jobs_generator ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]
@@ -431,26 +432,11 @@ application:
                           cicd_infrastructure:
                             gerrit:
                               ldap:
-                                server: "ldap://{$.environment.ldap.ldap_public_ips[0]}"
-
-                  - sonar_openldap:
-                      phase: ldap_integration
-                      precedingPhases: [ openldap_export_users ]
-                      action: chefsolo
-                      parameters:
-                        roles: [ sonar ]
-                        recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_sonar_ldap]" ]
-                        version: "11.8.2"
-                        jattrs:
-                          cicd_infrastructure:
-                            sonar:
-                              ldap:
                                 server: "{$.environment.ldap.ldap_public_ips[0]}"
 
-                  - jenkins_openldap:
+                  - jenkins_ldap:
                       phase: ldap_integration
-                      precedingPhases: [ openldap_export_users, add_asf_jenkins_jobs_generator ]
+                      precedingPhases: [ ldap_export_users, add_asf_jenkins_jobs_generator ]
                       action: chefsolo
                       parameters:
                         roles: [ jenkins ]
@@ -463,9 +449,24 @@ application:
                               ldap:
                                 server: "{$.environment.ldap.ldap_public_ips[0]}"
 
-                  - jira_openldap:
+                  - sonar_ldap:
                       phase: ldap_integration
-                      precedingPhases: [ openldap_export_users ]
+                      precedingPhases: [ ldap_export_users, add_asf_jenkins_jobs_generator ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ sonar ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_sonar_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            sonar:
+                              ldap:
+                                server: "{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - jira_ldap:
+                      phase: ldap_integration
+                      precedingPhases: [ ldap_export_users, add_asf_jenkins_jobs_generator ]
                       action: chefsolo
                       parameters:
                         roles: [ jira ]
@@ -476,7 +477,22 @@ application:
                           cicd_infrastructure:
                             jira:
                               ldap:
-                                host: "{$.environment.ldap.ldap_public_ips[0]}"
+                                server: "{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - nexus_ldap:
+                      phase: ldap_integration
+                      precedingPhases: [ ldap_export_users, add_asf_jenkins_jobs_generator ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ nexus ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_nexus_ldap]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            nexus:
+                              ldap:
+                                server: "{$.environment.ldap.ldap_public_ips[0]}"
 
               .init_vm:
                 parameters:
