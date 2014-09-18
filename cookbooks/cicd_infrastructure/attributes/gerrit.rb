@@ -13,9 +13,9 @@ default['gerrit']['version'] = "2.9"
 if node['cloud']
   case node['cloud']['provider']
   when "ec2"
-    default['gerrit']['hostname'] = node['cloud']['public_hostname']
+    default['gerrit']['hostname'] = node['cloud']['public_ipv4']
   when "rackspace"
-    default['gerrit']['hostname'] = node['cloud']['private_hostname']
+    default['gerrit']['hostname'] = node['cloud']['public_ipv4']
   end
 end
 
@@ -24,3 +24,4 @@ default['gerrit']['canonicalWebUrl'] = "http://#{node['gerrit']['hostname']}/"
 default['gerrit']['auth']['registerEmailPrivateKey'] = 'gerrit'
 default['gerrit']['auth']['restTokenPrivateKey'] = 'gerrit'
 default['gerrit']['sendemail']['enable'] = 'false'
+
