@@ -8,4 +8,5 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
+default['gitweb']['proxy']['port']['http'] = '8888'
 default['gitweb']['repository_dir'] = node['gerrit']['install_dir']
