@@ -9,3 +9,4 @@
 #
 
 include_recipe 'gerrit::default'
+include_recipe 'gitweb'
