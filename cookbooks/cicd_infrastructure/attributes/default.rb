@@ -31,7 +31,9 @@ default['cicd_infrastructure']['jenkins']['plugins'] = {
   'copyartifact' => '1.30',
   'envinject' => '',
   'groovy' => '',
-  'jira' => '1.39'
+  'jira' => '1.39',
+  'xunit' =>'',
+  'htmlpublisher' => ''
 }
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
