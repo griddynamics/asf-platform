@@ -1,0 +1,29 @@
+# path to git projects (<project>.git)
+$projectroot = "<%= @repository_dir %>";
+
+# base url list
+@git_base_url_list = (<% @base_urls.each do |x| %>"<%= "#{x.gsub(/@/, '\\@')}" %>", <% end %>);
+
+# directory to use for temp files
+$git_temp = "/tmp";
+
+# target of the home link on top of all pages
+#$home_link = $my_uri || "/";
+
+# html text to include at home page
+$home_text = "indextext.html";
+
+# file with project list; by default, simply scan the projectroot dir.
+$projects_list = $projectroot;
+
+# stylesheet to use
+$stylesheet = "<% if @theme %>theme/<% end %>gitweb.css";
+
+# javascript code for gitweb
+$javascript = "<% if @theme %>theme/<% end %>gitweb.js";
+
+# logo to use
+$logo = "git-logo.png";
+
+# the 'favicon'
+$favicon = "git-favicon.png";
