@@ -10,3 +10,8 @@
 
 include_recipe 'gerrit::default'
 include_recipe 'gitweb'
+
+gerrit_init = resources(execute: 'gerrit-init')
+node['gerrit']['plugins'].each do |plugin|
+    gerrit_init.command gerrit_init.command << " --install-plugin #{plugin}"
+end
