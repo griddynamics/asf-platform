@@ -400,7 +400,6 @@ job(type: Maven) {
   postBuildSteps {
     downstreamParameterized {
       trigger('deploy-integration-tests') {
-        currentBuild()
         predefinedProp("buildCommit", '${buildCommit}')
       }
     }
