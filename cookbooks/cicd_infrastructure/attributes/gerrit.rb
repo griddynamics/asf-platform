@@ -25,3 +25,9 @@ default['gerrit']['auth']['registerEmailPrivateKey'] = 'gerrit'
 default['gerrit']['auth']['restTokenPrivateKey'] = 'gerrit'
 default['gerrit']['sendemail']['enable'] = 'false'
 
+default['gerrit']['plugins'] = %w(
+    commit-message-length-validator
+    download-commands
+    replication
+    reviewnotes
+)
