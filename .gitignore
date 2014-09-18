@@ -9,6 +9,7 @@ pkg/
 # Berkshelf
 .vagrant
 cookbooks/vendor-cookbooks
+manifests/generated-*.yaml
 Berksfile.lock
 
 # Bundler
