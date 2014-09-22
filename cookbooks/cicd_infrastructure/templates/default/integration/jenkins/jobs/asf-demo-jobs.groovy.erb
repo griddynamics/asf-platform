@@ -423,6 +423,7 @@ job(type: Maven) {
     downstreamParameterized {
       trigger('deploy-integration-tests') {
         predefinedProp("buildCommit", '${buildCommit}')
+	predefinedProp("buildVersion", '${buildVersion}')
       }
     }
     publishers{
