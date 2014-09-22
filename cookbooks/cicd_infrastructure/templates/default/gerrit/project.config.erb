@@ -12,7 +12,8 @@
     createProject = group Registered Users
 [access "refs/*"]
     read = group Administrators
-    read = group Anonymous Users
+    read = group Project Owners
+    read = group Non-Interactive Users
 [access "refs/for/refs/*"]
     push = group Registered Users
     pushMerge = group Registered Users
@@ -20,6 +21,7 @@
     create = group Administrators
     create = group Project Owners
     create = group Registered Users
+    create = group Non-Interactive Users
     forgeAuthor = group Registered Users
     forgeCommitter = group Administrators
     forgeCommitter = group Project Owners
@@ -27,9 +29,11 @@
     push = group Administrators
     push = group Project Owners
     push = group Registered Users
+    push = group Non-Interactive Users
     label-Code-Review = -2..+2 group Administrators
     label-Code-Review = -2..+2 group Project Owners
     label-Code-Review = -2..+2 group Registered Users
+    label-Code-Review = -1..+1 group Non-Interactive Users
     submit = group Administrators
     submit = group Project Owners
     submit = group Registered Users
@@ -37,6 +41,9 @@
     editTopicName = +force group Project Owners
     editTopicName = +force group Registered Users
     label-Verified = -1..+1 group Administrators
+    label-Verified = -1..+1 group Non-Interactive Users
+    pushTag = group Non-Interactive Users
+    pushSignedTag = group Non-Interactive Users
 [access "refs/meta/config"]
     exclusiveGroupPermissions = read
     read = group Administrators
