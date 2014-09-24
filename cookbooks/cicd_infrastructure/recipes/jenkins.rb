@@ -30,6 +30,15 @@ node['cicd_infrastructure']['jenkins']['plugins'].each do |plugin, v|
   end
 end
 
+jenkins_plugin 'xunit' do
+    source "#{node['cicd_infrastructure']['jenkins']['plugin']['xunit']['url']}"
+end
+
+jenkins_plugin 'jbehave-jenkins-plugin' do
+    source "#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['url']}"
+    notifies :restart, 'service[jenkins]'
+end
+
 template "#{node['jenkins']['master']['home']}/config.xml" do
   source 'jenkins/config.xml.erb'
   owner node['jenkins']['master']['user']
