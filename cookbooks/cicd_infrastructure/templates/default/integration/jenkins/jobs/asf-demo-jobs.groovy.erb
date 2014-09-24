@@ -344,7 +344,29 @@ job(type: Maven) {
   postBuildSteps {
     publishers{
         publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
-    }
+        archiveXUnit {
+                failedThresholds {
+                unstable 0
+                unstableNew 0
+                failure 0
+                failureNew 0
+            }
+            skippedThresholds {
+                unstable 0
+                unstableNew 0
+                failure 0
+                failureNew 0
+            }
+            thresholdMode ThresholdMode.NUMBER
+            timeMargin 4000
+        }
+        }
+  }
+  configure { project ->
+    project / publishers / xunit / types << "JBehavePluginType"(plugin="jbehave-jenkins-plugin@3.7")
+  }
+  configure { project ->
+    project / publishers / xunit / types / JBehavePluginType / pattern << "spring-petclinic-test/target/jbehave/*.xml"
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
@@ -382,9 +404,30 @@ job(type: Maven) {
   postBuildSteps {
     publishers{
         publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
-    }
+        archiveXUnit {
+                failedThresholds {
+                unstable 0
+                unstableNew 0
+                failure 0
+                failureNew 0
+            }
+            skippedThresholds {
+                unstable 0
+                unstableNew 0
+                failure 0
+                failureNew 0
+            }
+            thresholdMode ThresholdMode.NUMBER
+            timeMargin 4000
+        }
+        }
   }
-
+  configure { project ->
+    project / publishers / xunit / types << "JBehavePluginType"(plugin="jbehave-jenkins-plugin@3.7")
+  }
+  configure { project ->
+    project / publishers / xunit / types / JBehavePluginType / pattern << "spring-petclinic-test/target/jbehave/*.xml"
+  }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
@@ -428,7 +471,29 @@ job(type: Maven) {
     }
     publishers{
         publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
-    }
+        archiveXUnit {
+                failedThresholds {
+                unstable 0
+                unstableNew 0
+                failure 0
+                failureNew 0
+            }
+            skippedThresholds {
+                unstable 0
+                unstableNew 0
+                failure 0
+                failureNew 0
+            }
+            thresholdMode ThresholdMode.NUMBER
+            timeMargin 4000
+        }
+        }
+  }
+  configure { project ->
+    project / publishers / xunit / types << "JBehavePluginType"(plugin="jbehave-jenkins-plugin@3.7")
+  }
+  configure { project ->
+    project / publishers / xunit / types / JBehavePluginType / pattern << "spring-petclinic-test/target/jbehave/*.xml"
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
