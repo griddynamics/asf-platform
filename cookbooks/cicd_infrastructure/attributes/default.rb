@@ -72,14 +72,14 @@ default['cicd_infrastructure']['jenkins']['jira']['plugin']['url'] = "http://rep
   "#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}/" +
   "jenkins-jira-plugin-#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}.hpi"
 
-default['cicd_infrastructure']['jenkins']['jbehave']['plugin']['version'] = '3.7'
-default['cicd_infrastructure']['jenkins']['jbehave']['plugin']['url'] = "https://nexus.codehaus.org/content/repositories/releases/org/jbehave/jbehave-jenkins-plugin/" + 
-"#{node['cicd_infrastructure']['jenkins']['jbehave']['plugin']['version']}/" + "jbehave-jenkins-plugin-" + 
-"#{node['cicd_infrastructure']['jenkins']['jbehave']['plugin']['version']}.hpi"
+default['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version'] = '3.7'
+default['cicd_infrastructure']['jenkins']['plugin']['jbehave']['url'] = "https://nexus.codehaus.org/content/repositories/releases/org/jbehave/jbehave-jenkins-plugin/" + 
+"#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version']}/" + "jbehave-jenkins-plugin-" + 
+"#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version']}.hpi"
 
-default['cicd_infrastructure']['jenkins']['xunit']['plugin']['version'] = '1.89'
-default['cicd_infrastructure']['jenkins']['xunit']['plugin']['url'] = "http://updates.jenkins-ci.org/download/plugins/xunit/" + 
-"#{node['cicd_infrastructure']['jenkins']['xunit']['plugin']['version']}/xunit.hpi"
+default['cicd_infrastructure']['jenkins']['plugin']['xunit']['version'] = '1.89'
+default['cicd_infrastructure']['jenkins']['plugin']['xunit']['url'] = "http://updates.jenkins-ci.org/download/plugins/xunit/" + 
+"#{node['cicd_infrastructure']['jenkins']['plugin']['xunit']['version']}/xunit.hpi"
 
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil

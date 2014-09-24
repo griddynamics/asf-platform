@@ -31,11 +31,11 @@ node['cicd_infrastructure']['jenkins']['plugins'].each do |plugin, v|
 end
 
 jenkins_plugin 'xunit' do
-    source "#{node['cicd_infrastructure']['jenkins']['xunit']['plugin']['url']}"
+    source "#{node['cicd_infrastructure']['jenkins']['plugin']['xunit']['url']}"
 end
 
 jenkins_plugin 'jbehave-jenkins-plugin' do
-    source "#{node['cicd_infrastructure']['jenkins']['jbehave']['plugin']['url']}"
+    source "#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['url']}"
     notifies :restart, 'service[jenkins]'
 end
 
