@@ -1,6 +1,5 @@
 [project]
-    description = Access inherited by all other projects.
-    state = active
+    description = Access inherited by all other projects
 [receive]
     requireContributorAgreement = false
     requireSignedOffBy = false
@@ -10,10 +9,13 @@
 [capability]
     administrateServer = group Administrators
     createProject = group Registered Users
+    priority = batch group Non-Interactive Users
+    streamEvents = group Non-Interactive Users
 [access "refs/*"]
     read = group Administrators
     read = group Project Owners
     read = group Non-Interactive Users
+    read = group Registered Users
 [access "refs/for/refs/*"]
     push = group Registered Users
     pushMerge = group Registered Users
@@ -22,6 +24,7 @@
     create = group Project Owners
     create = group Registered Users
     create = group Non-Interactive Users
+    create = group ldap/developers
     forgeAuthor = group Registered Users
     forgeCommitter = group Administrators
     forgeCommitter = group Project Owners
@@ -48,8 +51,6 @@
     exclusiveGroupPermissions = read
     read = group Administrators
     read = group Project Owners
-    push = group Administrators
-    push = group Project Owners
     label-Code-Review = -2..+2 group Administrators
     label-Code-Review = -2..+2 group Project Owners
     submit = group Administrators
@@ -57,7 +58,6 @@
 [access "refs/tags/*"]
     pushTag = group Administrators
     pushTag = group Project Owners
-    pushTag = group Registered Users
     pushSignedTag = group Administrators
     pushSignedTag = group Project Owners
     pushSignedTag = group Registered Users
