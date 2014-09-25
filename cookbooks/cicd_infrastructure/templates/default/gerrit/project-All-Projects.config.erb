@@ -1,6 +1,5 @@
 [project]
-    description = Access inherited by all other projects.
-    state = active
+    description = Access inherited by all other projects
 [receive]
     requireContributorAgreement = false
     requireSignedOffBy = false
@@ -10,9 +9,13 @@
 [capability]
     administrateServer = group Administrators
     createProject = group Registered Users
+    priority = batch group Non-Interactive Users
+    streamEvents = group Non-Interactive Users
 [access "refs/*"]
     read = group Administrators
-    read = group Anonymous Users
+    read = group Project Owners
+    read = group Non-Interactive Users
+    read = group Registered Users
 [access "refs/for/refs/*"]
     push = group Registered Users
     pushMerge = group Registered Users
@@ -20,6 +23,8 @@
     create = group Administrators
     create = group Project Owners
     create = group Registered Users
+    create = group Non-Interactive Users
+    create = group ldap/developers
     forgeAuthor = group Registered Users
     forgeCommitter = group Administrators
     forgeCommitter = group Project Owners
@@ -27,9 +32,11 @@
     push = group Administrators
     push = group Project Owners
     push = group Registered Users
+    push = group Non-Interactive Users
     label-Code-Review = -2..+2 group Administrators
     label-Code-Review = -2..+2 group Project Owners
     label-Code-Review = -2..+2 group Registered Users
+    label-Code-Review = -1..+1 group Non-Interactive Users
     submit = group Administrators
     submit = group Project Owners
     submit = group Registered Users
@@ -37,12 +44,13 @@
     editTopicName = +force group Project Owners
     editTopicName = +force group Registered Users
     label-Verified = -1..+1 group Administrators
+    label-Verified = -1..+1 group Non-Interactive Users
+    pushTag = group Non-Interactive Users
+    pushSignedTag = group Non-Interactive Users
 [access "refs/meta/config"]
     exclusiveGroupPermissions = read
     read = group Administrators
     read = group Project Owners
-    push = group Administrators
-    push = group Project Owners
     label-Code-Review = -2..+2 group Administrators
     label-Code-Review = -2..+2 group Project Owners
     submit = group Administrators
@@ -50,13 +58,14 @@
 [access "refs/tags/*"]
     pushTag = group Administrators
     pushTag = group Project Owners
-    pushTag = group Registered Users
     pushSignedTag = group Administrators
     pushSignedTag = group Project Owners
     pushSignedTag = group Registered Users
 [label "Code-Review"]
     function = MaxWithBlock
     copyMinScore = true
+    copyAllScoresOnTrivialRebase = true
+    copyAllScoresIfNoCodeChange = true
     value = -2 Do not submit
     value = -1 I would prefer that you didn't submit this
     value = 0 No score
