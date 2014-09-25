@@ -82,30 +82,3 @@ bash 'add_jenkins_user' do
   EOH
   action :nothing
 end
-
-template '/tmp/project.config' do
-  source 'gerrit/project.config.erb'
-  owner node['gerrit']['user']
-  group node['gerrit']['group']
-  mode 0644
-end
-
-bash 'Configure gerrit repos' do
-  user node['gerrit']['user']
-  cwd '/tmp'
-  code <<-EOH
-  mkdir gerrit-config
-  cd gerrit-config
-  git init
-  git remote add origin \
-    ssh://root@localhost:#{node['gerrit']['port']}/All-Projects
-  git fetch origin refs/meta/config:refs/remotes/origin/meta/config
-  git checkout meta/config
-  cp /tmp/project.config /tmp/gerrit-config/project.config
-  git config user.email root@localhost
-  git config user.name root
-  git add project.config
-  git commit -m 'Updated permissions'
-  git push origin meta/config:meta/config
-  EOH
-end
