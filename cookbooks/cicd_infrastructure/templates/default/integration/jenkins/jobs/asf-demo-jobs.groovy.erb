@@ -142,6 +142,9 @@ job(type: Maven) {
       }
     }
   }
+  publishers{
+      archiveArtifacts 'version.properties'
+  }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
@@ -155,18 +158,37 @@ job() {
     }
     logRotator(30, 50, -1, -1)
     steps {
-	    configure { project ->
-		    project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
-			    plugin: "qubell@2.5") {
-    		    expectedStatus('RUNNING')
-    		    timeout('1200')
-    		    outputFilePath('qubell_output.json')
-    		    manifestRelativePath('')
-    		    environmentId('\${QUBELL_ENV_ID}')
-    		    applicationId('\${QUBELL_APP_ID}')
-    		    extraParameters(qubell_app_params)
-		      }
-	    }
+    configure { 
+        it / builders << "hudson.plugins.copyartifact.CopyArtifact"(
+        plugin: "copyartifact@1.31") {
+            project("functional-tests")
+            filter("version.properties")
+            target()
+            excludes()
+            selector(class: "hudson.plugins.copyartifact.StatusBuildSelector")
+            downstreamParameterized()            
+        }
+    }
+    configure { project ->
+        project / builders << "EnvInjectBuilder"(
+        plugin: "envinject@1.90") {
+            info() {
+                propertiesFilePath("version.properties")
+            }            
+        }
+    }
+    configure { project ->
+        project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.StartInstanceBuilder"(
+            plugin: "qubell@2.5") {
+            expectedStatus('RUNNING')
+            timeout('1200')
+            outputFilePath('qubell_output.json')
+            manifestRelativePath('')
+            environmentId('\${QUBELL_ENV_ID}')
+            applicationId('\${QUBELL_APP_ID}')
+            extraParameters(qubell_app_params)
+          }
+    }
     configure { // It's hack because for some reasone DSL does not add qubell plugin into job
 	    it / builders << "hudson.plugins.groovy.SystemGroovy"(plugin: "groovy@1.20") {
 		    scriptSource(class : "hudson.plugins.groovy.StringScriptSource") {
@@ -296,6 +318,9 @@ job(type: Maven) {
       }
     }
   }
+  publishers{
+      archiveArtifacts 'version.properties'
+  }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
@@ -318,7 +343,11 @@ job(type: Maven) {
       branch('\${buildCommit}')
     }
   }
-
+  preBuildSteps {
+    copyArtifacts('fb-build', targetPath = 'version.properties') {
+        upstreamBuild(true)
+    }
+  }
   rootPOM("spring-petclinic-test/pom.xml")
   goals('-P functional-test,build clean verify -Dpetclinic.version=${buildVersion}')
   mavenInstallation(maven_installation)
@@ -439,7 +468,11 @@ job(type: Maven) {
       branch('\${buildCommit}')
     }
   }
-
+  preBuildSteps {
+    copyArtifacts('dev-build', targetPath = 'version.properties') {
+        upstreamBuild(true)
+    }
+  }
   rootPOM("spring-petclinic-test/pom.xml")
   goals('-P functional-test,build clean verify -Dpetclinic.version=${buildVersion}')
   mavenInstallation(maven_installation)
@@ -453,12 +486,11 @@ job(type: Maven) {
   }
   postBuildSteps {
     downstreamParameterized {
-      trigger('deploy-integration-tests') {
-        predefinedProp("buildCommit", '${buildCommit}')
-	predefinedProp("buildVersion", '${buildVersion}')
-      }
+      trigger('deploy-integration-tests')
     }
+  }
     publishers{
+        archiveArtifacts 'version.properties'
         publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
         archiveXUnit {
                 failedThresholds {
@@ -476,14 +508,13 @@ job(type: Maven) {
             thresholdMode ThresholdMode.NUMBER
             timeMargin 4000
         }
-        }
   }
   configure { project ->
     project / publishers / xunit / types << "JBehavePluginType"(plugin="jbehave-jenkins-plugin@3.7")
   }
   configure { project ->
     project / publishers / xunit / types / JBehavePluginType / pattern << "spring-petclinic-test/target/jbehave/*.xml"
-  }
+    }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
