@@ -16,6 +16,11 @@ node['gerrit']['plugins'].each do |plugin|
     gerrit_init.command gerrit_init.command << " --install-plugin #{plugin}"
 end
 
+gerrit_conf_template = resources(
+  template: "#{node['gerrit']['install_dir']}/etc/gerrit.config")
+gerrit_conf_template.cookbook 'cicd_infrastructure'
+gerrit_conf_template.source 'gerrit/gerrit.config.erb'
+
 gerrit_ssh_dir = "#{node['gerrit']['home']}/.ssh"
 
 directory gerrit_ssh_dir do
