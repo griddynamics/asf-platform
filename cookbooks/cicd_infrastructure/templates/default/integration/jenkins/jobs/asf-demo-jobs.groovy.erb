@@ -134,16 +134,14 @@ job(type: Maven) {
   goals('deploy -P build')
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
-  postBuildSteps {
-    downstreamParameterized {
-      trigger('functional-tests') {
-        currentBuild()
-        propertiesFile('version.properties')
-      }
-    }
-  }
   publishers{
       archiveArtifacts 'version.properties'
+      downstreamParameterized {
+        trigger('functional-tests') {
+          currentBuild()
+          propertiesFile('version.properties')
+        }
+      }
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
@@ -310,16 +308,14 @@ job(type: Maven) {
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
 
-  postBuildSteps {
-    downstreamParameterized {
-      trigger('fb-functional-tests') {
-        currentBuild()
-        propertiesFile('version.properties')
-      }
-    }
-  }
   publishers{
       archiveArtifacts 'version.properties'
+      downstreamParameterized {
+        trigger('fb-functional-tests') {
+          currentBuild()
+          propertiesFile('version.properties')
+        }
+      }
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
@@ -484,11 +480,6 @@ job(type: Maven) {
         settingsConfigId('<%= @settings_id %>')
       }
   }
-  postBuildSteps {
-    downstreamParameterized {
-      trigger('deploy-integration-tests')
-    }
-  }
     publishers{
         archiveArtifacts 'version.properties'
         publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
@@ -507,6 +498,9 @@ job(type: Maven) {
             }
             thresholdMode ThresholdMode.NUMBER
             timeMargin 4000
+        }
+        downstreamParameterized {
+          trigger('deploy-integration-tests')
         }
   }
   configure { project ->
