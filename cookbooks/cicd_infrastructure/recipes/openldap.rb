@@ -45,4 +45,4 @@ unless node['platform'].eql?('ubuntu')
   ldap_server.action(:upgrade)
 end
 
-include_recipe 'cicd_infrastructure::phpldapadmin'
+include_recipe 'phpldapadmin-cookbook::default'
