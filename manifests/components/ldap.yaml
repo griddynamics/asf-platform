@@ -17,6 +17,7 @@ application:
     output:
       ldap_public_ips: "bind(workflow#result.ldap_public_ips)"
       ldap_endpoint: "bind(workflow#result.ldap_endpoint)"
+      ldapadmin_endpoint: "bind(workflow#result.ldapadmin_endpoint)"
   components:
     workflow:
       type: workflow.Instance
@@ -32,6 +33,9 @@ application:
           ldap_endpoint:
             type: publish-signal(list<string>)
             name: "LDAP connnection string: "
+          ldapadmin_endpoint:
+            type: publish-signal(list<string>)
+            name: "LDAP WebUI: "
         keypair-store:
           get-keypair: "send-command(string id => object privateKey)"
       configuration:
@@ -74,6 +78,8 @@ application:
                 value: "{$.ldap_public_ips}"
               ldap_endpoint:
                 value: "ldap://{$.ldap_public_ips}:389"
+              ldapadmin_endpoint:
+                value: "http://{$.ldap_public_ips}/phpldapadmin"
           destroy:
             steps:
               - destroy:
