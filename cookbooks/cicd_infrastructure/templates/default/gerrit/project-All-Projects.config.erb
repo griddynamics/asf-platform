@@ -15,7 +15,6 @@
     read = group Administrators
     read = group Project Owners
     read = group Non-Interactive Users
-    read = group Registered Users
 [access "refs/for/refs/*"]
     push = group Registered Users
     pushMerge = group Registered Users
@@ -24,7 +23,6 @@
     create = group Project Owners
     create = group Registered Users
     create = group Non-Interactive Users
-    create = group ldap/developers
     forgeAuthor = group Registered Users
     forgeCommitter = group Administrators
     forgeCommitter = group Project Owners
@@ -45,12 +43,12 @@
     editTopicName = +force group Registered Users
     label-Verified = -1..+1 group Administrators
     label-Verified = -1..+1 group Non-Interactive Users
-    pushTag = group Non-Interactive Users
-    pushSignedTag = group Non-Interactive Users
 [access "refs/meta/config"]
     exclusiveGroupPermissions = read
     read = group Administrators
     read = group Project Owners
+    push = group Administrators
+    push = group Project Owners
     label-Code-Review = -2..+2 group Administrators
     label-Code-Review = -2..+2 group Project Owners
     submit = group Administrators
@@ -58,9 +56,11 @@
 [access "refs/tags/*"]
     pushTag = group Administrators
     pushTag = group Project Owners
+    pushTag = group Non-Interactive Users
     pushSignedTag = group Administrators
     pushSignedTag = group Project Owners
     pushSignedTag = group Registered Users
+    pushSignedTag = group Non-Interactive Users
 [label "Code-Review"]
     function = MaxWithBlock
     copyMinScore = true
