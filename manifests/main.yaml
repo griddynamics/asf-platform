@@ -47,6 +47,7 @@ application:
       gerrit: "bind(gerrit#output.gerrit_endpoint)"
       jenkins: "bind(jenkins#output.jenkins_endpoint)"
       ldap: "bind(ldap#output.ldap_endpoint)"
+      ldapadmin: "bind(ldap#output.ldapadmin_endpoint)"
       sonar: "bind(sonar#output.sonar_endpoint)"
       jira: "bind(jira#output.jira_endpoint)"
       nexus: "bind(nexus#output.nexus_endpoint)"
@@ -167,6 +168,9 @@ application:
           ldap_endpoint:
             type: publish-signal(list<string>)
             name: LDAP
+          ldapadmin_endpoint:
+            type: publish-signal(list<string>)
+            name: LDAP Admin
 
     nexus:
       type: reference.Submodule
