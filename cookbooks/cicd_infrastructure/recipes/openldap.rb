@@ -44,3 +44,5 @@ unless node['platform'].eql?('ubuntu')
   ldap_server.package_name('openldap-servers')
   ldap_server.action(:upgrade)
 end
+
+include_recipe 'cicd_infrastructure::phpldapadmin'
