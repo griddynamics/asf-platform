@@ -56,10 +56,9 @@ end
 
   ruby_block "add global:Registered-Users to groups" do
     block do
+      str = "global:Registered-Users                 \tRegistered Users"
       file = Chef::Util::FileEdit.new("/tmp/#{prj_name}/groups")
-      file.insert_line_if_no_match(
-        '/global:Registered-Users/',
-        'global:Registered-Users Registered Users')
+      file.insert_line_if_no_match("global:Registered-Users", str)
       file.write_file
     end
     not_if { prj_name == 'Private-Projects' }
