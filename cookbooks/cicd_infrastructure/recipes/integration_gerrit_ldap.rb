@@ -18,8 +18,7 @@ service 'gerrit' do
 end
 
 template "#{node['gerrit']['install_dir']}/etc/gerrit.config" do
-  source 'gerrit/gerrit.config'
-  cookbook 'gerrit'
+  source 'gerrit/gerrit.config.erb'
   owner node['gerrit']['user']
   group node['gerrit']['group']
   mode 0644
