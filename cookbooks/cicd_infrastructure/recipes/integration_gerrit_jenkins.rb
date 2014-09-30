@@ -21,5 +21,4 @@ bash 'add_jenkins_user' do
   --http-password jenkins\
   --ssh-key - jenkins
   EOH
-  action :nothing
 end
