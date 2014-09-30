@@ -8,8 +8,8 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-include_recipe 'gerrit::default'
 include_recipe 'gitweb'
+include_recipe 'gerrit::default'
 
 gerrit_init = resources(execute: 'gerrit-init')
 node['gerrit']['plugins'].each do |plugin|
