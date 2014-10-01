@@ -58,7 +58,7 @@ application:
                     jcloudsNodeNamePrefix: jira
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-d41689bd
-                    ec2SecurityGroup: default
+                    securityGroup: default
                     providerSettings:
                       userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                   output:
