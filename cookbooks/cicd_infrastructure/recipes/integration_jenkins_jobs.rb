@@ -54,6 +54,8 @@ bash 'Push jobs to repo' do
   git commit -m 'Add asf-webapp-demo jobs'
   git push origin master
   EOH
+  retries 5
+  retry_delay 30
 end
 
 template "#{Chef::Config['file_cache_path']}/asf-jobs.xml" do
