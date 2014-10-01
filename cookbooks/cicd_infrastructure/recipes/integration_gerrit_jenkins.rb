@@ -15,7 +15,7 @@ bash 'add_jenkins_user' do
   code <<-EOH
   echo #{jenkins_pubkey} | ssh -p #{node['gerrit']['port']} root@localhost\
   gerrit create-account\
-  --group "'Administrators'"\
+  --group "'Non-Interactive Users'"\
   --full-name JenkinsCI\
   --email jenkins-asf@griddynamics.com\
   --http-password jenkins\
