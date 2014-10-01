@@ -60,3 +60,8 @@ end
     end
 end
 
+jenkins_password_credentials "#{node['cicd_infrastructure']['jenkins']['nexus']['username']}" do
+  description 'Nexus user'
+  id 'e27d81bd-3c1e-4a30-ac68-da043fb5ecb4'
+  password "#{node['cicd_infrastructure']['jenkins']['nexus']['password']}"
+end

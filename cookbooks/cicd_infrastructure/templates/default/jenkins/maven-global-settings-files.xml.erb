@@ -15,39 +15,6 @@
 
     &lt;interactiveMode&gt;false&lt;/interactiveMode&gt;
 
-  &lt;servers&gt;
-    &lt;server&gt;
-      &lt;id&gt;builds-all&lt;/id&gt;
-      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
-      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
-    &lt;/server&gt;
-    &lt;server&gt;
-      &lt;id&gt;builds-main&lt;/id&gt;
-      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
-      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
-    &lt;/server&gt;
-    &lt;server&gt;
-      &lt;id&gt;builds-feature&lt;/id&gt;
-      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
-      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
-    &lt;/server&gt;
-    &lt;server&gt;
-      &lt;id&gt;builds-promoted&lt;/id&gt;
-      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
-      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
-    &lt;/server&gt;
-    &lt;server&gt;
-      &lt;id&gt;central&lt;/id&gt;
-      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
-      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
-    &lt;/server&gt;
-    &lt;server&gt;
-      &lt;id&gt;<%= @jbehave_framework_repo_id %>&lt;/id&gt;
-      &lt;username&gt;<%= @nexus_username %>&lt;/username&gt;
-      &lt;password&gt;<%= @nexus_password %>&lt;/password&gt;
-    &lt;/server&gt;
-  &lt;/servers&gt;
-
   &lt;mirrors&gt;
     &lt;mirror&gt;
       &lt;id&gt;central&lt;/id&gt;
@@ -126,7 +93,31 @@
 &lt;/profiles&gt;
 
 &lt;/settings&gt;</content>
-        <serverCredentialMappings/>
+        <serverCredentialMappings>
+          <org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+            <serverId>builds-main</serverId>
+            <credentialsId>e27d81bd-3c1e-4a30-ac68-da043fb5ecb4</credentialsId>
+          </org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+          <org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+            <serverId>builds-all</serverId>
+            <credentialsId>e27d81bd-3c1e-4a30-ac68-da043fb5ecb4</credentialsId>
+          </org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+          <org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+            <serverId>builds-feature</serverId>
+            <credentialsId>e27d81bd-3c1e-4a30-ac68-da043fb5ecb4</credentialsId>
+          </org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+          <org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+            <serverId>builds-promoted</serverId>
+            <credentialsId>e27d81bd-3c1e-4a30-ac68-da043fb5ecb4</credentialsId>
+          </org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+          <org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+            <serverId>central</serverId>
+            <credentialsId>e27d81bd-3c1e-4a30-ac68-da043fb5ecb4</credentialsId>
+          </org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+          <% if @use_jbehave_proxy == 'true' %>
+          <%= render 'jenkins/jbehave_credential_settings.xml.erb' %>
+          <% end %>
+        </serverCredentialMappings>
       </org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig>
     </entry>
   </configs>

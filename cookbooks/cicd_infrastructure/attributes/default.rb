@@ -20,7 +20,6 @@ default['cicd_infrastructure']['jenkins']['plugins'] = {
   'scm-api'=>'',
   'git'=>'',
   'parameterized-trigger'=>'',
-  'gerrit-trigger'=>'',
   'token-macro'=>'',
   'config-file-provider'=>'2.7.5',
   'gerrit-trigger'=>'',
@@ -61,6 +60,8 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] = "https://git
     "jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
 
 default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
+default['cicd_infrastructure']['jenkins']['nexus']['username'] = 'deployment' 
+default['cicd_infrastructure']['jenkins']['nexus']['password'] = 'deployment123'
 default['cicd_infrastructure']['jenkins']['selenium']['endpoint'] = nil
 
 default['cicd_infrastructure']['jenkins']['jira']['host'] = nil
