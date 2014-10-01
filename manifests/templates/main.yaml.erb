@@ -37,6 +37,7 @@ application:
     <% end -%>
       integration.workflow#input.cookbooks_url)
     endpoints:
+      <% if config['components'].include? 'ldap' -%>ldapadmin: "bind(ldap#output.ldapadmin_endpoint)"<% end %>
   <% (config['components'] - ['selenium']).each do |mod| -%>
     <%= mod %>: "bind(<%= mod %>#output.<%= mod %>_endpoint)"
   <% end -%>
@@ -159,6 +160,9 @@ application:
           ldap_endpoint:
             type: publish-signal(list<string>)
             name: LDAP
+          ldapadmin_endpoint:
+            type: publish-signal(list<string>)
+            name: LDAP Admin
   <% end -%>
   <% if config['components'].include? 'nexus' %>
     nexus:
@@ -323,9 +327,19 @@ application:
                         jenkins_host_state: chefState
                 <% end %>
                 <% if (['jenkins', 'gerrit'] - config['components']).empty? %>
+                  - gerrit_projects_setup:
+                      phase: gerrit_projects_setup
+                      precedingPhases: [ init_component_vms ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ gerrit ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_projects]" ]
+                        version: "11.8.2"
+
                   - gerrit_jenkins:
                       phase: gerrit_setup
-                      precedingPhases: [ jenkins_setup ]
+                      precedingPhases: [ gerrit_projects_setup, jenkins_setup ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]

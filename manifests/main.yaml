@@ -44,10 +44,10 @@ application:
           nexus#input.cookbooks_url,
           integration.workflow#input.cookbooks_url)
     endpoints:
+      ldapadmin: "bind(ldap#output.ldapadmin_endpoint)"
       gerrit: "bind(gerrit#output.gerrit_endpoint)"
       jenkins: "bind(jenkins#output.jenkins_endpoint)"
       ldap: "bind(ldap#output.ldap_endpoint)"
-      ldapadmin: "bind(ldap#output.ldapadmin_endpoint)"
       sonar: "bind(sonar#output.sonar_endpoint)"
       jira: "bind(jira#output.jira_endpoint)"
       nexus: "bind(nexus#output.nexus_endpoint)"
@@ -383,9 +383,19 @@ application:
                         jenkins_host_state: chefState
 
 
+                  - gerrit_projects_setup:
+                      phase: gerrit_projects_setup
+                      precedingPhases: [ init_component_vms ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ gerrit ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_projects]" ]
+                        version: "11.8.2"
+
                   - gerrit_jenkins:
                       phase: gerrit_setup
-                      precedingPhases: [ jenkins_setup ]
+                      precedingPhases: [ gerrit_projects_setup, jenkins_setup ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]
