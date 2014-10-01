@@ -374,10 +374,12 @@ application:
                             jenkins:
                               gerrit-trigger:
                                 host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                              <% if config['components'].include? 'nexus' %>
                               nexus:
                                 endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+                              <% end -%>
                 <% end -%>
-                <% config['components'].include? 'ldap' -%>
+                <% if config['components'].include? 'ldap' %>
                   <% (config['components'] - ['selenium', 'ldap']).each do |mod| %>
                   - <%= mod %>_ldap:
                       phase: ldap_integration
@@ -395,7 +397,7 @@ application:
                                 server: "{$.environment.ldap.ldap_public_ips[0]}"
                   <% end -%>
                 <% end -%>
-
+  <% end %>
               .init_vm:
                 parameters:
                   - role:

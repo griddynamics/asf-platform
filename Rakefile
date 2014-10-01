@@ -41,7 +41,7 @@ namespace :manifests do
     # template generated-<template_name> manifest
     desc 'Generate Qubell manifests from templates'
     task :generate do
-        puts "Using components: #{config['modules']}"
+        puts "Using components: #{config['components']}"
         Dir.glob("#{manifest_dir}/templates/*.yaml.erb") do |path|
             template = ERB.new(File.read(path), nil, '-')
             name = "generated-#{File.basename(path, '.*')}"
