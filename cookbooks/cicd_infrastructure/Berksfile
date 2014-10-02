@@ -13,4 +13,4 @@ cookbook 'sonar', '0.0.6', git: 'https://github.com/GreyTeardrop/chef-sonarqube.
 cookbook 'nginx', git: 'https://github.com/miketheman/nginx.git', tag: 'v2.7.4'
 cookbook 'chef-zephyr', '0.0.1', git: 'git@github.com:griddynamics/asf-zephyr-cookbook.git'
 cookbook 'gitweb', git: 'git@github.com:griddynamics/asf-gitweb-cookbook.git', tag: '0.1.0'
-cookbook 'phpldapadmin-cookbook', '0.1.0', git: 'git@github.com:griddynamics/asf-phpldapadmin-cookbook.git'
+cookbook 'phpldapadmin-cookbook', git: 'git@github.com:griddynamics/asf-phpldapadmin-cookbook.git', tag: '0.1.1'
