@@ -85,6 +85,9 @@ job(type: Maven) {
   goals('install')
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
+  publishers{
+    mailer("", false, true)
+  }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
@@ -138,13 +141,14 @@ job(type: Maven) {
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
   publishers{
-      archiveArtifacts 'version.properties'
-      downstreamParameterized {
-        trigger('functional-tests') {
-          currentBuild()
-          propertiesFile('version.properties')
-        }
+    mailer("", false, true)
+    archiveArtifacts 'version.properties'
+    downstreamParameterized {
+      trigger('functional-tests') {
+        currentBuild()
+        propertiesFile('version.properties')
       }
+    }
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
@@ -249,14 +253,19 @@ build.addAction(pa);
         }
     }
 
-	    configure { project ->
-		    project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.DestroyInstanceBuilder"(
-			    plugin: "qubell@2.5") {
-    		    expectedStatus('DESTROYED')
-                timeout('600')
-                commandName('destroy')
-		      }
-	    }
+  configure { project ->
+    project / builders << "com.qubell.jenkinsci.plugins.qubell.builders.DestroyInstanceBuilder"(
+      plugin: "qubell@2.5") {
+  	    expectedStatus('DESTROYED')
+        timeout('600')
+        commandName('destroy')
+      }
+  }
+  
+  publishers{
+    mailer("", false, true)
+  }
+  
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
@@ -314,13 +323,14 @@ job(type: Maven) {
   localRepository(LocalToWorkspace)
 
   publishers{
-      archiveArtifacts 'version.properties'
-      downstreamParameterized {
-        trigger('fb-functional-tests') {
-          currentBuild()
-          propertiesFile('version.properties')
-        }
+    mailer("", false, true)
+    archiveArtifacts 'version.properties'
+    downstreamParameterized {
+      trigger('fb-functional-tests') {
+        currentBuild()
+        propertiesFile('version.properties')
       }
+    }
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
@@ -363,24 +373,25 @@ job(type: Maven) {
   }
   postBuildSteps {
     publishers{
-        publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
-        archiveXUnit {
-                failedThresholds {
-                unstable 0
-                unstableNew 0
-                failure 0
-                failureNew 0
-            }
-            skippedThresholds {
-                unstable 0
-                unstableNew 0
-                failure 0
-                failureNew 0
-            }
-            thresholdMode ThresholdMode.NUMBER
-            timeMargin 4000
+      mailer("", false, true)
+      publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
+      archiveXUnit {
+          failedThresholds {
+          unstable 0
+          unstableNew 0
+          failure 0
+          failureNew 0
         }
+        skippedThresholds {
+          unstable 0
+          unstableNew 0
+          failure 0
+          failureNew 0
         }
+        thresholdMode ThresholdMode.NUMBER
+        timeMargin 4000
+      }
+    }
   }
   configure { project ->
     project / publishers / xunit / types << "JBehavePluginType"(plugin="jbehave-jenkins-plugin@3.7")
@@ -424,24 +435,25 @@ job(type: Maven) {
   }
   postBuildSteps {
     publishers{
-        publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
-        archiveXUnit {
-                failedThresholds {
-                unstable 0
-                unstableNew 0
-                failure 0
-                failureNew 0
-            }
-            skippedThresholds {
-                unstable 0
-                unstableNew 0
-                failure 0
-                failureNew 0
-            }
-            thresholdMode ThresholdMode.NUMBER
-            timeMargin 4000
+      mailer("", false, true)
+      publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
+      archiveXUnit {
+        failedThresholds {
+          unstable 0
+          unstableNew 0
+          failure 0
+          failureNew 0
         }
+        skippedThresholds {
+          unstable 0
+          unstableNew 0
+          failure 0
+          failureNew 0
         }
+        thresholdMode ThresholdMode.NUMBER
+        timeMargin 4000
+      }
+    }
   }
   configure { project ->
     project / publishers / xunit / types << "JBehavePluginType"(plugin="jbehave-jenkins-plugin@3.7")
@@ -488,28 +500,29 @@ job(type: Maven) {
         settingsConfigId('<%= @settings_id %>')
       }
   }
-    publishers{
-        archiveArtifacts 'version.properties'
-        publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
-        archiveXUnit {
-                failedThresholds {
-                unstable 0
-                unstableNew 0
-                failure 0
-                failureNew 0
-            }
-            skippedThresholds {
-                unstable 0
-                unstableNew 0
-                failure 0
-                failureNew 0
-            }
-            thresholdMode ThresholdMode.NUMBER
-            timeMargin 4000
-        }
-        downstreamParameterized {
-          trigger('deploy-integration-tests')
-        }
+  publishers{
+    mailer("", false, true)
+    archiveArtifacts 'version.properties'
+    publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
+    archiveXUnit {
+      failedThresholds {
+        unstable 0
+        unstableNew 0
+        failure 0
+        failureNew 0
+      }
+      skippedThresholds {
+        unstable 0
+        unstableNew 0
+        failure 0
+        failureNew 0
+      }
+      thresholdMode ThresholdMode.NUMBER
+      timeMargin 4000
+    }
+    downstreamParameterized {
+      trigger('deploy-integration-tests')
+    }
   }
   configure { project ->
     project / publishers / xunit / types << "JBehavePluginType"(plugin="jbehave-jenkins-plugin@3.7")
