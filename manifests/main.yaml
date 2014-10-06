@@ -352,9 +352,11 @@ application:
                         recipeUrl: "{$.cookbooks_url}"
                         runList:
                           - "recipe[cicd_infrastructure::integration_jenkins_gerrit]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_selenium]"
                           - "recipe[cicd_infrastructure::integration_jenkins_jira]"
                           - "recipe[cicd_infrastructure::integration_jenkins_nexus]"
                           - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_description]"
                         version: "11.8.2"
                         jattrs:
                           cicd_infrastructure:
@@ -379,9 +381,11 @@ application:
                                 username: "{$.environment.properties.jira_username}"
                                 password: "{$.environment.properties.jira_password}"
 
+                              sonar:
+                                host: "{$.environment.sonar.sonar_public_ips[0]}"
+
                       output:
                         jenkins_host_state: chefState
-
 
                   - gerrit_projects_setup:
                       phase: gerrit_projects_setup
@@ -430,8 +434,12 @@ application:
                             jenkins:
                               gerrit-trigger:
                                 host: "{$.environment.gerrit.gerrit_public_ips[0]}"
+
                               nexus:
                                 endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+
+                              jira:
+                                host: "{$.environment.jira.jira_public_ips[0]}"
 
                   - gerrit_ldap:
                       phase: ldap_integration

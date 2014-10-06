@@ -40,10 +40,12 @@ qubell_app_params = """{
 
 folder {
     name "${project_name}"
+    description("<a href='http://<%= @gerrit_host %>'> Gerrit</a>, <a href='http://<%= @jira_host %>'> JIRA</a>")
 }
 
 job(type: Maven) {
   name "${project_name}/dev-build-review"
+  description("<p>This job builds code and run unit tests. Triggered by Gerrit review action. Source code: <code>${git_url}</code></p>")
   jdk('/usr/lib/jvm/java/')
   parameters {
     stringParam("GERRIT_PROJECT", "${project_name}", "Gerrit project name")
@@ -91,6 +93,7 @@ job(type: Maven) {
 
 job(type: Maven) {
   name "${project_name}/dev-build"
+  description("<p>This job builds code published to dev branch and run unit tests, triggered job with functional test. Source code: <code>${git_url}</code></p>")
   jdk('/usr/lib/jvm/java/')
   configure { project ->
     project << globalSettings(
@@ -149,6 +152,7 @@ job(type: Maven) {
 }
 
 job() {
+    description("<p>This job requested Qubell deployment ${project_name}, triggered job with an integration tests, destroyed application in Qubell.</p>")
     jdk('/usr/lib/jvm/java/')
     parameters {
       stringParam('QUBELL_APP_ID', '53eb65e9e4b0f24b4a52c0f2', 'Qubell Application ID')
@@ -265,6 +269,7 @@ build.addAction(pa);
 
 job(type: Maven) {
   name "${project_name}/fb-build"
+  description("<p>This job builds feature branch code, run unit tests and triggered job with functional tests. Source code: <code>${git_url}</code></p>")
   jdk("/usr/lib/jvm/java/")
   configure { project ->
     project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
@@ -324,6 +329,7 @@ job(type: Maven) {
 
 job(type: Maven) {
   name "${project_name}/fb-functional-tests"
+  description("<p>This job run functional tests on feature branch code.</p>")
   jdk("/usr/lib/jvm/java/")
   configure { project ->
     project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
@@ -388,6 +394,7 @@ job(type: Maven) {
 }
 job(type: Maven) {
   name "${project_name}/integration-tests"
+  description("<p>This job run integration tests on dev branch code.</p>")
   jdk("/usr/lib/jvm/java/")
   configure { project ->
     project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
@@ -449,6 +456,7 @@ job(type: Maven) {
 
 job(type: Maven) {
   name "${project_name}/functional-tests"
+  description("<p>This job run functional test on dev branch code and triggered deployment application in Qubell</p>")
   jdk("/usr/lib/jvm/java/")
   configure { project ->
     project << globalSettings(class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider', plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
