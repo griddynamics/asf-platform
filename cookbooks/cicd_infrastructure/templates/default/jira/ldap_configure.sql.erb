@@ -1,4 +1,5 @@
-INSERT INTO cwd_directory (
+<% @time = Time.now.strftime('%Y-%m-%d %H:%M:%S') %>
+INSERT IGNORE INTO cwd_directory (
   ID,
   directory_name,
   lower_directory_name,
@@ -11,11 +12,11 @@ INSERT INTO cwd_directory (
   directory_type,
   directory_position)
 VALUES
-  (10000,
+  (2,
   'Delegated LDAP Authentication',
   'delegated ldap authentication',
-  '2014-07-22 13:58:31',
-  '2014-07-22 14:13:29',
+  '<%= @time %>',
+  '<%= @time %>',
   1,
   'TEST DIRECTORY',
   'com.atlassian.crowd.directory.DelegatedAuthenticationDirectory',
@@ -23,63 +24,60 @@ VALUES
   'DELEGATING',
   1);
 
-INSERT INTO cwd_directory_operation (
+INSERT IGNORE INTO cwd_directory_operation (
   directory_id,
   operation_type
 ) values
-(10000,'CREATE_GROUP'),
-(10000,'CREATE_ROLE'),
-(10000,'CREATE_USER'),
-(10000,'DELETE_GROUP'),
-(10000,'DELETE_ROLE'),
-(10000,'DELETE_USER'),
-(10000,'UPDATE_GROUP'),
-(10000,'UPDATE_GROUP_ATTRIBUTE'),
-(10000,'UPDATE_ROLE'),
-(10000,'UPDATE_ROLE_ATTRIBUTE'),
-(10000,'UPDATE_USER'),
-(10000,'UPDATE_USER_ATTRIBUTE');
+(2,'CREATE_GROUP'),
+(2,'CREATE_ROLE'),
+(2,'CREATE_USER'),
+(2,'DELETE_GROUP'),
+(2,'DELETE_ROLE'),
+(2,'DELETE_USER'),
+(2,'UPDATE_GROUP'),
+(2,'UPDATE_GROUP_ATTRIBUTE'),
+(2,'UPDATE_ROLE'),
+(2,'UPDATE_ROLE_ATTRIBUTE'),
+(2,'UPDATE_USER'),
+(2,'UPDATE_USER_ATTRIBUTE');
 
-INSERT INTO cwd_directory_attribute (
-  directory_id,attribute_name,attribute_value)
-VALUES (10000,'autoAddGroups','jira-developers');
-
-INSERT INTO cwd_directory_attribute (
+INSERT IGNORE INTO cwd_directory_attribute (
   directory_id,attribute_name,attribute_value)
 VALUES
-(10000,'crowd.delegated.directory.auto.create.user','true'),
-(10000,'crowd.delegated.directory.auto.update.user','true'),
-(10000,'crowd.delegated.directory.importGroups','false'),
-(10000,'crowd.delegated.directory.type','com.atlassian.crowd.directory.OpenLDAP'),
-(10000,'ldap.basedn','<%= @basedn %>'),
-(10000,'ldap.external.id','entryUUID'),
-(10000,'ldap.group.description','description'),
-(10000,'ldap.group.dn',''),
-(10000,'ldap.group.filter','(objectclass=<%= @group_attrs['objClass'] %>)'),
-(10000,'ldap.group.name','<%= @group_attrs['groupId'] %>'),
-(10000,'ldap.group.objectclass','<%= @group_attrs['objClass'] %>'),
-(10000,'ldap.group.usernames','<%= @group_attrs['memberAttr'] %>'),
-(10000,'ldap.nestedgroups.disabled','true'),
-(10000,'ldap.pagedresults','false'),
-(10000,'ldap.pagedresults.size','1000'),
-(10000,'ldap.password','<%= @root_pwd %>'),
-(10000,'ldap.referral','false'),
-(10000,'ldap.url','ldap://<%= @host %>:<%= @port %>'),
-(10000,'ldap.user.displayname','displayName'),
-(10000,'ldap.user.dn','<%= @userdn %>'),
-(10000,'ldap.user.email','<%= @user_attrs['mail'] %>'),
-(10000,'ldap.user.filter','(objectclass=<%= @user_attrs['objClass'] %>)'),
-(10000,'ldap.user.firstname','<%= @user_attrs['realname'] %>'),
-(10000,'ldap.user.group','memberOf'),
-(10000,'ldap.user.lastname','sn'),
-(10000,'ldap.user.objectclass','<%= @user_attrs['objClass'] %>'),
-(10000,'ldap.user.username','cn'),
-(10000,'ldap.user.username.rdn','cn'),
-(10000,'ldap.userdn','<%= @rootdn %>'),
-(10000,'ldap.usermembership.use','false'),
-(10000,'ldap.usermembership.use.for.groups','false');
+(2,'autoAddGroups','jira-users'),
+(2,'crowd.delegated.directory.auto.create.user','true'),
+(2,'crowd.delegated.directory.auto.update.user','true'),
+(2,'crowd.delegated.directory.importGroups','false'),
+(2,'crowd.delegated.directory.type','com.atlassian.crowd.directory.OpenLDAP'),
+(2,'ldap.basedn','<%= @basedn %>'),
+(2,'ldap.external.id','entryUUID'),
+(2,'ldap.group.description','description'),
+(2,'ldap.group.dn',''),
+(2,'ldap.group.filter','(objectclass=<%= @group_attrs['objClass'] %>)'),
+(2,'ldap.group.name','<%= @group_attrs['groupId'] %>'),
+(2,'ldap.group.objectclass','<%= @group_attrs['objClass'] %>'),
+(2,'ldap.group.usernames','<%= @group_attrs['memberAttr'] %>'),
+(2,'ldap.nestedgroups.disabled','true'),
+(2,'ldap.pagedresults','false'),
+(2,'ldap.pagedresults.size','1000'),
+(2,'ldap.password','<%= @root_pwd %>'),
+(2,'ldap.referral','false'),
+(2,'ldap.url','ldap://<%= @host %>:<%= @port %>'),
+(2,'ldap.user.displayname','displayName'),
+(2,'ldap.user.dn','<%= @userdn %>'),
+(2,'ldap.user.email','<%= @user_attrs['mail'] %>'),
+(2,'ldap.user.filter','(objectclass=<%= @user_attrs['objClass'] %>)'),
+(2,'ldap.user.firstname','<%= @user_attrs['realname'] %>'),
+(2,'ldap.user.group','memberOf'),
+(2,'ldap.user.lastname','sn'),
+(2,'ldap.user.objectclass','<%= @user_attrs['objClass'] %>'),
+(2,'ldap.user.username','cn'),
+(2,'ldap.user.username.rdn','cn'),
+(2,'ldap.userdn','<%= @rootdn %>'),
+(2,'ldap.usermembership.use','false'),
+(2,'ldap.usermembership.use.for.groups','false');
 
-INSERT INTO cwd_group (
+INSERT IGNORE INTO cwd_group (
   ID,
   group_name,
   lower_group_name,
@@ -91,16 +89,6 @@ INSERT INTO cwd_group (
   lower_description,
   group_type,
   directory_id)
-VALUES (
-  10010,
-  'jira-users',
-  'jira-users',
-  1,
-  1,
-  '2014-08-04 09:41:36',
-  '2014-08-04 09:41:36',
-  NULL,
-  NULL,
-  'GROUP',
-  10000);
-
+VALUES 
+(10003, 'jira-users', 'jira-users', 1, 1, '<%= @time %>', '<%= @time %>', '', NULL, 'GROUP', 2),
+(10004, 'jira-developers', 'jira-developers', 1, 1, '<%= @time %>', '<%= @time %>', '', NULL, 'GROUP', 2);

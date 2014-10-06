@@ -13,6 +13,7 @@ service 'jira' do
 end
 
 jira_ldap_config = node['cicd_infrastructure']['jira']['ldap']
+host = node['jira']['apache2']['virtual_host_name']
 
 execute "configure ldap" do
   user "root"
@@ -20,25 +21,25 @@ execute "configure ldap" do
   action :nothing
 end
 
-host = node['jira']['apache2']['virtual_host_name']
-
-ruby_block "wait for JIRA" do
-  block do
-    require "net/https"
-    require "uri"
-    port = node['jira']['apache2']['ssl']['port']
-    path = "secure/SetupApplicationProperties!default.jspa"
-    uri = URI.parse("https://#{host}/#{path}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    request = Net::HTTP::Get.new(uri.request_uri)
-    node['jira']['attempt_count'].times {
-      sleep(node['jira']['sleep_period'])
-      break if File.read("/opt/atlassian/jira/logs/catalina.out")
-      .include?("You can now access JIRA through your web browser")
-    }
-  end
+template "/tmp/ldap_configure.sql" do
+  source 'jira/ldap_configure.sql.erb'
+  owner node['jira']['user']
+  group node['jira']['group']
+  mode 0644
+  variables(
+    host:         jira_ldap_config['server'],
+    port:         jira_ldap_config['port'],
+    basedn:       jira_ldap_config['basedn'],
+    rootdn:       jira_ldap_config['rootdn'],
+    root_pwd:     jira_ldap_config['root_pwd'],
+    scheme:       jira_ldap_config['scheme'],
+    userdn:       jira_ldap_config['userdn'],
+    user_attrs:   jira_ldap_config['user_attrs'],
+    groupdn:      jira_ldap_config['groupdn'],
+    group_attrs:  jira_ldap_config['group_attrs']
+  )
+  action :nothing
+  notifies :run, 'execute[configure ldap]', :delayed
 end
 
 ruby_block "configure database" do
@@ -61,27 +62,25 @@ ruby_block "configure database" do
     }
   end
   action :nothing
+  notifies :create, resources(:template => "/tmp/ldap_configure.sql")
 end
 
-template "#{node['jira']['work_dir']}/ldap_configure.sql" do
-  source 'jira/ldap_configure.sql.erb'
-  owner node['jira']['user']
-  group node['jira']['group']
-  mode 0644
-  variables(
-    host:         jira_ldap_config['server'],
-    port:         jira_ldap_config['port'],
-    basedn:       jira_ldap_config['basedn'],
-    rootdn:       jira_ldap_config['rootdn'],
-    root_pwd:     jira_ldap_config['root_pwd'],
-    scheme:       jira_ldap_config['scheme'],
-    userdn:       jira_ldap_config['userdn'],
-    user_attrs:   jira_ldap_config['user_attrs'],
-    groupdn:      jira_ldap_config['groupdn'],
-    group_attrs:  jira_ldap_config['group_attrs']
-  )
-  notifies :restart, 'service[jira]', :delayed
-  notifies :run, 'ruby_block[wait for JIRA]', :delayed
-  notifies :run, 'ruby_block[configure database]', :delayed
-  notifies :run, 'execute[configure ldap]', :delayed
+ruby_block "wait for JIRA" do
+  block do
+    require "net/https"
+    require "uri"
+    port = node['jira']['apache2']['ssl']['port']
+    path = "secure/SetupApplicationProperties!default.jspa"
+    uri = URI.parse("https://#{host}/#{path}")
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    request = Net::HTTP::Get.new(uri.request_uri)
+    node['jira']['attempt_count'].times {
+      sleep(node['jira']['sleep_period'])
+      break if File.read("/opt/atlassian/jira/logs/catalina.out")
+      .include?("You can now access JIRA through your web browser")
+    }
+    notifies :run, resources(:ruby_block => 'configure database')
+  end
 end
