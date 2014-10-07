@@ -82,6 +82,9 @@ default['cicd_infrastructure']['jenkins']['plugin']['xunit']['version'] = '1.89'
 default['cicd_infrastructure']['jenkins']['plugin']['xunit']['url'] = "http://updates.jenkins-ci.org/download/plugins/xunit/" +
 "#{node['cicd_infrastructure']['jenkins']['plugin']['xunit']['version']}/xunit.hpi"
 
+default['cicd_infrastructure']['jenkins']['sonar']['host'] = nil
+default['cicd_infrastructure']['jenkins']['sonar']['port'] = '9000'
+
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
 default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'

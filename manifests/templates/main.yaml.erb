@@ -294,9 +294,10 @@ application:
                       parameters:
                         roles: [ jenkins ]
                         recipeUrl: "{$.cookbooks_url}"
-                        runList:<% (config['components'] - ['selenium', 'sonar', 'jenkins', 'ldap']).each do |mod| %>
+                        runList:<% (config['components'] - ['sonar', 'jenkins', 'ldap']).each do |mod| %>
                           - "recipe[cicd_infrastructure::integration_jenkins_<%= mod %>]"<% end %>
                           - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_description]"
                         version: "11.8.2"
                         jattrs:
                           cicd_infrastructure:
@@ -322,6 +323,10 @@ application:
                                 host: "{$.environment.jira.jira_public_ips[0]}"
                                 username: "{$.environment.properties.jira_username}"
                                 password: "{$.environment.properties.jira_password}"
+                              <% end %>
+                              <% if config['components'].include? 'sonar' %>
+                              sonar:
+                                host: "{$.environment.sonar.sonar_public_ips[0]}"
                               <% end %>
                       output:
                         jenkins_host_state: chefState
@@ -378,6 +383,10 @@ application:
                               nexus:
                                 endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
                               <% end -%>
+                              <% if config['components'].include? 'jira' %>
+                              jira:
+                                host: "{$.environment.jira.jira_public_ips[0]}"
+                              <% end %>
                 <% end -%>
                 <% if config['components'].include? 'ldap' %>
                   <% (config['components'] - ['selenium', 'ldap']).each do |mod| %>

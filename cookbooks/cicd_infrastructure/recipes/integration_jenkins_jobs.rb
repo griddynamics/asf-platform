@@ -18,6 +18,7 @@ end
 
 gerrit_config = node['cicd_infrastructure']['jenkins']['gerrit-trigger']
 nexus_config = node['cicd_infrastructure']['jenkins']['nexus']
+jira_config = node['cicd_infrastructure']['jenkins']['jira']
 
 execute 'Checkout jobs repo' do
   command "git clone ssh://jenkins@#{gerrit_config['host']}:#{gerrit_config['ssh_port']}/asf-webapp-jenkins-jobs"
@@ -40,6 +41,7 @@ template '/tmp/asf-webapp-jenkins-jobs/asf-demo-jobs.groovy' do
     gerrit_port: gerrit_config['ssh_port'],
     nexus_id: 'asf-webapp-demo',
     nexus_url: nexus_config['endpoint'],
+    jira_host: jira_config['host'],
     settings_id: node['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'],
     plugins: node['cicd_infrastructure']['jenkins']['plugins'],
     qubell_plugin_version: node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']
