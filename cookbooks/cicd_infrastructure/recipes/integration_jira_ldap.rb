@@ -17,7 +17,7 @@ host = node['jira']['apache2']['virtual_host_name']
 
 execute "configure ldap" do
   user "root"
-  command "mysql -ujira -pchangeit jira < /ldap_configure.sql"
+  command "mysql -ujira -pchangeit jira < /tmp/ldap_configure.sql"
   action :nothing
 end
 
