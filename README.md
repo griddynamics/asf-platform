@@ -1,11 +1,23 @@
-CICD-Infrastructure Cookbook
-============================
+Agile Software Factory
+======================
 
 Install common components of CI/CD infrastructure and setup integration between them.
 
-Recipes
--------
+Getting Started
+---------------
 
+Structure
+---------
+- **cookbooks** - contain cicd_infractructure cookbook - main cookbook for installing components and run integration.
+- **manifests** - contain manifest for main Qubell application, templates and manifests for dependencies.
+-  **manifests/templates** - contain manifest template for main Qubell application
+-  **manifests/components** - contain Qubell manifests for dependeces for main application
+-  **Rakefile** - set of rake tasks to simplify common operations.
+-  **config.json** - configuration file for Rakefile, contains information about preffered s3 buckets and components for generation main manifest from temptale.
+-  **meta.yaml** - Qubell component metadata file.
+
+Cookbook
+--------
 - **gerrit.rb** - install gerrit 2.9 and setup root user for it (accessiable only via CLI)
 - **integration_gerrit_demojobs_project.rb** - create project with jenkins jobs templates
 - **integration_gerrit_jenkins.rb** - create Non-Interactive user for jenkins based on passed public ssh key
@@ -32,12 +44,15 @@ Recipes
 - **sonar.rb** - install Sonar
 - **zephyr.rb** - install Zephyr
 
+Manifests
+---------
+
 Develop
 -------
 - Setup rbenv/rvm to use ruby 1.9.3 by default
 - Run `bundle install` to get all dependences
-- To verify syntax and code style run `bundle exec rake`
-- To get all cookbook dependences run `bundle exec berks install`
+- To verify cookbook syntax and code style run `bundle exec rake` in `cookbooks/cicd_infractructure`
+- To get all cookbook dependences run `bundle exec berks install
 - To get local copy of Berkshelf repo run `berks vendor cookbooks`
 - To setup dev installation of cookbook run `vagrant up`
 
