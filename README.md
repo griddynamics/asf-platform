@@ -1,55 +1,36 @@
 CICD-Infrastructure Cookbook
 ============================
-TODO: Enter the cookbook description here.
 
-e.g.
-This cookbook makes your favorite breakfast sandwich.
+Install common components of CI/CD infrastructure and setup integration between them.
 
-Requirements
-------------
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
+Recipes
+-------
 
-e.g.
-#### packages
-- `toaster` - cicd-infrastructure needs toaster to brown your bagel.
-
-Attributes
-----------
-TODO: List your cookbook attributes here.
-
-e.g.
-#### cicd-infrastructure::default
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['cicd-infrastructure']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
-
-Usage
------
-#### cicd-infrastructure::default
-TODO: Write usage instructions for each cookbook.
-
-e.g.
-Just include `cicd-infrastructure` in your node's `run_list`:
-
-```json
-{
-  "name":"my_node",
-  "run_list": [
-    "recipe[cicd-infrastructure]"
-  ]
-}
-```
+- **gerrit.rb** - install gerrit 2.9 and setup root user for it (accessiable only via CLI)
+- **integration_gerrit_demojobs_project.rb** - create project with jenkins jobs templates
+- **integration_gerrit_jenkins.rb** - create Non-Interactive user for jenkins based on passed public ssh key
+- **integration_gerrit_ldap.rb** - regenerate Gerrit config with ldap section.
+- **integration_gerrit_projects.rb** - set permissions for All-Projects and create new two project templates: Open-Projects and Private-Projects in Gerrit
+- **integration_jenkins_description.rb** - Add endpoint to other services in Jenkins
+- **integration_jenkins_gerrit.rb** - generate ssh key and pass it to Gerrit, setup Jenkins gerrit-trigger plugin
+- **integration_jenkins_jira.rb** - setup Jenkins jira plugin
+- **integration_jenkins_jobs.rb** - put jobs templates into Gerrit repo and add job for checkout and job generation in Jenkins
+- **integration_jenkins_ldap.rb** - setup Jenkins LDAP plugin
+- **integration_jenkins_nexus.rb** - add NEXUS_URL variable to Jenkins, setup access with maven-global-settings
+- **integration_jenkins_qubell.rb** - setup Jenkins Qubell plugin.
+- **integration_jenkins_selenium.rb** - add SELENIUM_URL variable to Jenkins
+- **integration_jira_jenkins.rb** - enables remote API call in JIRA
+- **integration_jira_ldap.rb** - add LDAP configuration to JIRA database
+- **integration_nexus_ldap.rb** - setup LDAP config and groups mapping in Nexus
+- **integration_sonar_ldap.rb** - setup LDAP in Sonar
+- **jenkins.rb** - install Jenkins and plugins for itAdd
+- **jira.rb** - install JIRA
+- **nexus.rb** - install Nexus and setup repositories
+- **openldap.rb** - install OpenLDAP and init root directory
+- **openldap_init_root.rb** - setup initial LDAP structure
+- **openldap_new_users.rb** - add users into LDAP
+- **sonar.rb** - install Sonar
+- **zephyr.rb** - install Zephyr
 
 Develop
 -------
