@@ -16,8 +16,18 @@ Structure
 -  **config.json** - configuration file for Rakefile, contains information about preffered s3 buckets and components for generation main manifest from temptale.
 -  **meta.yaml** - Qubell component metadata file.
 
-Cookbook
---------
+Manifests
+---------
+- **main.yaml** - main Qubell manifest with all components enabled. Run dependent components and setup integration.
+- **components/gerrit.yaml** - install Gerrit
+- **components/jenkins.yaml** - install Jenkins
+- **components/jira.yaml** - install JIRA
+- **components/ldap.yaml** - install LDAP
+- **components/nexus.yaml** - install Nexus
+- **components/sonar.yaml** - install Sonar
+
+Cookbook recipes
+----------------
 - **gerrit.rb** - install gerrit 2.9 and setup root user for it (accessiable only via CLI)
 - **integration_gerrit_demojobs_project.rb** - create project with jenkins jobs templates
 - **integration_gerrit_jenkins.rb** - create Non-Interactive user for jenkins based on passed public ssh key
@@ -43,9 +53,6 @@ Cookbook
 - **openldap_new_users.rb** - add users into LDAP
 - **sonar.rb** - install Sonar
 - **zephyr.rb** - install Zephyr
-
-Manifests
----------
 
 Develop
 -------
