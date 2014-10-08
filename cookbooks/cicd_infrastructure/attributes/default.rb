@@ -65,7 +65,7 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] = "https://git
     "jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
 
 default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
-default['cicd_infrastructure']['jenkins']['nexus']['username'] = 'deployment' 
+default['cicd_infrastructure']['jenkins']['nexus']['username'] = 'deployment'
 default['cicd_infrastructure']['jenkins']['nexus']['password'] = 'deployment123'
 default['cicd_infrastructure']['jenkins']['selenium']['endpoint'] = nil
 
@@ -98,6 +98,10 @@ default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=
 default['cicd_infrastructure']['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
 default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayName'
 default['cicd_infrastructure']['gerrit']['ldap']['accountEmailAddress'] = 'mail'
+
+default['cicd_infrastructure']['gerrit']['sendemail']['enable'] = 'true'
+default['cicd_infrastructure']['gerrit']['sendemail']['smtpServer'] = 'localhost'
+default['cicd_infrastructure']['gerrit']['sendemail']['smtpServerPort'] = '25'
 
 default['cicd_infrastructure']['nexus']['auth'] = 'LDAP'
 default['cicd_infrastructure']['nexus']['ldap']['server'] = 'localhost'

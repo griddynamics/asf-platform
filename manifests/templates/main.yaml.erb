@@ -332,17 +332,20 @@ application:
                       output:
                         jenkins_host_state: chefState
                 <% end %>
-                <% if (['jenkins', 'gerrit'] - config['components']).empty? %>
-                  - gerrit_projects_setup:
-                      phase: gerrit_projects_setup
+                <% if config['components'].include? 'gerrit' %>
+                  - gerrit_setup:
+                      phase: gerrit_setup
                       precedingPhases: [ init_component_vms ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]
                         recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_gerrit_projects]" ]
+                        runList:
+                          - "recipe[cicd_infrastructure::integration_gerrit_projects]"
+                          - "recipe[cicd_infrastructure::integration_gerrit_mail]"
                         version: "11.8.2"
-
+                <% end %>
+                <% if (['jenkins', 'gerrit'] - config['components']).empty? %>
                   - gerrit_jenkins:
                       phase: gerrit_setup
                       precedingPhases: [ gerrit_projects_setup, jenkins_setup ]
