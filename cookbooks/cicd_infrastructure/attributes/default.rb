@@ -31,7 +31,9 @@ default['cicd_infrastructure']['jenkins']['plugins'] = {
   'envinject' => '',
   'groovy' => '',
   'jira' => '1.39',
-  'htmlpublisher' => ''
+  'htmlpublisher' => '',
+  'analysis-core' => '',
+  'email-ext' => '2.38.2'
 }
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
@@ -46,6 +48,9 @@ default['cicd_infrastructure']['jenkins']['ldap']['userdn'] = 'ou=people'
 default['cicd_infrastructure']['jenkins']['ldap']['user_id'] = 'uid={0}'
 default['cicd_infrastructure']['jenkins']['ldap']['rootdn'] = 'cn=admin,dc=example,dc=com'
 default['cicd_infrastructure']['jenkins']['ldap']['root_pwd'] = 'password'
+
+default['cicd_infrastructure']['jenkins']['mail']['adress'] = 'no-reply@jenkins.host'
+default['cicd_infrastructure']['jenkins']['mail']['smtp']['host'] = 'localhost'
 
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['username'] = nil
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['password'] = nil

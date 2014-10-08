@@ -8,6 +8,15 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
+if node['cloud']
+  case node['cloud']['provider']
+  when "ec2"
+    default['jenkins']['master']['host'] = node['cloud']['public_ipv4']
+  when "rackspace"
+    default['jenkins']['master']['host'] = node['cloud']['public_ipv4']
+  end
+end
+
 override['jenkins']['master']['version'] = '1.554.2'
 override['jenkins']['master']['install_method'] = 'war'
 override['jenkins']['master']['source'] =
