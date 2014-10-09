@@ -369,7 +369,7 @@ job(type: Maven) {
     }
   }
   rootPOM("spring-petclinic-test/pom.xml")
-  goals('-P functional-test,build clean verify -Dpetclinic.version=${buildVersion}')
+  goals('-P functional-test,build-fb clean verify -Dpetclinic.version=${buildVersion}')
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
   configure { project ->
