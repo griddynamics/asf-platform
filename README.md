@@ -69,14 +69,17 @@ Develop
 -------
 - Setup rbenv/rvm to use Ruby 1.9.3 by default
 - Run `bundle install` to get all dependences
+- Specify your AWS S3 buckek in `config.json`
+- To upload `cicd_infrastructure` cookbook with all dependences run `rake cookbooks:upload`
+- To upload all manifests from `manifests` directory run `rake manifests:upload_3`
+- To generate manifests from templates run `rake manifests:generate`. Generated manifests will be in `manifests` directory with names `generated-<template-name>.yaml`
 - To verify cookbook syntax and code style run `bundle exec rake` in `cookbooks/cicd_infrastructure`
-- To get all cookbook dependences run `bundle exec berks install
-- To get local copy of Berkshelf repo run `berks vendor cookbooks`
-- To setup dev installation of cookbook run `vagrant up`
-
-To get more Vargant images look at [bento](https://github.com/opscode/bento)
-
+- To get all cookbook dependences run `bundle exec berks install`
+- To get local copy of Berkshelf repo run `berks vendor ../vendor-cookbooks` from `cookbooks/cicd_infrastructure`
 
 License and Authors
 -------------------
-Authors: TODO: List authors
+Authors:
+- Alexey Kornev <akornev@griddynamics.com>
+- Grigory Silantiev <gsilantyev@griddynamics.com>
+- Nikolay Yurin <nyurin@griddynamics.com>
