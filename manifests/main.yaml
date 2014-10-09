@@ -73,6 +73,8 @@ application:
           qubell_password: "publish-signal(string)"
           jira_username: "publish-signal(string)"
           jira_password: "publish-signal(string)"
+          sonar_username: "publish-signal(string)"
+          sonar_password: "publish-signal(string)"
 
 
     sonar:
@@ -243,6 +245,8 @@ application:
               qubell_password: consume-signal(string)
               jira_username: consume-signal(string)
               jira_password: consume-signal(string)
+              sonar_username: consume-signal(string)
+              sonar_password: consume-signal(string)
 
             gerrit:
               gerrit_public_ips: consume-signal(list<string>)
@@ -356,6 +360,7 @@ application:
                           - "recipe[cicd_infrastructure::integration_jenkins_jira]"
                           - "recipe[cicd_infrastructure::integration_jenkins_nexus]"
                           - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
+                          - "recipe[cicd_infrastructure::integration_jenkins_sonar]"
                           - "recipe[cicd_infrastructure::integration_jenkins_description]"
                         version: "11.8.2"
                         jattrs:
@@ -383,6 +388,8 @@ application:
 
                               sonar:
                                 host: "{$.environment.sonar.sonar_public_ips[0]}"
+                                username: "{$.environment.properties.sonar_username}"
+                                password: "{$.environment.properties.sonar_username}"
 
                       output:
                         jenkins_host_state: chefState

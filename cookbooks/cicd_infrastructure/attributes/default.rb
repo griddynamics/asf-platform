@@ -33,7 +33,8 @@ default['cicd_infrastructure']['jenkins']['plugins'] = {
   'jira' => '1.39',
   'htmlpublisher' => '',
   'analysis-core' => '',
-  'email-ext' => '2.38.2'
+  'email-ext' => '2.38.2',
+  'sonar' => ''
 }
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
@@ -89,6 +90,8 @@ default['cicd_infrastructure']['jenkins']['plugin']['xunit']['url'] = "http://up
 
 default['cicd_infrastructure']['jenkins']['sonar']['host'] = nil
 default['cicd_infrastructure']['jenkins']['sonar']['port'] = '9000'
+default['cicd_infrastructure']['jenkins']['sonar']['username'] = nil
+default['cicd_infrastructure']['jenkins']['sonar']['password'] = nil
 
 default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
