@@ -196,7 +196,7 @@ job() {
           }
     }
     configure { // It's hack because for some reasone DSL does not add qubell plugin into job
-	    it / builders << "hudson.plugins.groovy.SystemGroovy"(plugin: "groovy@1.20") {
+	    it / builders << "hudson.plugins.groovy.Groovy"(plugin: "groovy@1.22") {
 		    scriptSource(class : "hudson.plugins.groovy.StringScriptSource") {
 			    command """
 import groovy.json.JsonSlurper;
@@ -208,15 +208,23 @@ def envVarsMap = build.parent.builds[0].properties.get("envVars")
 def qubellOutputFile = new File("\${envVarsMap.get('WORKSPACE')}/qubell_output.json")
 def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
 
-def pa = new ParametersAction([
-new StringParameterValue('PETCLINIC_URL', userJson.returnValues.'output.webapp_endpoint')
-]);
-build.addAction(pa);
+def p = new Properties()
+
+p["PETCLINIC_URL"] = userJson.returnValues.'output.webapp_endpoint'
+p.store(new FileWriter('petclinic_url.properties'), null)
 """
         }
+        groovyName("Groovy-default")
       }
     }
-
+    configure { project ->
+        project / builders << "EnvInjectBuilder"(
+        plugin: "envinject@1.90") {
+            info() {
+                propertiesFilePath("petclinic_url.properties")
+            }            
+        }
+    }
 
     configure {
         it / builders << "hudson.plugins.parameterizedtrigger.TriggerBuilder"(plugin:"parameterized-trigger@2.25") {
