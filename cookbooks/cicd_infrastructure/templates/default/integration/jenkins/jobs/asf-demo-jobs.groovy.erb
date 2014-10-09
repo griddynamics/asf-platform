@@ -382,7 +382,7 @@ job(type: Maven) {
   postBuildSteps {
     publishers{
       mailer("", false, true)
-      publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
+      publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',true)}
       archiveXUnit {
           failedThresholds {
           unstable 0
