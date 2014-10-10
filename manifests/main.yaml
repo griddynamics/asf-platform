@@ -73,9 +73,10 @@ application:
           qubell_password: "publish-signal(string)"
           jira_username: "publish-signal(string)"
           jira_password: "publish-signal(string)"
-          sonar_username: "publish-signal(string)"
-          sonar_password: "publish-signal(string)"
-
+          jenkins_sonar_username: "publish-signal(string)"
+          jenkins_sonar_password: "publish-signal(string)"
+          admin_sonar_username: "publish-signal(string)"
+          admin_sonar_password: "publish-signal(string)"
 
     sonar:
       type: reference.Submodule
@@ -245,8 +246,10 @@ application:
               qubell_password: consume-signal(string)
               jira_username: consume-signal(string)
               jira_password: consume-signal(string)
-              sonar_username: consume-signal(string)
-              sonar_password: consume-signal(string)
+              jenkins_sonar_username: consume-signal(string)
+              jenkins_sonar_password: consume-signal(string)
+              admin_sonar_username: consume-signal(string)
+              admin_sonar_password: consume-signal(string)
 
             gerrit:
               gerrit_public_ips: consume-signal(list<string>)
@@ -447,6 +450,21 @@ application:
 
                               jira:
                                 host: "{$.environment.jira.jira_public_ips[0]}"
+
+                  - sonar_setup:
+                      precedingPhases: [ init_component_vms ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ sonar ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::integration_sonar_mail]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            sonar:
+                              credentials:
+                                username: "{$.environment.properties.admin_sonar_username}"
+                                password: "{$.environment.properties.admin_sonar_password}"
 
                   - gerrit_ldap:
                       phase: ldap_integration
