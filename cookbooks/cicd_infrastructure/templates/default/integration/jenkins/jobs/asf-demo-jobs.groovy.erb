@@ -135,6 +135,13 @@ job(type: Maven) {
       goals('versions:set -DnewVersion=\${buildVersion}')
       mavenInstallation(maven_installation)
       localRepository(LocalToWorkspace)
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
     }
   }
   logRotator(30, 50, -1, -1)
@@ -322,6 +329,13 @@ job(type: Maven) {
         goals('versions:set -DnewVersion=\${buildVersion}')
         mavenInstallation(maven_installation)
         localRepository(LocalToWorkspace)
+        configure { project ->
+            project << globalSettings(
+              class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+              plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+                settingsConfigId('<%= @settings_id %>')
+            }
+        }
     }
   }
   concurrentBuild(true)
