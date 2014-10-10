@@ -302,10 +302,11 @@ application:
                       parameters:
                         roles: [ jenkins ]
                         recipeUrl: "{$.cookbooks_url}"
-                        runList:<% (config['components'] - ['jenkins', 'ldap']).each do |mod| %>
+                        runList:
+                          - "recipe[cicd_infrastructure::integration_jenkins_description]"
+                          <%- (config['components'] - ['jenkins', 'ldap']).each do |mod| %>
                           - "recipe[cicd_infrastructure::integration_jenkins_<%= mod %>]"<% end %>
                           - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
-                          - "recipe[cicd_infrastructure::integration_jenkins_description]"
                           - "recipe[cicd_infrastructure::integration_jenkins_mail]"
                         version: "11.8.2"
                         jattrs:
