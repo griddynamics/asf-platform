@@ -1,0 +1,21 @@
+<hudson.plugins.sonar.SonarPublisher_-DescriptorImpl plugin="sonar@<%= @plugin_version %>">
+  <installations>
+    <hudson.plugins.sonar.SonarInstallation>
+      <name>Sonar</name>
+      <disabled>false</disabled>
+      <serverUrl>http://<%= @sonar_host %>:<%= @sonar_port%></serverUrl>
+      <mojoVersion></mojoVersion>
+      <databaseUrl>jdbc:h2:tcp://<%= @sonar_host %>:9092/sonar</databaseUrl>
+      <databaseDriver></databaseDriver>
+      <databaseLogin></databaseLogin>
+      <additionalProperties></additionalProperties>
+      <triggers>
+        <skipScmCause>false</skipScmCause>
+        <skipUpstreamCause>false</skipUpstreamCause>
+        <envVar>SKIP_SONAR</envVar>
+      </triggers>
+      <sonarLogin><%= @sonar_username %></sonarLogin>
+      <sonarPassword><%= @sonar_password %></sonarPassword>
+    </hudson.plugins.sonar.SonarInstallation>
+  </installations>
+</hudson.plugins.sonar.SonarPublisher_-DescriptorImpl>

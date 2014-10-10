@@ -98,6 +98,9 @@ job(type: Maven) {
   name "${project_name}/dev-build"
   description("<p>This job builds code published to dev branch and run unit tests, triggered job with functional test. Source code: <code>${git_url}</code></p>")
   jdk('/usr/lib/jvm/java/')
+  parameters{
+    booleanParam("SKIP_SONAR",true,"Skip sonar analysis")
+  }
   configure { project ->
     project << globalSettings(
       class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
@@ -152,6 +155,9 @@ job(type: Maven) {
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
+  }
+  configure { project ->
+    project / publishers << "hudson.plugins.sonar.SonarPublisher"(plugin:"sonar@<%= @plugins['sonar'] %>")
   }
 }
 

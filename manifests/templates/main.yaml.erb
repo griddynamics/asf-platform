@@ -61,6 +61,8 @@ application:
           qubell_password: "publish-signal(string)"
           jira_username: "publish-signal(string)"
           jira_password: "publish-signal(string)"
+          sonar_username: "publish-signal(string)"
+          sonar_password: "publish-signal(string)"
 
   <% if config['components'].include? 'sonar' %>
     sonar:
@@ -294,7 +296,7 @@ application:
                       parameters:
                         roles: [ jenkins ]
                         recipeUrl: "{$.cookbooks_url}"
-                        runList:<% (config['components'] - ['sonar', 'jenkins', 'ldap']).each do |mod| %>
+                        runList:<% (config['components'] - ['jenkins', 'ldap']).each do |mod| %>
                           - "recipe[cicd_infrastructure::integration_jenkins_<%= mod %>]"<% end %>
                           - "recipe[cicd_infrastructure::integration_jenkins_qubell]"
                           - "recipe[cicd_infrastructure::integration_jenkins_description]"
@@ -328,6 +330,8 @@ application:
                               <% if config['components'].include? 'sonar' %>
                               sonar:
                                 host: "{$.environment.sonar.sonar_public_ips[0]}"
+                                username: "{$.environment.properties.sonar_username}"
+                                password: "{$.environment.properties.sonar_password}"
                               <% end %>
                       output:
                         jenkins_host_state: chefState
