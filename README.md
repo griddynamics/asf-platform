@@ -5,8 +5,29 @@ Install common components of CI/CD infrastructure and setup integration between 
 
 Getting Started
 ---------------
-
 Agile Software Factory is the foundation for an efficient, scalable, and reliable development and release process. By modeling processes after a conveyor belt or pipeline, ASF gives structure to your software development process. This allows engineering teams to focus on implementing functionality instead of fighting with operational issues.
+
+<a name="setup-guide"></a>
+Setup Guide
+-----------
+- Login into AWS EC2 and setup security groups. Ports that should be open:
+    + **Selenium**: 5555, 4444
+    + **Sonar**: 9000, 9092
+    + **Nexus**: 8081
+    + **Gerrit**: 80, 8000, 29418
+    + **JIRA**: 443
+    + **Jenkins**: 8080
+    + **Qubell**: 22
+    + **LDAP**: 389
+- Login into Qubell account and add properties to your environment
+    + **admin_sonar_username**: < *sonar_admin_username* > (default: admin)
+    + **admin_sonar_password**: < *sonar_admin_password* > (default: admin)
+    + **jenkins_sonar_username**: < *jenkins_ci_bot_username* > (default: jenkins-ci-bot)
+    + **jenkins_sonar_password**: < *jenkins_ci_bot_password* > (default: jenkin$CiB0t)
+    + **jira_username**: < *jenkins_ci_bot_username* > (default: jenkins-ci-bot)
+    + **jira_password**: < *jenkins_ci_bot_password* > (default: jenkin$CiB0t)
+    + **qubell_username**: < *your_qubell_username* >
+    + **qubell_password**: < *your_qubell_password* >
 
 Components
 ----------
@@ -69,7 +90,7 @@ Develop
 -------
 - Setup rbenv/rvm to use Ruby 1.9.3 by default
 - Run `bundle install` to get all dependences
-- Specify your AWS S3 buckek in `config.json`
+- Specify your AWS S3 bucket in `config.json`
 - To upload `cicd_infrastructure` cookbook with all dependences run `rake cookbooks:upload`
 - To upload all manifests from `manifests` directory run `rake manifests:upload_3`
 - To generate manifests from templates run `rake manifests:generate`. Generated manifests will be in `manifests` directory with names `generated-<template-name>.yaml`
