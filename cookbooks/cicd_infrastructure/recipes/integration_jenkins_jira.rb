@@ -24,7 +24,7 @@ end
 
 add_jenkins_global_var 'Add Jenkins_URL env variables' do
   key 'Jenkins URL'
-  value node['jenkins']['master']['endpoint']
+  value "http://#{node['jenkins']['master']['host']}:#{node['jenkins']['master']['port']}"
   notifies :restart, 'service[jenkins]'
 end
 
