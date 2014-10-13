@@ -44,10 +44,10 @@ default['cicd_infrastructure']['jenkins']['gerrit-trigger']['http_port'] = '80'
 default['cicd_infrastructure']['jenkins']['auth'] = 'LDAP'
 default['cicd_infrastructure']['jenkins']['ldap']['server'] = nil
 default['cicd_infrastructure']['jenkins']['ldap']['port'] = '389'
-default['cicd_infrastructure']['jenkins']['ldap']['basedn'] = 'dc=example,dc=com'
+default['cicd_infrastructure']['jenkins']['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
 default['cicd_infrastructure']['jenkins']['ldap']['userdn'] = 'ou=people'
 default['cicd_infrastructure']['jenkins']['ldap']['user_id'] = 'uid={0}'
-default['cicd_infrastructure']['jenkins']['ldap']['rootdn'] = 'cn=admin,dc=example,dc=com'
+default['cicd_infrastructure']['jenkins']['ldap']['rootdn'] = 'cn=admin,dc=asf,dc=griddynamics,dc=com'
 default['cicd_infrastructure']['jenkins']['ldap']['root_pwd'] = 'password'
 
 default['cicd_infrastructure']['jenkins']['mail']['adress'] = 'no-reply@jenkins.host'
@@ -97,7 +97,7 @@ default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
 default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
 default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'
 default['cicd_infrastructure']['gerrit']['ldap']['server'] = 'localhost'
-default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=example,dc=com'
+default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=asf,dc=griddynamics,dc=com'
 default['cicd_infrastructure']['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
 default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayName'
 default['cicd_infrastructure']['gerrit']['ldap']['accountEmailAddress'] = 'mail'
@@ -109,7 +109,7 @@ default['cicd_infrastructure']['gerrit']['sendemail']['smtpServerPort'] = '25'
 default['cicd_infrastructure']['nexus']['auth'] = 'LDAP'
 default['cicd_infrastructure']['nexus']['ldap']['server'] = 'localhost'
 default['cicd_infrastructure']['nexus']['ldap']['port'] = '389'
-default['cicd_infrastructure']['nexus']['ldap']['basedn'] = 'dc=example,dc=com'
+default['cicd_infrastructure']['nexus']['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
 default['cicd_infrastructure']['nexus']['ldap']['rootdn'] = "cn=admin,#{node['cicd_infrastructure']['nexus']['ldap']['basedn']}"
 default['cicd_infrastructure']['nexus']['ldap']['root_pwd'] = 'password'
 default['cicd_infrastructure']['nexus']['ldap']['scheme'] = 'simple'
@@ -126,7 +126,7 @@ default['cicd_infrastructure']['nexus']['ldap']['group_attrs'] = {
   'groupId' => 'cn',
   'objClass' => 'groupOfNames',
   'memberAttr' => 'member',
-  'memberFormat' => 'uid=${username},ou=people,dc=example,dc=com'
+  'memberFormat' => 'uid=${username},ou=people,dc=asf,dc=griddynamics,dc=com'
 }
 # LDAP groups mapping
 # Key - LDAP group
@@ -176,7 +176,7 @@ default['cicd_infrastructure']['sonar']['ldap']['realm'] = 'mydomain.com'
 default['cicd_infrastructure']['sonar']['ldap']['security']['realm'] = 'LDAP'
 default['cicd_infrastructure']['sonar']['ldap']['server'] = 'localhost'
 default['cicd_infrastructure']['sonar']['ldap']['port'] = '389'
-default['cicd_infrastructure']['sonar']['ldap']['basedn'] = 'dc=example,dc=com'
+default['cicd_infrastructure']['sonar']['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
 default['cicd_infrastructure']['sonar']['ldap']['rootdn'] = "cn=admin,\
   #{node['cicd_infrastructure']['sonar']['ldap']['basedn']}"
 default['cicd_infrastructure']['sonar']['ldap']['root_pwd'] = 'password'
@@ -191,7 +191,7 @@ default['cicd_infrastructure']['sonar']['mail']['smtp_port.secured'] = '25'
 
 default['cicd_infrastructure']['jira']['ldap']['server'] = 'localhost'
 default['cicd_infrastructure']['jira']['ldap']['port'] = '389'
-default['cicd_infrastructure']['jira']['ldap']['basedn'] = 'dc=example,dc=com'
+default['cicd_infrastructure']['jira']['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
 default['cicd_infrastructure']['jira']['ldap']['rootdn'] = "cn=admin,#{node['cicd_infrastructure']['jira']['ldap']['basedn']}"
 default['cicd_infrastructure']['jira']['ldap']['root_pwd'] = 'password'
 default['cicd_infrastructure']['jira']['ldap']['scheme'] = 'simple'
@@ -208,7 +208,7 @@ default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
   'groupId' => 'cn',
   'objClass' => 'groupOfUniqueNames',
   'memberAttr' => 'uniqueMember',
-  'memberFormat' => 'uid=${username},ou=people,dc=example,dc=com'
+  'memberFormat' => 'uid=${username},ou=people,dc=asf,dc=griddynamics,dc=com'
 }
 default['cicd_infrastructure']['jira']['plugins'] = {
 #   'jira-jenkins-plugin' => {
