@@ -8,15 +8,15 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-node.set['openldap']['basedn'] = 'dc=example,dc=com'
+node.set['openldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
 node.set['openldap']['manage_ssl'] = false
 node.set['openldap']['rootpw'] = 'password'
 
 default['openldap']['server'] = 'localhost'
 default['openldap']['users'] = [
   {
-    'username' => 'sample',
-    'password' => 'samplepassword',
+    'username' => 'noc',
+    'password' => 'nocpassword',
     'group' => 'developers'
   },
   {

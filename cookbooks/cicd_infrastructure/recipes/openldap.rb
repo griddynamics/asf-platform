@@ -21,11 +21,21 @@ end
 
 include_recipe 'openldap::server'
 
+service 'slapd' do
+  action :nothing
+end
+
 template "#{node['openldap']['dir']}/ldap.conf" do
   source 'openldap/ldap.conf.erb'
   mode 0644
   owner 'root'
   group 'root'
+end
+
+
+file "#{node['openldap']['dir']}/slapd.d/cn=config/olcDatabase={2}bdb.ldif" do
+  action :delete
+  notifies :restart, 'service[slapd]'
 end
 
 include_recipe 'cicd_infrastructure::openldap_init_root'
