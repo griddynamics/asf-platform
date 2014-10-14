@@ -44,7 +44,7 @@ template '/tmp/asf-webapp-jenkins-jobs/asf-demo-jobs.groovy' do
     jira_host: jira_config['host'],
     settings_id: node['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'],
     plugins: node['cicd_infrastructure']['jenkins']['plugins'],
-    qubell_plugin_version: node['cicd_infrastructure']['jenkins']['qubell-plugin']['version'],
+    qubell_plugin_version: node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']
   )
 end
 
