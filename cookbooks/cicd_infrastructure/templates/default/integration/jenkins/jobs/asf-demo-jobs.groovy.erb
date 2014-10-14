@@ -154,7 +154,7 @@ job(type: Maven) {
     mailer("", false, true)
     archiveArtifacts 'version.properties'
     downstreamParameterized {
-      trigger('functional-tests') {
+      trigger('dev-test-functional') {
         currentBuild()
         propertiesFile('version.properties')
       }
@@ -176,7 +176,7 @@ job() {
     configure { 
         it / builders << "hudson.plugins.copyartifact.CopyArtifact"(
         plugin: "copyartifact@1.31") {
-            project("functional-tests")
+            project("dev-test-functional")
             filter("version.properties")
             target()
             excludes()
@@ -239,7 +239,7 @@ p.store(new FileWriter('petclinic_url.properties'), null)
         it / builders << "hudson.plugins.parameterizedtrigger.TriggerBuilder"(plugin:"parameterized-trigger@2.25") {
             configs{
                     "hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig" {
-                        projects("integration-tests")
+                        projects("dev-test-integration")
                         condition("UNSTABLE_OR_BETTER")
                         triggerWithNoParameters(false)
                         buildAllNodesWithLabel(false)
@@ -289,7 +289,7 @@ p.store(new FileWriter('petclinic_url.properties'), null)
 }
     // Workaround because dsl plugin bind function into context
     configure { project ->
-        name ("${project_name}/deploy-integration-tests")
+        name ("${project_name}/dev-deploy")
     }
 }
 
@@ -350,7 +350,7 @@ job(type: Maven) {
     mailer("", false, true)
     archiveArtifacts 'version.properties'
     downstreamParameterized {
-      trigger('fb-functional-tests') {
+      trigger('fb-test-functional') {
         currentBuild()
         propertiesFile('version.properties')
       }
@@ -362,7 +362,7 @@ job(type: Maven) {
 }
 
 job(type: Maven) {
-  name "${project_name}/fb-functional-tests"
+  name "${project_name}/fb-test-functional"
   description("<p>This job run functional tests on feature branch code.</p>")
   jdk("/usr/lib/jvm/java/")
   configure { project ->
@@ -428,7 +428,7 @@ job(type: Maven) {
   }
 }
 job(type: Maven) {
-  name "${project_name}/integration-tests"
+  name "${project_name}/dev-test-integration"
   description("<p>This job run integration tests on dev branch code.</p>")
   jdk("/usr/lib/jvm/java/")
   configure { project ->
@@ -491,7 +491,7 @@ job(type: Maven) {
 }
 
 job(type: Maven) {
-  name "${project_name}/functional-tests"
+  name "${project_name}/dev-test-functional"
   description("<p>This job run functional test on dev branch code and triggered deployment application in Qubell</p>")
   jdk("/usr/lib/jvm/java/")
   configure { project ->
@@ -545,7 +545,7 @@ job(type: Maven) {
       timeMargin 4000
     }
     downstreamParameterized {
-      trigger('deploy-integration-tests')
+      trigger('dev-deploy')
     }
   }
   configure { project ->
