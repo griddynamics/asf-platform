@@ -15,8 +15,8 @@ node.set['openldap']['rootpw'] = 'password'
 default['openldap']['server'] = 'localhost'
 default['openldap']['users'] = [
   {
-    'username' => 'sample',
-    'password' => 'samplepassword',
+    'username' => 'noc',
+    'password' => 'nocpassword',
     'group' => 'developers'
   },
   {
