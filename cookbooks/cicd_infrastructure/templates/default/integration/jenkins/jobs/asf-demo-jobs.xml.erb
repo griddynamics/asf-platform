@@ -11,6 +11,16 @@
 					<description></description>
 					<defaultValue>asf-webapp</defaultValue>
 				</hudson.model.StringParameterDefinition>
+				<hudson.model.StringParameterDefinition>
+					<name>qubell_app_id</name>
+					<description>Qubell Application ID</description>
+                    <defaultValue><%= @qubell_default_app_id %></defaultValue>
+				</hudson.model.StringParameterDefinition>
+				<hudson.model.StringParameterDefinition>
+					<name>qubell_env_id</name>
+					<description>Qubell Env ID</description>
+                    <defaultValue><%= @qubell_default_env_id %></defaultValue>
+				</hudson.model.StringParameterDefinition>
 			</parameterDefinitions>
 		</hudson.model.ParametersDefinitionProperty>
 	</properties>

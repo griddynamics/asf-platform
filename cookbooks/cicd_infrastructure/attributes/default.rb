@@ -64,6 +64,8 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] = "https://git
     "contrib-jenkins-qubell-plugin/releases/download/" +
     "v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/" +
     "jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
+default['cicd_infrastructure']['qubell_default_app_id'] = "53eb65e9e4b0f24b4a52c0f2"
+default['cicd_infrastructure']['qubell_default_env_id'] = "53f5d94ce4b0b03d045f7a13"
 
 default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
 default['cicd_infrastructure']['jenkins']['nexus']['username'] = 'deployment'

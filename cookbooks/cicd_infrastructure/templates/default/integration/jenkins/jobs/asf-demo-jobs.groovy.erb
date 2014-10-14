@@ -164,10 +164,6 @@ job(type: Maven) {
 job() {
     description("<p>This job requested Qubell deployment ${project_name}, triggered job with an integration tests, destroyed application in Qubell.</p>")
     jdk('/usr/lib/jvm/java/')
-    parameters {
-      stringParam('QUBELL_APP_ID', '53eb65e9e4b0f24b4a52c0f2', 'Qubell Application ID')
-      stringParam('QUBELL_ENV_ID', '53f5d94ce4b0b03d045f7a13', 'Qubell Env ID')
-    }
     logRotator(30, 50, -1, -1)
     steps {
     configure { 
@@ -196,8 +192,8 @@ job() {
             timeout('1200')
             outputFilePath('qubell_output.json')
             manifestRelativePath('')
-            environmentId('\${QUBELL_ENV_ID}')
-            applicationId('\${QUBELL_APP_ID}')
+            environmentId("${qubell_env_id}")
+            applicationId("${qubell_app_id}")
             extraParameters(qubell_app_params)
           }
     }

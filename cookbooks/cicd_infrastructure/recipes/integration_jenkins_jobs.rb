@@ -44,7 +44,7 @@ template '/tmp/asf-webapp-jenkins-jobs/asf-demo-jobs.groovy' do
     jira_host: jira_config['host'],
     settings_id: node['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'],
     plugins: node['cicd_infrastructure']['jenkins']['plugins'],
-    qubell_plugin_version: node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']
+    qubell_plugin_version: node['cicd_infrastructure']['jenkins']['qubell-plugin']['version'],
   )
 end
 
@@ -67,7 +67,9 @@ template "#{Chef::Config['file_cache_path']}/asf-jobs.xml" do
   mode 0644
   variables(
     gerrit_host: gerrit_config['host'],
-    gerrit_port: gerrit_config['ssh_port']
+    gerrit_port: gerrit_config['ssh_port'],
+    qubell_default_app_id: node['cicd_infrastructure']['qubell_default_app_id'],
+    qubell_default_env_id: node['cicd_infrastructure']['qubell_default_env_id']
   )
   notifies :restart, 'service[jenkins]'
 end
