@@ -85,7 +85,32 @@ job(type: Maven) {
   goals('install')
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
+  postBuildSteps {
+    maven {
+      goals('pmd:pmd')
+      goals('pmd:cpd')
+      goals('checkstyle:checkstyle')
+      goals('findbugs:findbugs')
+      mavenInstallation(maven_installation)
+      localRepository(LocalToWorkspace)
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
+    }
+  }
   publishers{
+    pmd('**/pmd.xml') {
+        shouldDetectModules true
+    }
+    checkstyle('**/checkstyle-result.xml') {
+        shouldDetectModules true
+    }
+    findbugs('**/findbugsXml.xml', true)
+    dry('**/cpd.xml')
     mailer("", false, true)
   }
   configure { project ->
@@ -150,7 +175,34 @@ job(type: Maven) {
   goals('deploy -P build')
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
+  postBuildSteps {
+    maven {
+      goals('pmd:pmd')
+      goals('pmd:cpd')
+      goals('checkstyle:checkstyle')
+      goals('findbugs:findbugs')
+      mavenInstallation(maven_installation)
+      localRepository(LocalToWorkspace)
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
+    }
+  }
+
   publishers{
+    pmd('**/pmd.xml') {
+        shouldDetectModules true
+    }
+    checkstyle('**/checkstyle-result.xml') {
+        shouldDetectModules true
+    }
+    findbugs('**/findbugsXml.xml', true)
+    dry('**/cpd.xml')
+    
     mailer("", false, true)
     archiveArtifacts 'version.properties'
     downstreamParameterized {
@@ -345,8 +397,33 @@ job(type: Maven) {
   goals('deploy -P build-fb')
   mavenInstallation(maven_installation)
   localRepository(LocalToWorkspace)
+  postBuildSteps {
+    maven {
+      goals('pmd:pmd')
+      goals('pmd:cpd')
+      goals('checkstyle:checkstyle')
+      goals('findbugs:findbugs')
+      mavenInstallation(maven_installation)
+      localRepository(LocalToWorkspace)
+      configure { project ->
+        project << globalSettings(
+          class:'org.jenkinsci.plugins.configfiles.maven.job.MvnGlobalSettingsProvider',
+          plugin:'config-file-provider@<%= @plugins['config-file-provider'] %>') {
+            settingsConfigId('<%= @settings_id %>')
+          }
+      }
+    }
+  }
 
   publishers{
+    pmd('**/pmd.xml') {
+        shouldDetectModules true
+    }
+    checkstyle('**/checkstyle-result.xml') {
+        shouldDetectModules true
+    }
+    findbugs('**/findbugsXml.xml', true)
+    dry('**/cpd.xml')
     mailer("", false, true)
     archiveArtifacts 'version.properties'
     downstreamParameterized {
