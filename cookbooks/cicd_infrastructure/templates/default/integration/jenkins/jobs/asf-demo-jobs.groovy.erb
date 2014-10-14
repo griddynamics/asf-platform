@@ -622,7 +622,9 @@ job(type: Maven) {
       timeMargin 4000
     }
     downstreamParameterized {
-      trigger('dev-deploy')
+        trigger('dev-deploy') {
+            currentBuild()
+        }
     }
   }
   configure { project ->
