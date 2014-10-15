@@ -34,7 +34,11 @@ default['cicd_infrastructure']['jenkins']['plugins'] = {
   'htmlpublisher' => '',
   'analysis-core' => '',
   'email-ext' => '2.38.2',
-  'sonar' => ''
+  'sonar' => '',
+  'pmd' => '',
+  'findbugs' => '',
+  'checkstyle' => '',
+  'dry' =>''
 }
 default['cicd_infrastructure']['jenkins']['pubkey'] = nil
 default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
