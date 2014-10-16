@@ -21,7 +21,7 @@ template "#{jenkins['home']}/hudson.plugins.sonar.SonarPublisher.xml" do
   group jenkins['group']
   mode 0644
   variables(
-    plugin_version: node['cicd_infrastructure']['jenkins']['plugins']['mailer'],
+    plugin_version: node['cicd_infrastructure']['jenkins']['plugins']['sonar'],
     sonar_host: sonar['host'],
     sonar_port: sonar['port'],
     sonar_username: sonar['username'],

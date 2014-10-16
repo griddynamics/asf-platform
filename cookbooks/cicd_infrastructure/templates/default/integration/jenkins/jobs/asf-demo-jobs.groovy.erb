@@ -216,7 +216,9 @@ job(type: Maven) {
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
   configure { project ->
-    project / publishers << "hudson.plugins.sonar.SonarPublisher"(plugin:"sonar@<%= @plugins['sonar'] %>")
+    project / publishers << "hudson.plugins.sonar.SonarPublisher"(plugin:"sonar@"){
+        jobAdditionalProperties('-Dsonar.profile="Sonar way with Findbugs"')
+    }
   }
 }
 
