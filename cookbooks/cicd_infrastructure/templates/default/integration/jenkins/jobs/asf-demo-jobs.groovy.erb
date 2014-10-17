@@ -263,10 +263,9 @@ job() {
 import groovy.json.JsonSlurper;
 import hudson.model.*;
 
-def build = Thread.currentThread().executable;
-def envVarsMap = build.parent.builds[0].properties.get("envVars")
+def env = System.getenv()
 
-def qubellOutputFile = new File("\${envVarsMap.get('WORKSPACE')}/qubell_output.json")
+def qubellOutputFile = new File("${env.WORKSPACE}/qubell_output.json")
 def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
 
 def p = new Properties()
