@@ -18,7 +18,7 @@ node['cicd_infrastructure']['sonar']['mail'].each do |key, value|
     block do
       uri = URI.parse("http://localhost:9000")
       http = Net::HTTP.new(uri.host, uri.port)
-      request = Net::HTTP::Post.new("/api/properties?id=email.#{key}&value=#{value}")
+      request = Net::HTTP::Post.new("/api/properties?id=email.#{key}&value='#{value}'")
       request.basic_auth sonar_credentials['username'], sonar_credentials['password']
       response = http.request(request)
     end

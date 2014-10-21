@@ -1,6 +1,9 @@
 Agile Software Factory
 ======================
 
+[![Install](https://raw.github.com/qubell-bazaar/component-skeleton/master/img/install.png)](https://express.qubell.com/applications/upload?metadataUrl=http://gd-asf.s3.amazonaws.com/meta.yaml)
+
+
 Install common components of CI/CD infrastructure and setup integration between them.
 
 Getting Started
