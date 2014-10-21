@@ -17,7 +17,7 @@ kit:
     - name: "OpenLDAP"
       manifest: http://gd-asf.s3.amazonaws.com/ldap.yaml
     - name: "SeleniumGrid"
-      manifest: http://gd-asf.s3.amazonaws.com/mainhttps://raw.github.com/qubell-bazaar/component-selenium-grid/master/component-selenium-grid.yml
+      manifest: https://raw.github.com/qubell-bazaar/component-selenium-grid/master/component-selenium-grid.yml
   provider:
     name: "Grid Dynamics"
     link: http://www.griddynamics.com/
