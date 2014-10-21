@@ -313,7 +313,7 @@ application:
                           cicd_infrastructure:
                             jenkins:
                               pubkey: ""
-                              <% if config['components'].include? 'jenkins' %>
+                              <% if config['components'].include? 'gerrit' %>
                               gerrit-trigger:
                                 host: "{$.environment.gerrit.gerrit_public_ips[0]}"
                               <% end -%>
