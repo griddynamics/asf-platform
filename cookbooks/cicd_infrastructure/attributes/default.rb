@@ -54,7 +54,7 @@ default['cicd_infrastructure']['jenkins']['ldap']['user_id'] = 'uid={0}'
 default['cicd_infrastructure']['jenkins']['ldap']['rootdn'] = 'cn=admin,dc=asf,dc=griddynamics,dc=com'
 default['cicd_infrastructure']['jenkins']['ldap']['root_pwd'] = 'password'
 
-default['cicd_infrastructure']['jenkins']['mail']['adress'] = 'no-reply@jenkins.host'
+default['cicd_infrastructure']['jenkins']['mail']['address'] = 'jenkins@asf.griddynamics.com'
 default['cicd_infrastructure']['jenkins']['mail']['smtp']['host'] = 'localhost'
 
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['username'] = nil
@@ -65,9 +65,9 @@ default['cicd_infrastructure']['jenkins']['qubell-plugin']['endpoint'] = 'https:
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['version'] = '2.5'
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['checksum'] = '7dc571813114ce521bc22580c8b0e0b3'
 default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] = "https://github.com/qubell/" +
-    "contrib-jenkins-qubell-plugin/releases/download/" +
-    "v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/" +
-    "jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
+  "contrib-jenkins-qubell-plugin/releases/download/" +
+  "v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/" +
+  "jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
 default['cicd_infrastructure']['qubell_default_app_id'] = "53eb65e9e4b0f24b4a52c0f2"
 default['cicd_infrastructure']['qubell_default_env_id'] = "53f5d94ce4b0b03d045f7a13"
 
@@ -87,12 +87,12 @@ default['cicd_infrastructure']['jenkins']['jira']['plugin']['url'] = "http://rep
 
 default['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version'] = '3.7'
 default['cicd_infrastructure']['jenkins']['plugin']['jbehave']['url'] = "https://nexus.codehaus.org/content/repositories/releases/org/jbehave/jbehave-jenkins-plugin/" +
-"#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version']}/" + "jbehave-jenkins-plugin-" +
-"#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version']}.hpi"
+  "#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version']}/" + "jbehave-jenkins-plugin-" +
+  "#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version']}.hpi"
 
 default['cicd_infrastructure']['jenkins']['plugin']['xunit']['version'] = '1.89'
 default['cicd_infrastructure']['jenkins']['plugin']['xunit']['url'] = "http://updates.jenkins-ci.org/download/plugins/xunit/" +
-"#{node['cicd_infrastructure']['jenkins']['plugin']['xunit']['version']}/xunit.hpi"
+  "#{node['cicd_infrastructure']['jenkins']['plugin']['xunit']['version']}/xunit.hpi"
 
 default['cicd_infrastructure']['jenkins']['sonar']['host'] = nil
 default['cicd_infrastructure']['jenkins']['sonar']['port'] = '9000'

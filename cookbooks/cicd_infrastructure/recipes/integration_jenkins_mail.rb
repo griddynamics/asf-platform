@@ -48,7 +48,7 @@ template "#{jenkins['home']}/jenkins.model.JenkinsLocationConfiguration.xml" do
   group jenkins['group']
   mode 0644
   variables(
-    jenkins_email: mail_config['adress'],
+    jenkins_email: mail_config['address'],
     jenkins_host: jenkins['host'],
     jenkins_port: jenkins['port']
   )
