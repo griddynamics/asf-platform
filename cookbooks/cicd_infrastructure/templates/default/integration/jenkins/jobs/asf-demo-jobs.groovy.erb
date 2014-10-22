@@ -265,27 +265,17 @@ job() {
 import groovy.json.JsonSlurper;
 import hudson.model.*;
 
-def env = System.getenv()
+def env_vars = System.getenv()
+def workspace_path = env_vars.WORKSPACE
 
-def qubellOutputFile = new File("${env.WORKSPACE}/qubell_output.json")
+def qubellOutputFile = new File("${workspace_path}/qubell_output.json")
 def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
 
-def p = new Properties()
-
-p["PETCLINIC_URL"] = userJson.returnValues.'output.webapp_endpoint'
-p.store(new FileWriter('petclinic_url.properties'), null)
+new File("petclinic_url.properties").withWriter{ it << "PETCLINIC_URL=${userJson.returnValues.'output.webapp_endpoint'}"}
 """
         }
         groovyName("Groovy-default")
       }
-    }
-    configure { project ->
-        project / builders << "EnvInjectBuilder"(
-        plugin: "envinject@1.90") {
-            info() {
-                propertiesFilePath("petclinic_url.properties")
-            }            
-        }
     }
 
     configure {
@@ -298,7 +288,13 @@ p.store(new FileWriter('petclinic_url.properties'), null)
                         buildAllNodesWithLabel(false)
                     configs {
                         "hudson.plugins.parameterizedtrigger.PredefinedBuildParameters" {
-                        properties("buildCommit=\${buildCommit}\nPETCLINIC_URL=\${PETCLINIC_URL}")
+                            properties("buildCommit=\${buildCommit}")
+                        }
+                        "hudson.plugins.parameterizedtrigger.FileBuildParameters" {
+                            propertiesFile("petclinic_url.properties")
+                            failTriggerOnMissing(true)
+                            useMatrixChild(false)
+                            onlyExactRuns(false)
                         }
                     }
                     block{
