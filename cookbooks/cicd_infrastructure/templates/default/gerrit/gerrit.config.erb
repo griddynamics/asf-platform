@@ -57,9 +57,3 @@
     <%= k %> = <%= v %>
     <% end %>
 <% end %>
-<% if node['gerrit']['gitweb'] %>
-[gitweb]
-<% node['gerrit']['gitweb'].each do |k, v| %>
-    <%=k%> = <%= v%>
-    <% end %>
-<% end %>
