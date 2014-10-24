@@ -31,6 +31,3 @@ default['gerrit']['plugins'] = %w(
   replication
   reviewnotes
 )
-
-default['gerrit']['gitweb']['cgi'] = '/var/www/git/gitweb.cgi'
-default['gerrit']['gitweb']['url'] = "http://#{node['gerrit']['hostname']}:8000"

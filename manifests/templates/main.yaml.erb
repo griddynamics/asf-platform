@@ -354,6 +354,7 @@ application:
                         runList:
                           - "recipe[cicd_infrastructure::integration_gerrit_projects]"
                           - "recipe[cicd_infrastructure::integration_gerrit_mail]"
+                          - "recipe[cicd_infrastructure::integration_gerrit_gitweb]"
                         version: "11.8.2"
                 <% end %>
                 <% if (['jenkins', 'gerrit'] - config['components']).empty? %>
