@@ -49,7 +49,8 @@ end
 
 [
     'hudson.tasks.Maven.xml',
-    'hudson.plugins.groovy.Groovy.xml'
+    'hudson.plugins.groovy.Groovy.xml',
+    'hudson.tasks.Shell.xml'
 ].each do |config|
     template "#{node[:jenkins][:master][:home]}/#{config}" do
         source "jenkins/#{config}.erb"
