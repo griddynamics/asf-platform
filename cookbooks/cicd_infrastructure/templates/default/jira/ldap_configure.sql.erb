@@ -44,7 +44,7 @@ INSERT IGNORE INTO cwd_directory_operation (
 INSERT IGNORE INTO cwd_directory_attribute (
   directory_id,attribute_name,attribute_value)
 VALUES
-(2,'autoAddGroups','jira-users'),
+(2,'autoAddGroups','jira-users|jira-developers'),
 (2,'crowd.delegated.directory.auto.create.user','true'),
 (2,'crowd.delegated.directory.auto.update.user','true'),
 (2,'crowd.delegated.directory.importGroups','false'),
@@ -71,7 +71,7 @@ VALUES
 (2,'ldap.user.group','memberOf'),
 (2,'ldap.user.lastname','sn'),
 (2,'ldap.user.objectclass','<%= @user_attrs['objClass'] %>'),
-(2,'ldap.user.username','cn'),
+(2,'ldap.user.username','uid'),
 (2,'ldap.user.username.rdn','cn'),
 (2,'ldap.userdn','<%= @rootdn %>'),
 (2,'ldap.usermembership.use','false'),
