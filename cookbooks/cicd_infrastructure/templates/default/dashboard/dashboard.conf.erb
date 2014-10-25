@@ -1,0 +1,12 @@
+#
+#  Web-based tool for managing LDAP servers
+#
+
+Alias <%= @params[:site_alias] %> <%= @params[:docroot] %>
+
+<Directory <%= @params[:docroot] %>>
+  Order Deny,Allow
+  Deny from all
+  Allow from all
+  Allow from ::1
+</Directory>
