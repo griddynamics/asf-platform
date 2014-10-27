@@ -105,6 +105,8 @@ default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'
 default['cicd_infrastructure']['gerrit']['ldap']['server'] = 'localhost'
 default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=asf,dc=griddynamics,dc=com'
 default['cicd_infrastructure']['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
+default['cicd_infrastructure']['gerrit']['ldap']['groupBase'] = 'ou=groups,dc=asf,dc=griddynamics,dc=com'
+default['cicd_infrastructure']['gerrit']['ldap']['groupMemberPattern'] = '(|(member=${dn})(uniqueMember=${dn}))'
 default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayName'
 default['cicd_infrastructure']['gerrit']['ldap']['accountEmailAddress'] = 'mail'
 

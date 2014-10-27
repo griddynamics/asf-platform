@@ -18,7 +18,7 @@ node['openldap']['users'].each do |record|
       basedn: node['openldap']['basedn'],
       username: record.username,
       password: record.password,
-      group: record.group
+      groups: record.groups
     )
   end
 

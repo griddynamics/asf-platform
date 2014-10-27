@@ -26,3 +26,20 @@ template "#{node['gerrit']['install_dir']}/etc/gerrit.config" do
   mode 0644
   notifies :restart, 'service[gerrit]'
 end
+
+ruby_block 'match_ldap_groups' do
+  block do
+    require 'mysql'
+    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+    db = Mysql.new(node['gerrit']['database']['host'],
+                   node['gerrit']['database']['username'],
+                   node['gerrit']['database']['password'],
+                   node['gerrit']['database']['name'])
+    db.query("INSERT INTO account_group_by_id (GROUP_ID, INCLUDE_UUID) \
+                 SELECT group_id, 'ldap:cn=administrators,ou=groups,dc=asf,dc=griddynamics,dc=com' \
+                         FROM account_group_names WHERE NAME='Administrators';")
+    db.close
+  end
+  retries 5
+  retry_delay 30
+end
