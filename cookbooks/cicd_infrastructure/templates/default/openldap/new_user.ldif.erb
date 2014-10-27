@@ -7,7 +7,10 @@ sn: <%= @username %>
 userPassword: <%= @password %>
 mail: <%= @username %>@localhost.com
 
-dn: cn=<%= @group %>,ou=groups,<%= @basedn %>
+<% @groups.each do |group| %>
+dn: cn=<%= group %>,ou=groups,<%= @basedn %>
 changetype: modify
 add: member
 member: uid=<%= @username %>,ou=people,<%= @basedn %>
+
+<% end %>    

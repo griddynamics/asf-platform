@@ -26,3 +26,9 @@ objectClass: top
 objectClass: groupOfNames
 cn: developers
 member: cn=admin,<%= @basedn %>
+
+dn: cn=administrators,ou=groups,<%= @basedn %>
+objectClass: top
+objectClass: groupOfNames
+cn: developers
+member: cn=admin,<%= @basedn %>
