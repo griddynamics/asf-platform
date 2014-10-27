@@ -1,0 +1,25 @@
+
+img {
+    width: 50%;
+}
+h3 {
+    text-align: center;
+}
+a {
+  width: 100%;
+  font-size: 60%;
+}
+
+.thumbnail {
+  height: 370px;
+}
+
+div.thumbnail p {
+  margin-bottom: 5px; 
+}
+
+div.thumbnail a {
+  position: absolute;
+  bottom: 10%;
+  width: 80%;
+}

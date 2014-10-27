@@ -53,6 +53,7 @@ application:
       nexus: "bind(nexus#output.nexus_endpoint)"
       selenium_console: "bind(selenium#endpoints.console-url)"
       selenium_webdriver: "bind(selenium#endpoints.remote-url)"
+      dashboard: "bind(integration.workflow#result.dashboard)"
 
     servers:
       gerrit_host: "bind(gerrit#output.gerrit_public_ips)"
@@ -77,7 +78,6 @@ application:
           jenkins_sonar_password: "publish-signal(string)"
           admin_sonar_username: "publish-signal(string)"
           admin_sonar_password: "publish-signal(string)"
-
 
     sonar:
       type: reference.Submodule
@@ -266,6 +266,13 @@ application:
               nexus_public_ips: consume-signal(list<string>)
             selenium:
               remote-url: consume-signal(string)
+              console-url: consume-signal(string)
+            selenium_hosts:
+              hub: consume-signal(string)
+            result:
+              dashboard:
+                type: publish-signal(string)
+                name: Dashboard
 
           required:
             - gerrit
@@ -372,34 +379,25 @@ application:
                           cicd_infrastructure:
                             jenkins:
                               pubkey: ""
-
                               gerrit-trigger:
                                 host: "{$.environment.gerrit.gerrit_public_ips[0]}"
-
                               nexus:
                                 endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
-
                               selenium:
                                 endpoint: "{$.environment.selenium.remote-url}"
-
                               qubell-plugin:
                                 username: "{$.environment.properties.qubell_username}"
                                 password: "{$.environment.properties.qubell_password}"
-
                               jira:
                                 host: "{$.environment.jira.jira_public_ips[0]}"
                                 username: "{$.environment.properties.jira_username}"
                                 password: "{$.environment.properties.jira_password}"
-
-
                               sonar:
                                 host: "{$.environment.sonar.sonar_public_ips[0]}"
                                 username: "{$.environment.properties.jenkins_sonar_username}"
                                 password: "{$.environment.properties.jenkins_sonar_password}"
-
                       output:
                         jenkins_host_state: chefState
-
 
                   - gerrit_setup:
                       phase: gerrit_setup
@@ -414,10 +412,8 @@ application:
                           - "recipe[cicd_infrastructure::integration_gerrit_gitweb]"
                         version: "11.8.2"
 
-
                   - gerrit_jenkins:
-                      phase: gerrit_setup
-                      precedingPhases: [ gerrit_projects_setup, jenkins_setup ]
+                      precedingPhases: [ gerrit_setup, jenkins_setup ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]
@@ -431,7 +427,7 @@ application:
                               jenkins_pubkey: "{$.jenkins_host_state.*.[0].cicd_infrastructure.jenkins.pubkey}"
 
                   - add_asf_jenkins_jobs_project:
-                      precedingPhases: [ gerrit_setup ]
+                      precedingPhases: [ gerrit_jenkins ]
                       action: chefsolo
                       parameters:
                         roles: [ gerrit ]
@@ -440,7 +436,7 @@ application:
                         version: "11.8.2"
 
                   - add_asf_jenkins_jobs_generator:
-                      precedingPhases: [ jenkins_setup, add_asf_jenkins_jobs_project ]
+                      precedingPhases: [ add_asf_jenkins_jobs_project ]
                       action: chefsolo
                       parameters:
                         roles: [ jenkins ]
@@ -459,7 +455,6 @@ application:
                               jira:
                                 host: "{$.environment.jira.jira_public_ips[0]}"
 
-
                   - sonar_setup:
                       precedingPhases: [ init_component_vms ]
                       action: chefsolo
@@ -474,8 +469,6 @@ application:
                               credentials:
                                 username: "{$.environment.properties.admin_sonar_username}"
                                 password: "{$.environment.properties.admin_sonar_password}"
-
-
 
                   - gerrit_ldap:
                       phase: ldap_integration
@@ -551,6 +544,43 @@ application:
                             nexus:
                               ldap:
                                 server: "{$.environment.ldap.ldap_public_ips[0]}"
+
+                  - dashboard:
+                      precedingPhases: [ ldap_export_users ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ ldap ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::dashboard]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            dashboard:
+                              services:
+                                jenkins:
+                                  ip: "{$.environment.jenkins.jenkins_public_ips[0]}"
+                                  endpoint: "http://{$.environment.jenkins.jenkins_public_ips[0]}:8080"
+                                gerrit:
+                                  ip: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                                  endpoint: "http://{$.environment.gerrit.gerrit_public_ips[0]}"
+                                jira:
+                                  ip: "{$.environment.jira.jira_public_ips[0]}"
+                                  endpoint: "https://{$.environment.jira.jira_public_ips[0]}"
+                                nexus:
+                                  ip: "{$.environment.nexus.nexus_public_ips[0]}"
+                                  endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+                                selenium:
+                                  ip: "{$.environment.selenium_hosts.hub}"
+                                  endpoint: "{$.environment.selenium.console-url}"
+                                sonar:
+                                  ip: "{$.environment.sonar.sonar_public_ips[0]}"
+                                  endpoint: "http://{$.environment.sonar.sonar_public_ips[0]}:9000"
+                                ldap:
+                                  ip: "{$.environment.ldap.ldap_public_ips[0]}"
+                                  endpoint: "http://{$.environment.ldap.ldap_public_ips[0]}/phpldapadmin"
+                return:
+                  dashboard:
+                    value: "http://{$.environment.ldap.ldap_public_ips[0]}/dashboard"
 
               .init_vm:
                 parameters:

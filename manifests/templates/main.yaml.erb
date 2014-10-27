@@ -37,6 +37,7 @@ application:
     <% end -%>
       integration.workflow#input.cookbooks_url)
     endpoints:
+      dashboard: "bind(integration.workflow#result.dashboard)"
       <% if config['components'].include? 'ldap' -%>ldapadmin: "bind(ldap#output.ldapadmin_endpoint)"<% end %>
   <% (config['components'] - ['selenium']).each do |mod| -%>
     <%= mod %>: "bind(<%= mod %>#output.<%= mod %>_endpoint)"
@@ -252,7 +253,14 @@ application:
           <% if config['components'].include? 'selenium' %>
             selenium:
               remote-url: consume-signal(string)
+              console-url: consume-signal(string)
+            selenium_hosts:
+              hub: consume-signal(string)
           <% end %>
+            result:
+              dashboard:
+                type: publish-signal(string)
+                name: Dashboard
           required:<% config['components'].each do |mod| %>
             - <%= mod -%>
           <% end %>
@@ -438,6 +446,58 @@ application:
                                 server: "{$.environment.ldap.ldap_public_ips[0]}"
                   <% end -%>
                 <% end -%>
+
+                  - dashboard:
+                      precedingPhases: [ ldap_export_users ]
+                      action: chefsolo
+                      parameters:
+                        roles: [ ldap ]
+                        recipeUrl: "{$.cookbooks_url}"
+                        runList: [ "recipe[cicd_infrastructure::dashboard]" ]
+                        version: "11.8.2"
+                        jattrs:
+                          cicd_infrastructure:
+                            dashboard:
+                              services:
+                                <% if config['components'].include? 'jenkins' %>
+                                jenkins:
+                                  ip: "{$.environment.jenkins.jenkins_public_ips[0]}"
+                                  endpoint: "http://{$.environment.jenkins.jenkins_public_ips[0]}:8080"
+                                <% end -%>
+                                <% if config['components'].include? 'gerrit' %>
+                                gerrit:
+                                  ip: "{$.environment.gerrit.gerrit_public_ips[0]}"
+                                  endpoint: "http://{$.environment.gerrit.gerrit_public_ips[0]}"
+                                <% end -%>
+                                <% if config['components'].include? 'jira' %>
+                                jira:
+                                  ip: "{$.environment.jira.jira_public_ips[0]}"
+                                  endpoint: "https://{$.environment.jira.jira_public_ips[0]}"
+                                <% end -%>
+                                <% if config['components'].include? 'nexus' %>
+                                nexus:
+                                  ip: "{$.environment.nexus.nexus_public_ips[0]}"
+                                  endpoint: "http://{$.environment.nexus.nexus_public_ips[0]}:8081/nexus"
+                                <% end -%>
+                                <% if config['components'].include? 'selenium' %>
+                                selenium:
+                                  ip: "{$.environment.selenium_hosts.hub}"
+                                  endpoint: "{$.environment.selenium.console-url}"
+                                <% end -%>
+                                <% if config['components'].include? 'sonar' %>
+                                sonar:
+                                  ip: "{$.environment.sonar.sonar_public_ips[0]}"
+                                  endpoint: "http://{$.environment.sonar.sonar_public_ips[0]}:9000"
+                                <% end -%>
+                                <% if config['components'].include? 'ldap' %>
+                                ldap:
+                                  ip: "{$.environment.ldap.ldap_public_ips[0]}"
+                                  endpoint: "http://{$.environment.ldap.ldap_public_ips[0]}/phpldapadmin"
+                                <% end -%>
+
+                return:
+                  dashboard:
+                    value: "http://{$.environment.ldap.ldap_public_ips[0]}/dashboard"
   <% end %>
               .init_vm:
                 parameters:
