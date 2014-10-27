@@ -146,7 +146,7 @@ job(type: Maven) {
   triggers {
     gerrit {
       events {
-        RefUpdated
+        ChangeMerged
       }
       project("${project_name}", 'plain:dev')
     }
@@ -202,7 +202,7 @@ job(type: Maven) {
     }
     findbugs('**/findbugsXml.xml', true)
     dry('**/cpd.xml')
-    
+
     mailer("", false, true)
     archiveArtifacts 'version.properties'
     downstreamParameterized {
@@ -227,7 +227,7 @@ job() {
     jdk('/usr/lib/jvm/java/')
     logRotator(30, 50, -1, -1)
     steps {
-    configure { 
+    configure {
         it / builders << "hudson.plugins.copyartifact.CopyArtifact"(
         plugin: "copyartifact@1.31") {
             project("dev-test-functional")
@@ -235,7 +235,7 @@ job() {
             target()
             excludes()
             selector(class: "hudson.plugins.copyartifact.StatusBuildSelector")
-            downstreamParameterized()            
+            downstreamParameterized()
         }
     }
     configure { project ->
@@ -243,7 +243,7 @@ job() {
         plugin: "envinject@1.90") {
             info() {
                 propertiesFilePath("version.properties")
-            }            
+            }
         }
     }
     configure { project ->
@@ -328,11 +328,11 @@ new File("petclinic_url.properties").withWriter{ it << "PETCLINIC_URL=${webapp_e
         commandName('destroy')
       }
   }
-  
+
   publishers{
     mailer("", false, true)
   }
-  
+
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
