@@ -550,22 +550,6 @@ job(type: Maven) {
     publishers{
       mailer("", false, true)
       publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',true)}
-      archiveXUnit {
-          failedThresholds {
-          unstable 0
-          unstableNew 0
-          failure 0
-          failureNew 0
-        }
-        skippedThresholds {
-          unstable 0
-          unstableNew 0
-          failure 0
-          failureNew 0
-        }
-        thresholdMode ThresholdMode.NUMBER
-        timeMargin 4000
-      }
     }
   }
   configure { project ->
@@ -573,6 +557,36 @@ job(type: Maven) {
   }
   configure { project ->
     project / publishers / xunit / types / JBehavePluginType / pattern << "spring-petclinic-test/target/jbehave/*.xml"
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / unstableThreshold << "0"
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / unstableNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / failureThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / failureNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / unstableThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / unstableNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / failureThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / failureNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholdMode << "1"
+  }
+  configure { project ->
+    project / publishers / xunit / extraConfiguration / testTimeMargin << "3000"
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
@@ -612,22 +626,6 @@ job(type: Maven) {
     publishers{
       mailer("", false, true)
       publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
-      archiveXUnit {
-        failedThresholds {
-          unstable 0
-          unstableNew 0
-          failure 0
-          failureNew 0
-        }
-        skippedThresholds {
-          unstable 0
-          unstableNew 0
-          failure 0
-          failureNew 0
-        }
-        thresholdMode ThresholdMode.NUMBER
-        timeMargin 4000
-      }
     }
   }
   configure { project ->
@@ -635,6 +633,36 @@ job(type: Maven) {
   }
   configure { project ->
     project / publishers / xunit / types / JBehavePluginType / pattern << "spring-petclinic-test/target/jbehave/*.xml"
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / unstableThreshold << "0"
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / unstableNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / failureThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / failureNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / unstableThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / unstableNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / failureThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / failureNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholdMode << "1"
+  }
+  configure { project ->
+    project / publishers / xunit / extraConfiguration / testTimeMargin << "3000"
   }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
@@ -679,22 +707,6 @@ job(type: Maven) {
     mailer("", false, true)
     archiveArtifacts 'version.properties'
     publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
-    archiveXUnit {
-      failedThresholds {
-        unstable 0
-        unstableNew 0
-        failure 0
-        failureNew 0
-      }
-      skippedThresholds {
-        unstable 0
-        unstableNew 0
-        failure 0
-        failureNew 0
-      }
-      thresholdMode ThresholdMode.NUMBER
-      timeMargin 4000
-    }
     downstreamParameterized {
         trigger('dev-deploy') {
             currentBuild()
@@ -707,6 +719,36 @@ job(type: Maven) {
   configure { project ->
     project / publishers / xunit / types / JBehavePluginType / pattern << "spring-petclinic-test/target/jbehave/*.xml"
     }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / unstableThreshold << "0"
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / unstableNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / failureThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.FailedThreshold" / failureNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / unstableThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / unstableNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / failureThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholds / "org.jenkinsci.plugins.xunit.threshold.SkippedThreshold" / failureNewThreshold << ""
+  }
+  configure { project ->
+    project / publishers / xunit / thresholdMode << "1"
+  }
+  configure { project ->
+    project / publishers / xunit / extraConfiguration / testTimeMargin << "3000"
+  }
   configure { project ->
     project / publishers << "hudson.plugins.jira.JiraIssueUpdater"(plugin:"jira@<%= @plugins['jira'] %>")
   }
