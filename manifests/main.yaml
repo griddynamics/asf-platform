@@ -349,16 +349,6 @@ application:
                         runList: [ "recipe[cicd_infrastructure::openldap_new_users]" ]
                         version: "11.8.2"
 
-                  - jira_setup:
-                      phase: jira_setup
-                      precedingPhases: [ init_jira_vm ]
-                      action: chefsolo
-                      parameters:
-                        roles: [ jira ]
-                        recipeUrl: "{$.cookbooks_url}"
-                        runList: [ "recipe[cicd_infrastructure::integration_jira_jenkins]" ]
-                        version: "11.8.2"
-
                   - jenkins_setup:
                       precedingPhases: [ init_component_vms ]
                       action: chefsolo

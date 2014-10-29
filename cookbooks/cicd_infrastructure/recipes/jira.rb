@@ -11,26 +11,43 @@
 include_recipe 'java::default'
 include_recipe 'jira::default'
 
-# ruby_block "wait for JIRA" do
-#     block do
-#         require "net/https"
-#         require "uri"
-#
-#         host = node['jira']['apache2']['virtual_host_name']
-#         port = node['jira']['apache2']['ssl']['port']
-#         path = "secure/SetupApplicationProperties!default.jspa"
-#
-#         uri = URI.parse("https://#{host}:#{port}/#{path}")
-#         http = Net::HTTP.new(uri.host, uri.port)
-#         http.use_ssl = true
-#         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-#
-#         request = Net::HTTP::Get.new(uri.request_uri)
-#
-#         10.times {
-#             sleep(60)
-#            break if File.read("/opt/atlassian/jira/logs/catalina.out")
-#            .include?("You can now access JIRA through your web browser")
-#         }
-#     end
-# end
+package 'unzip'
+
+Chef::Config[:file_cache_path] = '/tmp'
+
+template "#{node['jira']['home_path']}/jira-config.properties" do
+  source 'jira/jira-config.properties'
+  owner node['jira']['user']
+  group node['jira']['group']
+  mode 0644
+  notifies :restart, 'service[jira]'
+end
+
+node['cicd_infrastructure']['jira']['plugins'].each do |plugin, plugin_attrs|
+  download_dir = if plugin_attrs['type'] == 'jar'
+                   "#{node['jira']['home_path']}/plugins/installed-plugins"
+                 else
+                   Chef::Config[:file_cache_path]
+                 end
+
+  execute "unpacking #{plugin}" do
+    command "unzip -j #{download_dir}/#{plugin}.obr *.jar"
+    user 'root'
+    cwd "#{node['jira']['home_path']}/plugins/installed-plugins"
+    creates "#{plugin}.jar"
+    not_if { plugin_attrs['type'] == 'jar' }
+    action :nothing
+  end
+
+  remote_file "#{download_dir}/#{plugin}.#{plugin_attrs['type']}" do
+    owner node['jira']['user']
+    mode 0755
+    source plugin_attrs['url']
+    only_if { Dir["#{download_dir}/*#{plugin}*.jar"].empty? }
+    notifies :run, "execute[unpacking #{plugin}]",:immediately
+  end
+end
+
+service 'jira' do
+  action :restart
+end
