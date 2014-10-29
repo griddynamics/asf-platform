@@ -234,7 +234,9 @@ job() {
             filter("version.properties")
             target()
             excludes()
-            selector(class: "hudson.plugins.copyartifact.StatusBuildSelector")
+            selector(class: "hudson.plugins.copyartifact.StatusBuildSelector") {
+                stable(true)
+            }
             downstreamParameterized()
         }
     }
@@ -289,7 +291,7 @@ new File("petclinic_url.properties").withWriter{ it << "PETCLINIC_URL=\${webapp_
                         buildAllNodesWithLabel(false)
                     configs {
                         "hudson.plugins.parameterizedtrigger.PredefinedBuildParameters" {
-                            properties("buildCommit=\${buildCommit}")
+                            properties("buildCommit=\${buildCommit}\nbuildNumber=\${buildNumber}")
                         }
                         "hudson.plugins.parameterizedtrigger.FileBuildParameters" {
                             propertiesFile("petclinic_url.properties")
@@ -532,7 +534,7 @@ job(type: Maven) {
   }
   preBuildSteps {
     copyArtifacts('fb-build', targetPath = 'version.properties') {
-        upstreamBuild(true)
+        buildNumber('\${buildNumber}') 
     }
   }
   rootPOM("spring-petclinic-test/pom.xml")
@@ -610,7 +612,11 @@ job(type: Maven) {
       branch('\${buildCommit}')
     }
   }
-
+  preBuildSteps {
+    copyArtifacts('dev-build', targetPath = 'version.properties') {
+        buildNumber('\${buildNumber}') 
+    }
+  }
   rootPOM("spring-petclinic-test/pom.xml")
   goals('-P integration-test clean verify -Dspring.profiles.active=remote -DREMOTE_WEBDRIVER_URL=${SELENIUM_URL} -Dbrowser.version= -Dpetclinic.url=${PETCLINIC_URL}')
   mavenInstallation(maven_installation)
@@ -625,6 +631,7 @@ job(type: Maven) {
   postBuildSteps {
     publishers{
       mailer("", false, true)
+      archiveArtifacts 'version.properties'
       publishHtml{report("spring-petclinic-test/target/jbehave/view","HTML Report",'index.html',false)}
     }
   }
@@ -689,7 +696,7 @@ job(type: Maven) {
   }
   preBuildSteps {
     copyArtifacts('dev-build', targetPath = 'version.properties') {
-        upstreamBuild(true)
+        buildNumber('\${buildNumber}') 
     }
   }
   rootPOM("spring-petclinic-test/pom.xml")
