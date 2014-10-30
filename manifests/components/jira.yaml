@@ -10,12 +10,14 @@
 
 application:
   configuration:
+    input.storage_size: 10
     input.jira_version: "6.1.5"
     input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
   interfaces:
     input:
       jira_version: "bind(workflow#input.jira_version)"
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
+      storage_size: "bind(workflow#input.storage_size)"
     output:
       jira_public_ips: "bind(workflow#result.jira_public_ips)"
       jira_endpoint: "bind(workflow#result.jira_endpoint)"
@@ -24,6 +26,9 @@ application:
       type: workflow.Instance
       interfaces:
         input:
+          storage_size:
+            type: configuration(int)
+            name: Storage size
           jira_version:
             type: configuration(string)
             name: JIRA version
@@ -57,10 +62,14 @@ application:
                     jcloudsRegions: us-east-1
                     jcloudsNodeNamePrefix: jira
                     vmIdentity: ec2-user
-                    imageId: us-east-1/ami-c25be3aa
+                    imageId: us-east-1/ami-642bba0d
                     securityGroup: default
                     providerSettings:
                       userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
+                    blockDeviceMapping:
+                      "/dev/sda1":
+                        ebs:
+                          volumeSize: "{$.storage_size}"
                   output:
                     jira_public_ips: ips
                     private_ips: privateips

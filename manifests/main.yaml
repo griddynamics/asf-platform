@@ -18,6 +18,7 @@ application:
     input.sonar_version: "3.7.4"
     input.selenium_version: "2.42.2"
     input.selenium_node_count: "1"
+    input.storage_size: 10
   bindings:
       - [integration.workflow, gerrit]
       - [integration.workflow, jenkins]
@@ -34,6 +35,14 @@ application:
       sonar_version: "bind(sonar#input.sonar_version)"
       selenium_version: "bind(selenium#conf.selenium-version)"
       selenium_node_count: "bind(selenium#conf.slave-node-count)"
+      storage_size: |
+        bind(
+          gerrit#input.storage_size,
+          jenkins#input.storage_size,
+          ldap#input.storage_size,
+          sonar#input.storage_size,
+          jira#input.storage_size,
+          nexus#input.storage_size)
       cookbooks_url: |
         bind(
           gerrit#input.cookbooks_url,
@@ -85,6 +94,9 @@ application:
         __locator.application-id: "Sonar"
       interfaces:
         input:
+          storage_size:
+            type: configuration(int)
+            name: Storage size
           sonar_version:
             type: configuration(string)
             name: Sonar version
@@ -105,6 +117,9 @@ application:
         __locator.application-id: "Gerrit"
       interfaces:
         input:
+          storage_size:
+            type: configuration(int)
+            name: Storage size
           gerrit_version:
             type: configuration(string)
             name: Gerrit version
@@ -125,6 +140,9 @@ application:
         __locator.application-id: "Jenkins"
       interfaces:
         input:
+          storage_size:
+            type: configuration(int)
+            name: Storage size
           cookbooks_url:
             type: configuration(string)
             name: Cookbooks tarball URL
@@ -142,6 +160,9 @@ application:
         __locator.application-id: "JIRA"
       interfaces:
         input:
+          storage_size:
+            type: configuration(int)
+            name: Storage size
           jira_version:
             type: configuration(string)
             name: JIRA version
@@ -162,6 +183,9 @@ application:
         __locator.application-id: "OpenLDAP"
       interfaces:
         input:
+          storage_size:
+            type: configuration(int)
+            name: Storage size
           cookbooks_url:
             type: configuration(string)
             name: Cookbooks tarball URL
@@ -182,6 +206,9 @@ application:
         __locator.application-id: "Nexus"
       interfaces:
         input:
+          storage_size:
+            type: configuration(int)
+            name: Storage size
           cookbooks_url:
             type: configuration(string)
             name: Cookbooks tarball URL
