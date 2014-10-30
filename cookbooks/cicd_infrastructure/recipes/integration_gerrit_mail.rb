@@ -8,6 +8,8 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
+include_recipe 'postfix'
+
 node.set['gerrit']['sendemail'] = node['cicd_infrastructure']['gerrit']['sendemail']
 
 service 'gerrit' do
