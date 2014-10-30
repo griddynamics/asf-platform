@@ -57,8 +57,8 @@ application:
                     jcloudsRegions: us-east-1
                     jcloudsNodeNamePrefix: nexus
                     vmIdentity: ec2-user
-                    imageId: us-east-1/ami-642bba0d
-                    securityGroup: default
+                    imageId: us-east-1/ami-b028aad8
+                    ec2SecurityGroup: default
                     providerSettings:
                       userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                     blockDeviceMapping:

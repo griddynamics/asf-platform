@@ -610,7 +610,7 @@ application:
                       action: provisionVms
                       parameters:
                         hardwareId: m3.medium
-                        imageId: us-east-1/ami-c25be3aa
+                        imageId: us-east-1/ami-b028aad8
                         jcloudsProvider: aws-ec2
                         jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
                         roleName: "{$.role}"
