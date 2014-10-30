@@ -13,6 +13,16 @@ end
 
 sonar_credentials = node['cicd_infrastructure']['sonar']['credentials']
 
+ruby_block "wait for Sonar" do
+  block do
+    10.times {
+      sleep(60)
+      break if File.read("#{node['sonar']['dir']}/logs/sonar.log")
+      .include?("Start components done")
+    }
+  end
+end
+
 node['cicd_infrastructure']['sonar']['mail'].each do |key, value|
   ruby_block "set sonar property #{key}:#{value}" do
     block do
