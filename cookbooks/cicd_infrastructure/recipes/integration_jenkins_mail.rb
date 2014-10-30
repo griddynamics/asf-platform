@@ -8,7 +8,7 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-include_recipe 'cicd_infrastructure::postfix'
+include_recipe 'postfix'
 
 service 'jenkins' do
   action :nothing

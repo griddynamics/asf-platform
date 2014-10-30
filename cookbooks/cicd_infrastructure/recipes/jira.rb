@@ -10,6 +10,7 @@
 
 include_recipe 'java::default'
 include_recipe 'jira::default'
+include_recipe 'postfix'
 
 package 'unzip'
 

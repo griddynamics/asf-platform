@@ -11,3 +11,4 @@
 include_recipe 'java'
 include_recipe 'sonar'
 include_recipe 'sonar::database_mysql'
+include_recipe 'postfix'

@@ -7,6 +7,8 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
+include_recipe 'postfix'
+
 service 'sonar' do
   action :nothing
 end
