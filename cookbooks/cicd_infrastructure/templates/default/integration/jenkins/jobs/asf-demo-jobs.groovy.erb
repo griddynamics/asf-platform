@@ -275,7 +275,7 @@ def userJson = new JsonSlurper().parseText(qubellOutputFile.text)
 def webapp_endpoint = userJson.returnValues.'output.webapp_endpoint'
 
 def f= new File("petclinic_url.properties")
-f.withWriter{ it << "PETCLINIC_URL=${webapp_endpoint}"}
+f.withWriter{ it << "PETCLINIC_URL=\${webapp_endpoint}"}
 """
         }
         groovyName("Groovy-default")
