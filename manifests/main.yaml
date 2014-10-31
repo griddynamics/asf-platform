@@ -16,7 +16,7 @@ application:
     input.gerrit_version: "2.9"
     input.jira_version: "6.1.5"
     input.sonar_version: "3.7.4"
-    input.selenium_version: "2.42.2"
+    input.selenium_version: "2.43.1"
     input.selenium_node_count: "1"
     input.storage_size: 10
   bindings:
