@@ -22,7 +22,7 @@ remote_directory install_dir do
   action :create
 end
 
-template "#{install_dir}/services.json"do
+template "#{install_dir}/services.json" do
   source 'dashboard/services.json.erb'
   owner node['apache']['user']
   group node['apache']['group']
