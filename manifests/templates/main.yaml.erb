@@ -16,7 +16,7 @@ application:
     <% if config['components'].include? 'gerrit'   -%>input.gerrit_version: "2.9"<% end %>
     <% if config['components'].include? 'jira'     -%>input.jira_version: "6.1.5"<% end %>
     <% if config['components'].include? 'sonar'    -%>input.sonar_version: "3.7.4"<% end %>
-    <% if config['components'].include? 'selenium' -%>input.selenium_version: "2.42.2"
+    <% if config['components'].include? 'selenium' -%>input.selenium_version: "2.43.1"
     input.selenium_node_count: "1"<% end %>
   bindings:
   <% config['components'].each do |mod| -%>
