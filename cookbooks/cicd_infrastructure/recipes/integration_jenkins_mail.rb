@@ -24,7 +24,6 @@ template "#{jenkins['home']}/hudson.tasks.Mailer.xml" do
   mode 0644
   variables(
     plugin_version: node['cicd_infrastructure']['jenkins']['plugins']['mailer'],
-    admin_email: mail_config['adress'],
     smtp_host: mail_config['smtp']['host']
   )
   notifies :restart, 'service[jenkins]'
