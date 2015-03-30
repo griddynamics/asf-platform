@@ -19,3 +19,14 @@ Set up a Qubell Account
    - **jira_password**: < jenkins_ci_bot_password > (default: jenkin$CiB0t)
    - **qubell_username**: < your_qubell_username >
    - **qubell_password**: < your_qubell_password >
+   - **qubell_app_id**: < qubell_app_id >
+   - **qubell_env_id**: < qubell_env_id >
+   - **mysql_password**: < password > (default: password123)
+   - **amazon_access_id**: < access_id >
+   - **amazon_secret_key**: < secret_key > 
+   - **amazon_instance_ami**: < ami-id > (default: ami-aacbe6c2)
+   - **amazon_instance_cap**: < instance_cap > (default: 30)
+   - **amazon_instance_security_groups**: < security_group_list > (default: default)
+   - **amazon_instance_type**: < instance_type > (default: M3Large)
+   - **amazon_instance_zone**: < instance_zone > (default: us-east-1b)
+   - **amazon_region**: < region > (default: us-east-1)
