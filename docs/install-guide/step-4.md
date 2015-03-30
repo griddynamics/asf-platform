@@ -1,5 +1,5 @@
-Step 4. Launch and post-deployment
-==================================
+Launch and post-deployment
+==========================
 
 Go to qubell and launch Agile Software Factory. Use Advanced Lunch and set root size around 30Gib.
 
@@ -109,8 +109,8 @@ Gerrit configuration
 --------------------
 
 1. Go to gerrit
- * Add your ssh key. You can use user noc with password: nocpassword
- * Create project asf-webapp
- * Push source code from [github](https://github.com/griddynamics/asf-webapp-demo) to dev brunch of asf-webapp gerrit repository
- * switch HEAD reference from "master" to "dev"
- * enable fast-forward push only
+2. Add your ssh key. You can use user noc with password: nocpassword
+3. Create project asf-webapp
+4. Push source code from [github](https://github.com/griddynamics/asf-webapp-demo) to dev brunch of asf-webapp gerrit repository
+5. Switch HEAD reference from "master" to "dev"
+6. Enable fast-forward push only
