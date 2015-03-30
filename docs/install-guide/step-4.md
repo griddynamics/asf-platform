@@ -17,7 +17,7 @@ Add new user into LDAP
 
 5. Add user atester
 
-```
+ ```
  dn:uid=atester,ou=people,dc=asf,dc=griddynamics,dc=com
  cn: atester
  displayname: Alice Tester
@@ -28,10 +28,10 @@ Add new user into LDAP
  sn: Tester
  uid: atester
  userpassword: atester
-```
+ ```
+
 6. Press button "Create object".
 7. Validate data and press "Commit" button.
-
 8. Add user bcoder
 
 ```
@@ -46,6 +46,7 @@ sn: Coder
 uid: bcoder
 userpassword: bcoder
 ```
+
 9. Press button "Create object".
 10. Validate data and press "Commit" button.
 
