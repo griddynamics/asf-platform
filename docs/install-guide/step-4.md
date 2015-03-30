@@ -16,30 +16,36 @@ Add new user into LDAP
 4. On the right side choose ASF: create user template for new entry.
 
 5. Add user atester
- * dn: uid=atester,ou=people,dc=asf,dc=griddynamics,dc=com
- * cn: atester
- * displayname: Alice Tester
- * givenname: Alice
- * mail: alisa-qa@griddynamics.com
- * objectclass: inetOrgPerson
- * objectclass: top
- * sn: Tester
- * uid: atester
- * userpassword: atester
+
+```
+ dn:uid=atester,ou=people,dc=asf,dc=griddynamics,dc=com
+ cn: atester
+ displayname: Alice Tester
+ givenname: Alice
+ mail: alisa-qa@griddynamics.com
+ objectclass: inetOrgPerson
+ objectclass: top
+ sn: Tester
+ uid: atester
+ userpassword: atester
+```
 6. Press button "Create object".
 7. Validate data and press "Commit" button.
 
 8. Add user bcoder
- * dn: uid=bcoder,ou=people,dc=asf,dc=griddynamics,dc=com
- * cn: bcoder
- * displayname: Bob Coder
- * givenname: Bob
- * mail: bob-dev@griddynamics.com
- * objectclass: inetOrgPerson
- * objectclass: top
- * sn: Coder
- * uid: bcoder
- * userpassword: bcoder
+
+```
+dn: uid=bcoder,ou=people,dc=asf,dc=griddynamics,dc=com
+cn: bcoder
+displayname: Bob Coder
+givenname: Bob
+mail: bob-dev@griddynamics.com
+objectclass: inetOrgPerson
+objectclass: top
+sn: Coder
+uid: bcoder
+userpassword: bcoder
+```
 9. Press button "Create object".
 10. Validate data and press "Commit" button.
 
