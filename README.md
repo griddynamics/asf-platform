@@ -11,8 +11,8 @@ Agile Software Factory
 	* [Demo application](#demoapp)
 * [Setup](#setup)
 	* [Step-by-step Setup Guide](#step-by-step-setup)
-* [Developer Guide](#develop)
 * [Known Issues](#issues)
+* [License and Authors](#license-authors)
 
 <a name="getting-started"></a>
 # Getting Started
@@ -25,9 +25,9 @@ Agile Software Factory is the foundation for an efficient, scalable, and reliabl
 <a name="architecture"></a>
 ## Architecture
 
-Agile Software Factory consists of 10 main components:
+Agile Software Factory consists of nine main components:
 
-- **Jenkins** - CI-server, build, verify code, run code analysis and deploy artifacts into repository
+- **Jenkins** - build, verify code, run code analysis and deploy artifacts into repository
 - **Gerrit** - code review tool and source code repository manager
 - **LDAP** - centralized store of user accounts information for authentication on other components
 - **JIRA** - project management software, aggregates statuses for all other components
@@ -50,14 +50,30 @@ All components of ASF integrated with each other and provide fully working CI pi
 <a name="ci-workflow"></a>
 ## CI Workflow
 
-![Component infrastructure](docs/images/readme/ci-flow.png)
+ASF provides CI pipelines for demo Java application. Currently ASF supports 3 main pipelines:
+
+- **Dev Review Pipeline**
+    
+    For each new opened code review Jenkins checkout code, build it and run unit tests. If tests passed, Jenkins mark change `Verified +1`, else `-1`.
+    
+    ![Dev Review Pipeline](docs/images/readme/dev-review-workflow.png)
+
+- **Dev Build Pipeline**
+
+    Each time change submitted to `dev` branch, Jenkins checkout latest `dev` revision and start running full CI pipeline - build code, run unit and functional tests, then upload artifact to Nexus and build docker image based on artifact from Nexus. After docker image deploys to DockerVM and run integration testing against it.
+    
+    ![Dev Build Pipeline](docs/images/readme/dev-workflow.png)
+
+- **Feature Branch Build Pipeline**
+
+    Implements the same process as *dev build pipeline* with main difference that feature branch build works for branches with `fb-` prefix and starts only manually.
 
 <a name="requirements"></a>
 ## Requirements
 
-Agile Software Factory requires minimum 9 m3.medium AWS instances for infrastructure and one m3.large for Jenkins slave. Estimated costs of infrastructure is $<cost>/month. Currently ASF can be launched **only in us-east** AWS region.
+Agile Software Factory requires minimum nine m3.medium AWS instances for infrastructure and one m3.large for Jenkins slave. Estimated costs of infrastructure is $<cost>/month. Currently ASF can be launched **only in us-east** AWS region.
 
-List of images required by ASF:
+List of required images:
 
 | Name | Image AMI |
 |------|-----------|
@@ -70,6 +86,8 @@ All instances required public ips, launching in **VPC currently not supported**.
 <a name="demoapp"></a>
 ## Demo application
 
+As a demo application Agile Software factory uses [Spring Petclinic](https://github.com/spring-projects/spring-petclinic) with additional integration tests and deploy scripts. Checkout [ASF-Webapp-Demo](https://github.com/griddynamics/asf-webapp-demo) repo for more info.
+
 <a name="setup"></a>
 ## Setup
 
@@ -80,8 +98,13 @@ All instances required public ips, launching in **VPC currently not supported**.
 - **[Step 3. Obtain the Agile Software Factory](docs/install-guide/step-3.md)**
 - **[Step 4. Launch and post-deployment](docs/install-guide/step-4.md)**
 
-License and Authors
--------------------
+<a name="issues"></a>
+## Known Issues
+
+
+<a name="license-authors"></a>
+## License and Authors
+
 Authors:
 - Alexey Kornev <akornev@griddynamics.com>
 - Grigory Silantiev <gsilantyev@griddynamics.com>
