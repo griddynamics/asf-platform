@@ -43,6 +43,7 @@
 <% end %>
 [sshd]
     listenAddress = *:<%= node['gerrit']['port'] %>
+    threads = <%= node['gerrit']['sshd_threads'] %>
 [httpd]
 <% if node['gerrit']['proxy'] %>
     listenUrl = proxy-http<%= node['gerrit']['ssl'] ? 's' : '' %>://127.0.0.1:8080/

@@ -1,0 +1,334 @@
+# Encoding: utf-8
+#
+# Application: Agile Software Factory
+# Component: docker_pool
+#
+# Copyright (c) 2015 Grid Dynamics International, Inc. All Rights Reserved
+# Classification level: Public
+# Licensed under the Apache License, Version 2.0.
+#
+
+application:
+  configuration:
+    input.storage_size: 20
+    input.docker_registry: "0.0.0.0"
+  interfaces:
+    input:
+      "*": "bind(workflow#input.*)"
+    result:
+      "*": "bind(workflow#result.*)"
+    docker_pool-actions:
+      "*": "bind(workflow#actions.*)"
+  components:
+    workflow:
+      type: workflow.Instance
+      interfaces:
+        input:
+          docker_registry:
+            type: "configuration(string)"
+            name: "Docker Registry IP"
+          storage_size:
+            type: "configuration(int)"
+            name: "Storage size"
+        actions:
+          allocate:
+            name: "Allocate"
+            type: "receive-command(=>string allocated_ip)"
+          release:
+            name: "Release"
+            type: "receive-command(string ip)"
+          provision:
+            name: "Provision"
+            type: "receive-command(int storage_size => string allocated_ip, list<string> available_vms)"
+          remove:
+            name: "Destroy"
+            type: "receive-command(string ip)"
+          utilization:
+            name: "Utilization"
+            type: "receive-command(=> list<string> available_vms)"
+        result:
+          metadata_ip:
+            type: "publish-signal(string)"
+            name: "Docker pool manager IP"
+          available_vms:
+            type: "publish-signal(list<string>)"
+            name: "Available VMs list"
+          allocated_ip:
+            type: "publish-signal(string)"
+            name: "Latest allocated IP"
+      configuration:
+        configuration.schedule:
+          utilization: "0 0/30 * * * ? *"
+        configuration.triggers: {}
+        configuration.workflows:
+          launch:
+            steps:
+              - "env-props": &env-props
+                  action: getSignals
+                  output:
+                    config: result
+              - provision:
+                  action: provisionVms
+                  precedingPhases: [ "env-props" ]
+                  parameters:
+                    roleName: docker-pool-metadata
+                    hardwareId: t1.micro
+                    quantity: 1
+                    retryCount: 1
+                    jcloudsProvider: aws-ec2
+                    jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                    jcloudsRegions: us-east-1
+                    jcloudsNodeNamePrefix: docker-pool-metadata
+                    vmIdentity: root
+                    imageId: us-east-1/ami-05ebd06c
+                    ec2SecurityGroup: default
+                    providerSettings:
+                      userData: |
+                        #cloud-config
+                        coreos:
+                          units:
+                            - name: format-ephemeral.service
+                              command: start
+                              content: |
+                                [Unit]
+                                Description=Formats the ephemeral drive
+                                [Service]
+                                Type=oneshot
+                                RemainAfterExit=yes
+                                ExecStart=/usr/sbin/wipefs -f /dev/xvdb
+                                ExecStart=/usr/sbin/mkfs.btrfs -f /dev/xvdb
+                            - name: var-lib-docker.mount
+                              command: start
+                              content: |
+                                [Unit]
+                                Description=Mount ephemeral to /var/lib/docker
+                                Requires=format-ephemeral.service
+                                After=format-ephemeral.service
+                                Before=docker.service
+                                [Mount]
+                                What=/dev/xvdb
+                                Where=/var/lib/docker
+                                Type=btrfs
+                  output:
+                    public_ips: ips
+                    private_ips: privateips
+              - init_metadata:
+                  action: execrun
+                  precedingPhases: [ "provision" ]
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          wget --no-check-certificate http://gd-asf.s3.amazonaws.com/metadata.py -O /opt/metadata.py
+                          chmod +x /opt/metadata.py
+                          /opt/metadata.py init
+                  output:
+                    ip: stdout
+            return:
+              available_vms:
+                value: [ "No VMs provision yet" ]
+              allocated_ip:
+                value: "No VMs allocated yet"
+              metadata_ip:
+                value: "{$.public_ips[0]}"
+          allocate:
+            steps:
+              - allocate:
+                  action: execrun
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py allocate
+                  output:
+                    ip: stdout
+            return:
+              allocated_ip:
+                value: "{$.ip.*[0]}"
+
+          release:
+            parameters:
+              ip:
+                description: "VM IP"
+            steps:
+              - get_vm_role:
+                  action: execrun
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py get_role "{$.ip}"
+                  output:
+                    role: stdout
+              - cleanup_instance:
+                  action: execrun
+                  precedingPhases: [ "get_vm_role" ]
+                  parameters:
+                    roles: [ "{$.role.*[0]}" ]
+                    command:
+                      - |
+                          docker rm -f $$(docker ps -qa)
+              - update_metadata:
+                  action: execrun
+                  precedingPhases: [ "cleanup_instance" ]
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py release "{$.ip}"
+
+          provision:
+            parameters:
+              storage_size:
+                default: 20
+                description: "Node storage size"
+            steps:
+              - env-props: *env-props
+              - generate_uid:
+                  action: execrun
+                  precedingPhases: [ "env-props" ]
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py uid
+                  output:
+                    uid: stdout
+              - provision:
+                  action: provisionVms
+                  precedingPhases: [ "generate_uid" ]
+                  parameters:
+                    roleName: "{$.uid.*[0]}"
+                    hardwareId: m1.small
+                    quantity: 1
+                    retryCount: 1
+                    jcloudsProvider: aws-ec2
+                    jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                    jcloudsRegions: us-east-1
+                    jcloudsNodeNamePrefix: docker_pool
+                    vmIdentity: core
+                    imageId: us-east-1/ami-5e9bd836
+                    ec2SecurityGroup: default
+                    providerSettings:
+                      userData: |
+                        #cloud-config
+                        write_files:
+                          - path: /etc/systemd/system/docker.service.d/50-insecure-registry.conf
+                            content: |
+                                [Service]
+                                Environment=DOCKER_OPTS='--insecure-registry={$.docker_registry}:5000 --registry-mirror="{$.docker_registry}"'
+                    blockDeviceMapping:
+                      "/dev/sda1":
+                        ebs:
+                          volumeSize: "{$.storage_size}"
+                  output:
+                    public_ips: ips
+                    private_ips: privateips
+              - install_watcher:
+                  action: execrun
+                  precedingPhases: [ "provision" ]
+                  parameters:
+                    roles: [ "{$.uid.*[0]}" ]
+                    command:
+                      - |
+                          wget --no-check-certificate http://gd-asf.s3.amazonaws.com/server.py -O /home/core/server.py
+                          docker run -d -v /home/core:/tmp -p 30000:30000 --name lastuse_watcher google/python python /tmp/server.py /tmp/.undeploy.me
+              - save_metadata:
+                  action: execrun
+                  precedingPhases: [ "provision" ]
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py register "{$.public_ips[0]}" "{$.uid.*[0]}"
+              - get_vms_list:
+                  action: .get_vms_list
+                  precedingPhases: [ "save_metadata" ]
+                  output:
+                    vms: vms_list
+            return:
+              allocated_ip:
+                value: "{$.public_ips}"
+              available_vms:
+                value: "{$.vms}"
+
+          remove:
+            parameters:
+              ip:
+                description: "VM IP"
+            steps:
+              - get_vm_role:
+                  action: execrun
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py get_role "{$.ip}"
+                  output:
+                    role: stdout
+              - destroy_vm:
+                  action: "destroyVms"
+                  precedingPhases: [ "get_vm_role" ]
+                  parameters:
+                    roleName: "{$.role.*[0]}"
+              - update_metadata:
+                  action: execrun
+                  precedingPhases: [ "destroy_vm" ]
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py remove "{$.ip}"
+
+          utilization:
+            steps:
+              - get_unused_instanse:
+                  action: execrun
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py utilize
+                  output:
+                    ip: stdout
+              - remove:
+                  action: remove
+                  precedingPhases: [ "get_unused_instanse" ]
+                  parameters:
+                    ip: "{$.ip.*[0]}"
+              - get_vms_list:
+                  action: .get_vms_list
+                  precedingPhases: [ "remove" ]
+                  output:
+                    vms: vms_list
+            return:
+              available_vms:
+                value: "{$.vms}"
+
+          .get_vms_list:
+            steps:
+              - get_vms_list:
+                  action: execrun
+                  parameters:
+                    roles: [ "docker-pool-metadata" ]
+                    command:
+                      - |
+                          /opt/metadata.py vm_list
+                  output:
+                    vms: stdout
+              - serialize:
+                  action: serialize
+                  precedingPhases: [ "get_vms_list" ]
+                  parameters:
+                    format: CSV
+                    input: "{$.vms.*}"
+                  output:
+                    vms_list: serialized
+            return:
+              vms_list:
+                value: "{$.vms_list}"
+
+          destroy:
+            steps:
+                - destroy:
+                    action: undeployEnv

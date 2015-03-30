@@ -1,7 +1,7 @@
 # Encoding: utf-8
 #
 # Cookbook Name:: cicd_infrastructure
-# Recipe:: sonar
+# Recipe:: sonarqube
 #
 # Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
 # Classification level: Public
@@ -9,6 +9,11 @@
 #
 
 include_recipe 'java'
-include_recipe 'sonar'
-include_recipe 'sonar::database_mysql'
+include_recipe 'sonarqube'
 include_recipe 'postfix'
+include_recipe 'iptables'
+
+iptables_rule 'allow_private_ips'
+iptables_rule 'allow_sonar' do
+  source 'sonar/allow_sonar.erb'
+end

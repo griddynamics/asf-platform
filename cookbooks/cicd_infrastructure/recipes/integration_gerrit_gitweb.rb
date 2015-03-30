@@ -9,10 +9,16 @@
 #
 
 package 'gitweb' do
-	action :install
+  action :install
 end
 
-execute "Add gitweb to gerrit config" do
-	command "git config --file /var/gerrit/review/etc/gerrit.config gitweb.cgi /var/www/git/gitweb.cgi"
-	user node['gerrit']['user']
+service 'gerrit' do
+  action :nothing
+end
+
+bash 'Add gitweb to gerrit config' do
+  user node['gerrit']['user']
+  cwd '/var/gerrit/review/etc'
+  code 'git config --file /var/gerrit/review/etc/gerrit.config gitweb.cgi /var/www/git/gitweb.cgi'
+  notifies :restart, 'service[gerrit]'
 end

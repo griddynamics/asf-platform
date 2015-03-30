@@ -10,11 +10,11 @@
 
 override['nexus']['cli']['ssl']['verify'] = false
 override['nexus']['app_server_proxy']['use_self_signed'] = true
-override['nexus']['version'] = '2.8.1-01'
-override['nexus']['checksum'] = 'b72a9dd6f332b725cd4b5f2aafd6a97eea5fb3b5611f8c046223758a16b5625b'
-override['nexus']['external_version'] = '2.8.1'
+override['nexus']['version'] = '2.10.0-02'
+override['nexus']['checksum'] = '730442be2ca4918b44a69b98bb62abfcbf8ce8f997385349510dd807c1bf88d6'
+override['nexus']['external_version'] = '2.10.0'
 override['nexus']['bundle_name'] = "#{node['nexus']['name']}-#{node['nexus']['version']}"
-override['nexus']['url'] = "http://download.sonatype.com/nexus/oss/nexus-#{node['nexus']['external_version']}-bundle.tar.gz"
+override['nexus']['url'] = "http://download.sonatype.com/nexus/oss/nexus-#{node['nexus']['version']}-bundle.tar.gz"
 override['nexus']['attempt_count'] = 1
 override['nexus']['sleep_period'] = 60
 override['nexus']['use_chef_vault'] = 'false'

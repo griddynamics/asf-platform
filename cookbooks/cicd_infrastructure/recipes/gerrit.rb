@@ -8,14 +8,22 @@
 # Licensed under the Apache License, Version 2.0.
 #
 include_recipe 'gerrit::default'
+include_recipe 'iptables::default'
 
-gerrit_init = resources(execute: 'gerrit-init')
+iptables_rule 'allow_private_ips'
+iptables_rule 'allow_http'
+
+iptables_rule 'allow_gerrit' do
+  source 'gerrit/allow_gerrit.erb'
+end
+
+gerrit_init = resources({:execute => 'gerrit-init'})
 node['gerrit']['plugins'].each do |plugin|
-    gerrit_init.command gerrit_init.command << " --install-plugin #{plugin}"
+  gerrit_init.command gerrit_init.command << " --install-plugin #{plugin}"
 end
 
 gerrit_conf_template = resources(
-  template: "#{node['gerrit']['install_dir']}/etc/gerrit.config")
+  {:template => "#{node['gerrit']['install_dir']}/etc/gerrit.config"})
 gerrit_conf_template.cookbook 'cicd_infrastructure'
 gerrit_conf_template.source 'gerrit/gerrit.config.erb'
 
@@ -72,5 +80,5 @@ ruby_block 'add_root_user' do
   end
   retries 5
   retry_delay 30
-  only_if { File.exists?("#{gerrit_ssh_dir}/id_rsa.pub") }
+  only_if { File.exist?("#{gerrit_ssh_dir}/id_rsa.pub") }
 end

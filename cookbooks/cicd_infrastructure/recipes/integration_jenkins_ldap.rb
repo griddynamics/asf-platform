@@ -10,15 +10,15 @@
 
 jenkins_ldap_config = node['cicd_infrastructure']['jenkins']['ldap']
 
-jenkins_ldap_auth "Configure jenkins ldap" do
-  auth       node['cicd_infrastructure']['jenkins']['auth']
-  server     jenkins_ldap_config['server']
-  port       jenkins_ldap_config['port']
-  basedn     jenkins_ldap_config['basedn']
-  userdn     jenkins_ldap_config['userdn']
-  user_id    jenkins_ldap_config['user_id']
-  rootdn     jenkins_ldap_config['rootdn']
-  root_pwd   Base64.encode64(jenkins_ldap_config['root_pwd'])
+jenkins_ldap_auth 'Configure jenkins ldap' do
+  auth node['cicd_infrastructure']['jenkins']['auth']
+  server jenkins_ldap_config['server']
+  port jenkins_ldap_config['port']
+  basedn jenkins_ldap_config['basedn']
+  userdn jenkins_ldap_config['userdn']
+  user_id jenkins_ldap_config['user_id']
+  rootdn jenkins_ldap_config['rootdn']
+  root_pwd Base64.encode64(jenkins_ldap_config['root_pwd'])
 end
 
 service 'jenkins' do

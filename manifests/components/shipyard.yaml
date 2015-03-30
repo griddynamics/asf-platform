@@ -1,0 +1,132 @@
+# Encoding: utf-8
+#
+# Application: Agile Software Factory
+# Component: Shipyard
+#
+# Copyright (c) 2015 Grid Dynamics International, Inc. All Rights Reserved
+# Classification level: Public
+# Licensed under the Apache License, Version 2.0.
+#
+
+application:
+  configuration:
+    input.storage_size: 20
+  interfaces:
+    input:
+      "*": "bind(workflow#input.*)"
+    result:
+      "*": "bind(workflow#result.*)"
+    shipyard-actions:
+      "*": "bind(workflow#actions.*)"
+    docker-registry:
+      "*": "bind(workflow#registry.*)"
+  components:
+    workflow:
+      type: workflow.Instance
+      required:
+        - registry
+      interfaces:
+        input:
+          storage_size:
+            type: "configuration(int)"
+            name: "Storage size"
+        actions:
+          registrate_pubkey:
+            type: "receive-command(string pubkey, string user)"
+            name: "Add Public Key"
+        result:
+          shipyard_public_ips:
+            type: "publish-signal(list<string>)"
+            name: "Docker IP"
+          docker_endpoints:
+            type: "publish-signal(list<string>)"
+            name: "Docker Endpoints"
+        registry:
+          docker_registry_ip: "consume-signal(string)"
+          docker_registry_private_ip: "consume-signal(string)"
+          docker_registry_endpoint: "consume-signal(string)"
+        keypair-store:
+          get-keypair: "send-command(string id => object privateKey)"
+      configuration:
+        configuration.triggers: {}
+        configuration.workflows:
+          launch:
+            steps:
+              - "env-props": &env-props
+                  action: getSignals
+                  output:
+                    config: result
+              - provision:
+                  action: provisionVms
+                  precedingPhases: [ "env-props" ]
+                  parameters:
+                    roleName: shipyard
+                    hardwareId: m1.small
+                    quantity: 1
+                    retryCount: 1
+                    jcloudsProvider: aws-ec2
+                    jcloudsEndpoint: https://ec2.us-east-1.amazonaws.com
+                    jcloudsRegions: us-east-1
+                    jcloudsNodeNamePrefix: shipyard
+                    vmIdentity: core
+                    imageId: us-east-1/ami-5e9bd836
+                    ec2SecurityGroup: default
+                    providerSettings:
+                      userData: |
+                        #cloud-config
+                        write_files:
+                          - path: /etc/systemd/system/docker.service.d/50-insecure-registry.conf
+                            content: |
+                                [Service]
+                                Environment=DOCKER_OPTS='--insecure-registry={$.config.registry.docker_registry_private_ip}:5000 --registry-mirror="{$.config.registry.docker_registry_endpoint}"'
+                        coreos:
+                          units:
+                            - name: docker.service
+                              command: restart
+                            - name: docker-tcp.socket
+                              command: start
+                              enable: true
+                              content: |
+                                [Unit]
+                                Description=Docker Socket for the API
+                                [Socket]
+                                ListenStream=2375
+                                BindIPv6Only=both
+                                Service=docker.service
+                                [Install]
+                                WantedBy=sockets.target
+                    blockDeviceMapping:
+                      "/dev/sda1":
+                        ebs:
+                          volumeSize: "{$.storage_size}"
+                  output:
+                    shipyard_public_ips: ips
+                    private_ips: privateips
+            return:
+              shipyard_public_ips:
+                value: "{$.shipyard_public_ips}"
+              docker_endpoints:
+                value: "tcp://{$.private_ips}:2376"
+
+          registrate_pubkey:
+            parameters:
+              pubkey:
+                description: "SSH Public Key"
+                default: undefined
+              user:
+                description: "User"
+                default: "coreos"
+            steps:
+              - registration:
+                  action: "execrun"
+                  parameters:
+                    roles: [ "shipyard" ]
+                    isSudo: true
+                    command:
+                      - |
+                          echo "{$.pubkey}" | sudo -u "{$.user}" sh -c "cat >> ~/.ssh/authorized_keys.d/coreos-cloudinit"
+                          /usr/bin/update-ssh-keys
+          destroy:
+            steps:
+                - destroy:
+                    action: undeployEnv

@@ -17,7 +17,7 @@ default['openldap']['users'] = [
   {
     'username' => 'noc',
     'password' => 'nocpassword',
-    'groups' => ['developers', 'administrators']
+    'groups' => %w(developers administrators)
   },
   {
     'username' => 'jenkins-ci-bot',

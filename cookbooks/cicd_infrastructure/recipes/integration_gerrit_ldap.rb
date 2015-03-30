@@ -30,7 +30,6 @@ end
 ruby_block 'match_ldap_groups' do
   block do
     require 'mysql'
-    timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
     db = Mysql.new(node['gerrit']['database']['host'],
                    node['gerrit']['database']['username'],
                    node['gerrit']['database']['password'],

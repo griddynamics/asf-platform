@@ -1,4 +1,4 @@
-source "https://api.berkshelf.com"
+source "https://supermarket.chef.io/"
 
 metadata
 
@@ -9,8 +9,11 @@ cookbook 'gerrit', git: 'https://github.com/TYPO3-cookbooks/gerrit.git', tag: '0
 cookbook 'jenkins', git: 'https://github.com/opscode-cookbooks/jenkins', tag: 'v2.1.2'
 cookbook 'openldap', '1.12.10'
 cookbook 'java', '1.22.0'
-cookbook 'sonar', '0.0.6', git: 'https://github.com/GreyTeardrop/chef-sonarqube.git'
+cookbook 'sonarqube', '0.1.2'
 cookbook 'nginx', git: 'https://github.com/miketheman/nginx.git', tag: 'v2.7.4'
 cookbook 'chef-zephyr', '0.0.1', git: 'git@github.com:griddynamics/asf-zephyr-cookbook.git'
 cookbook 'phpldapadmin-cookbook', git: 'git@github.com:griddynamics/asf-phpldapadmin-cookbook.git', tag: '0.1.3'
 cookbook 'mysql', git: 'https://github.com/opscode-cookbooks/mysql.git', tag: 'v5.5.3'
+cookbook 'mysql-chef_gem', git: 'https://github.com/opscode-cookbooks/mysql-chef_gem', ref: 'd33f5afbf00284a3e642e48502b1340b8b2780be'
+cookbook 'windows', '1.34.8'
+cookbook 'database', '2.1.0'

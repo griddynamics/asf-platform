@@ -31,9 +31,8 @@ template "#{node['jenkins']['master']['home']}/maven-global-settings-files.xml" 
     nexus_url: node['cicd_infrastructure']['jenkins']['nexus']['endpoint'],
     settings_id: node['cicd_infrastructure']['jenkins']['cfg_provider']['settings_id'],
     cfg_plugin_version: node['cicd_infrastructure']['jenkins']['plugins']['config-file-provider'],
-    jbehave_framework_repo_id:         nexus_config['repo']['jbehave']['id'],
-    jbehave_framework_repo_name:       nexus_config['repo']['jbehave']['name'],
-    use_jbehave_proxy:                 nexus_config['repo']['jbehave']['use']
+    gd_repo_id:         nexus_config['repo']['gd']['id'],
+    gd_repo_name:       nexus_config['repo']['gd']['name']
   )
   notifies :restart, 'service[jenkins]'
 end

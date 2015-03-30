@@ -1,6 +1,6 @@
 <repository>
-      <id><%= @jbehave_framework_repo_id %></id>
-      <name><%= @jbehave_framework_repo_name %></name>
+      <id><%= @gd_repo_id %></id>
+      <name><%= @gd_repo_name %></name>
       <providerRole>org.sonatype.nexus.proxy.repository.Repository</providerRole>
       <providerHint>maven2</providerHint>
       <localStatus>IN_SERVICE</localStatus>
@@ -16,14 +16,10 @@
         <provider>file</provider>
       </localStorage>
       <remoteStorage>
-        <url><%= @jbehave_framework_repo_location %></url>
-        <authentication>
-          <username><%= @jbehave_framework_repo_username %></username>
-          <password><%= @jbehave_framework_repo_password %></password>
-        </authentication>
+        <url><%= @gd_repo_location %></url>
       </remoteStorage>
       <externalConfiguration>
-        <repositoryPolicy><%= @jbehave_framework_repo_policy %></repositoryPolicy>
+        <repositoryPolicy><%= @gd_repo_policy %></repositoryPolicy>
         <checksumPolicy>WARN</checksumPolicy>
         <fileTypeValidation>true</fileTypeValidation>
         <downloadRemoteIndex>true</downloadRemoteIndex>

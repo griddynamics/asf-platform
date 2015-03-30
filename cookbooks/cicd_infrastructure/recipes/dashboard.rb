@@ -10,6 +10,11 @@
 
 include_recipe 'apache2::default'
 include_recipe 'apache2::mod_alias'
+include_recipe 'apache2::mod_proxy_http'
+include_recipe 'iptables::default'
+
+iptables_rule 'allow_private_ips'
+iptables_rule 'allow_http'
 
 install_dir = "#{node['apache']['docroot_dir']}/dashboard"
 
@@ -27,7 +32,7 @@ template "#{install_dir}/services.json" do
   owner node['apache']['user']
   group node['apache']['group']
   mode 0755
-  variables(:services => node['cicd_infrastructure']['dashboard']['services'])
+  variables(services: node['cicd_infrastructure']['dashboard']['services'])
 end
 
 web_app 'dashboard' do
@@ -35,6 +40,12 @@ web_app 'dashboard' do
   path "#{node['apache']['dir']}/sites-available/dashboard.conf"
   site_alias node['cicd_infrastructure']['dashboard']['alias']
   docroot install_dir
+  enable true
+end
+
+web_app 'selenium-console' do
+  template 'dashboard/selenium-console.conf.erb'
+  selenium_ip node['cicd_infrastructure']['dashboard']['services']['selenium']['ip']
   enable true
 end
 

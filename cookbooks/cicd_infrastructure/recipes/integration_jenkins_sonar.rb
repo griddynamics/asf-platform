@@ -23,6 +23,7 @@ template "#{jenkins['home']}/hudson.plugins.sonar.SonarPublisher.xml" do
   variables(
     plugin_version: node['cicd_infrastructure']['jenkins']['plugins']['sonar'],
     sonar_host: sonar['host'],
+    sonar_private_ip: sonar['private_ip'],
     sonar_port: sonar['port'],
     sonar_username: sonar['username'],
     sonar_password: sonar['password']

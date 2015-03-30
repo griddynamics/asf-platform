@@ -6,12 +6,13 @@
       <properties>
         <hudson.tools.InstallSourceProperty>
           <installers>
-            <hudson.tasks.Maven_-MavenInstaller>
-              <id>3.1.1</id>
-            </hudson.tasks.Maven_-MavenInstaller>
+            <hudson.tools.ZipExtractionInstaller>
+              <url><%= @maven_intallation_url %></url>
+              <subdir>/mnt/.jenkins/tools/hudson.tasks.Maven_MavenInstallation/Maven-default/apache-maven-<%= @maven_version %></subdir>
+            </hudson.tools.ZipExtractionInstaller>
           </installers>
         </hudson.tools.InstallSourceProperty>
       </properties>
-    </hudson.tasks.Maven_-MavenInstallation>
+  </hudson.tasks.Maven_-MavenInstallation>
   </installations>
 </hudson.tasks.Maven_-DescriptorImpl>

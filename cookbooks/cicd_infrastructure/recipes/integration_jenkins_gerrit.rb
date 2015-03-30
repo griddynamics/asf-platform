@@ -25,7 +25,7 @@ ssh_keys jenkins_ssh_dir do
   user node['jenkins']['master']['user']
   group node['jenkins']['master']['group']
   action :create
-  not_if { File.exists? "#{jenkins_ssh_dir}/id_rsa" }
+  not_if { File.exist? "#{jenkins_ssh_dir}/id_rsa" }
 end
 
 # Save public key to chef-server as jenkins_pubkey
@@ -40,7 +40,7 @@ end
 gerrit_trigger_config = node['cicd_infrastructure']['jenkins']['gerrit-trigger']
 
 Chef::Log.Error 'Gerrit-trigger config failed' if gerrit_trigger_config
-.values.include? nil
+                                                  .values.include? nil
 
 template "#{node['jenkins']['master']['home']}/gerrit-trigger.xml" do
   source 'integration/jenkins/gerrit-trigger.xml.erb'
@@ -53,7 +53,7 @@ template "#{node['jenkins']['master']['home']}/gerrit-trigger.xml" do
     gerrit_http_port: gerrit_trigger_config['http_port'],
     jenkins_private_key: "#{jenkins_ssh_dir}/id_rsa"
   )
-  notifies :restart, "service[jenkins]"
+  notifies :restart, 'service[jenkins]'
 end
 
 template "#{jenkins_ssh_dir}/config" do

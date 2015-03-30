@@ -17,9 +17,7 @@
     --permissions-only\
     --name #{prj_name}.git
     EOH
-    not_if {
-      File.directory?("#{node['gerrit']['home']}/review/git/#{prj_name}.git")
-    }
+    not_if { File.directory?("#{node['gerrit']['home']}/review/git/#{prj_name}.git") }
   end
 end
 
@@ -39,7 +37,6 @@ end
     action :checkout
   end
 
-
   template "/tmp/#{prj_name}/project.config" do
     source "gerrit/project-#{prj_name}.config.erb"
     owner node['gerrit']['user']
@@ -54,11 +51,11 @@ end
     mode 0644
   end
 
-  ruby_block "add global:Registered-Users to groups" do
+  ruby_block "add global:Registered-Users to groups in #{prj_name}" do
     block do
       str = "global:Registered-Users                 \tRegistered Users"
       file = Chef::Util::FileEdit.new("/tmp/#{prj_name}/groups")
-      file.insert_line_if_no_match("global:Registered-Users", str)
+      file.insert_line_if_no_match('global:Registered-Users', str)
       file.write_file
     end
     not_if { prj_name == 'Private-Projects' }

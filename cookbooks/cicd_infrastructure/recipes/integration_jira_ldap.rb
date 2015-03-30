@@ -15,13 +15,13 @@ end
 jira_ldap_config = node['cicd_infrastructure']['jira']['ldap']
 host = node['jira']['apache2']['virtual_host_name']
 
-execute "configure ldap" do
-  user "root"
-  command "mysql -ujira -pchangeit jira < /tmp/ldap_configure.sql"
+execute 'configure ldap' do
+  user 'root'
+  command 'mysql -ujira -pchangeit jira < /tmp/ldap_configure.sql'
   action :nothing
 end
 
-template "/tmp/ldap_configure.sql" do
+template '/tmp/ldap_configure.sql' do
   source 'jira/ldap_configure.sql.erb'
   owner node['jira']['user']
   group node['jira']['group']
@@ -42,45 +42,45 @@ template "/tmp/ldap_configure.sql" do
   notifies :run, 'execute[configure ldap]', :delayed
 end
 
-ruby_block "configure database" do
+ruby_block 'configure database' do
   block do
-    require "net/https"
-    require "uri"
-    path = "secure/SetupDatabase.jspa"
+    require 'net/https'
+    require 'uri'
+    path = 'secure/SetupDatabase.jspa'
     uri = URI("https://#{host}/#{path}")
     req = Net::HTTP::Get.new(uri.path)
     res = Net::HTTP.start(
       uri.host,
-      :use_ssl => uri.scheme == 'https',
-    :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
+      use_ssl: uri.scheme == 'https',
+      verify_mode: OpenSSL::SSL::VERIFY_NONE) do |https|
       https.request(req)
     end
-    node['jira']['attempt_count'].times {
+    node['jira']['attempt_count'].times do
       sleep(node['jira']['sleep_period'])
-      break if File.read("/opt/atlassian/jira/logs/catalina.out")
-      .include?("JIRA has been upgraded to build number")
-    }
+      break if File.read('/opt/atlassian/jira/logs/catalina.out')
+               .include?('JIRA has been upgraded to build number')
+    end
   end
   action :nothing
-  notifies :create, resources(:template => "/tmp/ldap_configure.sql")
+  notifies :create, resources({:template => '/tmp/ldap_configure.sql'})
 end
 
-ruby_block "wait for JIRA" do
+ruby_block 'wait for JIRA' do
   block do
-    require "net/https"
-    require "uri"
+    require 'net/https'
+    require 'uri'
     port = node['jira']['apache2']['ssl']['port']
-    path = "secure/SetupApplicationProperties!default.jspa"
+    path = 'secure/SetupApplicationProperties!default.jspa'
     uri = URI.parse("https://#{host}/#{path}")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
-    node['jira']['attempt_count'].times {
+    node['jira']['attempt_count'].times do
       sleep(node['jira']['sleep_period'])
-      break if File.read("/opt/atlassian/jira/logs/catalina.out")
-      .include?("You can now access JIRA through your web browser")
-    }
-    notifies :run, resources(:ruby_block => 'configure database')
+      break if File.read('/opt/atlassian/jira/logs/catalina.out')
+               .include?('You can now access JIRA through your web browser')
+    end
+    notifies :run, resources({:ruby_block => 'configure database'})
   end
 end

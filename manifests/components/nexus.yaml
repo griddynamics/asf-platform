@@ -11,7 +11,7 @@
 application:
   configuration:
     input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
-    input.storage_size: 10
+    input.storage_size: 20
   interfaces:
     input:
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
@@ -58,7 +58,7 @@ application:
                     jcloudsNodeNamePrefix: nexus
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-b028aad8
-                    ec2SecurityGroup: default
+                    securityGroup: default
                     providerSettings:
                       userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                     blockDeviceMapping:

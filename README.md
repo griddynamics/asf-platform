@@ -89,12 +89,20 @@ Cookbook recipes
 - **sonar.rb** - install Sonar
 - **zephyr.rb** - install Zephyr
 
+Artifacts on AWS S3
+-------------------
+- jdk-7u71-linux-x64.tar.gz
+- apache-ant-1.9.4-bin.tar.gz
+- apache-maven-3.1.1-bin.tar.gz
+- groovy-binary-2.2.1.zip
+
 Develop
 -------
 - Setup rbenv/rvm to use Ruby 1.9.3 by default
 - Run `bundle install` to get all dependences
 - Specify your AWS S3 bucket in `config.json`
 - To upload `cicd_infrastructure` cookbook with all dependences run `rake cookbooks:upload`
+- To update `cicd_infrastructure` cookbook dependences, run `rake cookbooks:update`
 - To upload all manifests from `manifests` directory run `rake manifests:upload_3`
 - To generate manifests from templates run `rake manifests:generate`. Generated manifests will be in `manifests` directory with names `generated-<template-name>.yaml`
 - To verify cookbook syntax and code style run `bundle exec rake` in `cookbooks/cicd_infrastructure`
