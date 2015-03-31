@@ -2,6 +2,7 @@
 
 final hudson.EnvVars env = hudson.model.Executor.currentExecutor().getCurrentExecutable().getEnvironment()
 
-folder(project_name) {
+folder {
+    name "${project_name}"
     description("<a href='http://${env['GERRIT_HOST']}'> Gerrit</a>, <a href='http://${env['JIRA_HOST']}'> JIRA</a>")
 }

@@ -46,7 +46,8 @@ p.store(new FileWriter('version.properties'), env['BUILD_TAG'])
                 gerritRefspec, gerritBranch, gerritEventRegexp, Closure gerritTriggerEvents, 
                 skipSonar, isSetVersion, testResultPattern, mavenProfiles = '', 
                 isPublishToJira, isPublishToSonar, isPublishToEmail, triggeredJobs) {
-        dsl.freeStyleJob(jobName) {
+        dsl.job {
+                  name jobName
                   description(jobDescription)
                   jdk('jdk-'+env['JDK_VERSION']) 
                   // parameters

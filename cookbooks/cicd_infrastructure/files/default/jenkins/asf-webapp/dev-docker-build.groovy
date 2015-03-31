@@ -9,7 +9,8 @@ git_url = "ssh://jenkins@\${GERRIT_HOST}:"+env['GERRIT_PORT']+"/${project_name}"
 
 set_version = "build.displayName = build.getEnvironment(null)[\"buildVersion\"] ?: \"#\${build.number}\""
 
-freeStyleJob("${project_name}/dev-docker-build") {
+job() {
+  name "${project_name}/dev-docker-build"
   description("<p>This job builds docker image and push it to registry. Triggered by dev-build job. Source code: <code>${git_url}</code></p>")
   jdk(jdk_installation)
   parameters {

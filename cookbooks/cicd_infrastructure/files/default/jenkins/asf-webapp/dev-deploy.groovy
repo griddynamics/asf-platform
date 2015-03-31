@@ -21,7 +21,7 @@ qubell_app_params = '''{
   "input.docker_vm_ip":     "${SHIPYARD}"
 }'''
 
-freeStyleJob("${project_name}/dev-deploy") {
+job() {
   description("<p>This job requested Qubell deployment ${project_name}, triggered job with an integration tests, destroyed application in Qubell.</p>")
   jdk(jdk_installation)
   logRotator(30, 50, -1, -1)
@@ -52,6 +52,10 @@ f.withWriter{ it << "PETCLINIC_URL=\${webapp_endpoint}"}
                                             'petclinic_url.properties')
 
     configure Qubell.destroyInstance() 
+  }
+  // Workaround because dsl plugin bind function into context
+  configure { project ->
+      name ("${project_name}/dev-deploy")
   }
 }
 

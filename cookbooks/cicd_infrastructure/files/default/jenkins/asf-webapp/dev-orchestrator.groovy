@@ -1,7 +1,8 @@
 //NOTE: project_name is parameter of seed job it's available as variable in dsl scope
 import helpers.ParameterizedTrigger
 
-freeStyleJob("${project_name}/dev-orchestrator") {
+job() {
+  name "${project_name}/dev-orchestrator"
   description("<p>This job trigger jobs dev-test-functional and dev-docker-build, after it trigger dev-deploy job.Triggered by dev-build job.</p>")
   parameters {
     stringParam("buildCommit")
@@ -14,6 +15,9 @@ freeStyleJob("${project_name}/dev-orchestrator") {
     configure ParameterizedTrigger.parameterizedTrigger('dev-test-functional,dev-docker-build',
                                             'ALWAYS',
                                             'buildCommit=\${buildCommit}\nbuildNumber=\${buildNumber}\nbuildVersion=\${buildVersion}')
+    configure { project ->
+      name "${project_name}/dev-orchestrator"
+    }
   }
   publishers{
     downstreamParameterized {

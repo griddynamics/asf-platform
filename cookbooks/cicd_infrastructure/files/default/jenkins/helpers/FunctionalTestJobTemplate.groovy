@@ -16,7 +16,8 @@ class FunctionalTestJobTemplate {
     static job(dsl, jobName, jobDescription, projectName, jobParameters, allocatePortList = [],
                mavenProperties, mavenProfiles = '',
                copyArtefactPath, isArchiveArtifacts, isPublishToJira) {
-        dsl.freeStyleJob(jobName) {
+        dsl.job {
+          name jobName
           description(jobDescription)
           jdk("jdk-"+env['JDK_VERSION']) 
           logRotator(30,50,-1,-1)
