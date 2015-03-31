@@ -11,8 +11,6 @@
 default['cicd_infrastructure']['jenkins'].tap do |jenkins|
   jenkins['plugins'] = {
     'mailer' => '',
-    'openid4java' => '',
-    'openid' => '',
     'promoted-builds' => '',
     'credentials' => '',
     'ssh-credentials' => '',
