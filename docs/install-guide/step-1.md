@@ -1,7 +1,13 @@
-Set up and Configure an Amazon Web Services (AWS) Account
-=========================================================
+Step 1. Set up and Configure an Amazon Web Services (AWS) Account
+=================================================================
 
-1. Open your Amazon EC2 console at https://console.aws.amazon.com/ec2/.
+Since you will be deploying the sample web store and analytics on Amazon Cloud, you must have an AWS account. The instructions below will walk you through configuring your AWS account's security group to allow traffic to your applications.
+
+First, sign up for an Amazon EC2 account (one that supports EC2 nodes and S3). If you don't have an AWS account, you can create one by navigating here.
+
+Once you've created your AWS account, you need to configure your security group. To configure your security group for Agile Software Factory, follow the steps below.
+
+1. Open your Amazon EC2 console at https://console.aws.amazon.com/ec2
 2. In the navigation pane, click **Security Groups**.
 3. Select the security group named "**default**".
 4. Click on "**Inbound**" tab to add new rules (note that there should already be three existing/default rules).
@@ -15,3 +21,7 @@ Set up and Configure an Amazon Web Services (AWS) Account
    * Qubell: 22
    * LDAP: 389
    * Docker: 5000
+
+If you need additional help, please refer to the [Amazon portal](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-network-security.html#adding-security-group-rule).
+
+#### Next step: [Set up a Qubell Account](step-2.md)

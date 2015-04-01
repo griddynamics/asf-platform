@@ -1,10 +1,13 @@
-Launch and post-deployment
-==========================
+#### Previous Step: [Obtain the Agile Software Factory](step-3.md)
 
-Go to qubell and launch Agile Software Factory. Use Advanced Lunch and set root size around 30Gib.
+Step 4. Launch and post-deployment
+==================================
 
-Add new user into LDAP
-----------------------
+Go to Qubell and launch Agile Software Factory. By default ASF start instances with 10gb root partition. To increase root partition size use *Advanced Launch* and change default `Storage size` parameter.
+
+After Agile Software Factory application becomes `Active` follow the steps below:
+
+## Add new user into LDAP
 
 1. Go to phpldapadmin page
 2. Login with credential:
@@ -56,11 +59,10 @@ Add new user into LDAP
  * Press 'Save changes' button.
  * Validate the change and press 'Update Object' button.
 12. To make the account fully functional and usable:
- * Login to Jira using the new account credentials.
+ * Login to JIRA using the new account credentials.
  * Login to Gerrit using the new account credentials.
 
-JIRA Configuration
-------------------
+## JIRA Configuration
 
 1. Go to JIRA and accept ssl certificates
 2. Use JIRA title: ASF JIRA
@@ -78,7 +80,7 @@ JIRA Configuration
  * Service Provider: Custom
  * Host Name: localhost
  * Protocol: SMTP
-5. Jira Agile installation
+5. JIRA Agile installation
  * Login into JIRA as administrator
  * In right corner choose configuration menu -> Add-ons
  * Type "greenhopper" in "Search in Marketplace" and install JIRA Agile Plugin
@@ -100,17 +102,17 @@ JIRA Configuration
  * Issue type: Task
  * Summary: Test issue
 
-Jenkins jobs Configuration
---------------------------
+## Jenkins jobs Configuration
 
-Run asf-demo-jobs-generator in order to generate jobs
+Login into Jenkins and run `asf-demo-jobs-generator` job in order to generate jobs.
 
-Gerrit configuration
---------------------
+## Gerrit configuration
 
-1. Go to gerrit
-2. Add your ssh key. You can use user noc with password: nocpassword
-3. Create project asf-webapp
-4. Push source code from [github](https://github.com/griddynamics/asf-webapp-demo) to dev brunch of asf-webapp gerrit repository
+1. Login into Gerrit
+2. Add your ssh key to your account
+3. Create project `asf-webapp`
+4. Push source code from [github](https://github.com/griddynamics/asf-webapp-demo) to dev brunch of `asf-webapp` gerrit repository
 5. Switch HEAD reference from "master" to "dev"
 6. Enable fast-forward push only
+
+#### [Back to README](../../README.md)
