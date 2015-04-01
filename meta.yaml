@@ -20,27 +20,14 @@ kit:
       manifest: http://gd-asf.s3.amazonaws.com/ldap.yaml
     - name: "SeleniumGrid"
       manifest: https://raw.github.com/qubell-bazaar/component-selenium-grid/master/component-selenium-grid.yml
+    - name: "Docker Registry"
+      manifest: http://gd-asf.s3.amazonaws.com/docker-registry.yaml
+    - name: "DockerVM"
+      manifest: http://gd-asf.s3.amazonaws.com/docker-vm.yaml
   provider:
     name: "Grid Dynamics"
-    link: http://www.griddynamics.com/
+    link: http://www.griddynamics.com
   documentation:
     overview: |
-      This application requires the following items to be configured in your environment:
-        * Setup Amazon EC2 account. Ports to be open on the security group and firewall:
-          - Selenium: 5555, 4444
-          - Sonar: 9000, 9092
-          - Nexus: 8081
-          - Gerr: 80, 8000, 29418
-          - JIRA: 443
-          - Jenkins: 8080
-          - Qubell: 22
-          - LDAP: 389
-        * Setup Qubell enviroment. Attributes required for application:
-          - admin_sonar_username: < sonar_admin_username > (default: admin)
-          - admin_sonar_password: < sonar_admin_password > (default: admin)
-          - jenkins_sonar_username: <jenkins_ci_bot_username > (default: jenkins-ci-bot)
-          - jenkins_sonar_password: < jenkins_ci_bot_password > (default: jenkin$CiB0t)
-          - jira_username: < jenkins_ci_bot_username > (default: jenkins-ci-bot)
-          - jira_password: < jenkins_ci_bot_password*> (default: jenkin$CiB0t)
-          - qubell_username: < your_qubell_username >
-          - qubell_password: < your_qubell_password* >
+      Thank you for installing Agile Software Factory!
+      Checkout the latest documentation here: https://github.com/griddynamics/asf
