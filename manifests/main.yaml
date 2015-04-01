@@ -28,9 +28,9 @@ application:
       - [integration.workflow, jira]
       - [integration.workflow, nexus]
       - [integration.workflow, props]
-      - [integration.workflow, shipyard]
+      - [integration.workflow, docker-vm]
       - [integration.workflow, docker-registry]
-      - [docker-registry, shipyard]
+      - [docker-registry, docker-vm]
   interfaces:
     input:
       jira_version: "bind(jira#input.jira_version)"
@@ -46,7 +46,7 @@ application:
           sonar#input.storage_size,
           jira#input.storage_size,
           nexus#input.storage_size,
-          shipyard#input.storage_size)
+          docker-vm#input.storage_size)
       cookbooks_url: |
         bind(
           gerrit#input.cookbooks_url,
@@ -67,7 +67,7 @@ application:
       selenium_console: "bind(selenium#endpoints.console-url)"
       selenium_webdriver: "bind(selenium#endpoints.remote-url)"
       dashboard: "bind(integration.workflow#result.dashboard)"
-      docker: "bind(shipyard#result.docker_endpoints)"
+      docker: "bind(docker-vm#result.docker_endpoints)"
     servers:
       gerrit_host: "bind(gerrit#output.gerrit_public_ips)"
       jenkins_host: "bind(jenkins#output.jenkins_public_ips)"
@@ -77,7 +77,7 @@ application:
       nexus_host: "bind(nexus#output.nexus_public_ips)"
       selenium_hub_host: "bind(selenium#hosts.hub)"
       selenium_node_hosts: "bind(selenium#hosts.nodes)"
-      docker: "bind(shipyard#result.shipyard_public_ips)"
+      docker: "bind(docker-vm#result.docker-vm_public_ips)"
 
   components:
     props:
@@ -304,10 +304,10 @@ application:
             type: "publish-signal(string)"
             name: "Docker Registry Endpoints"
 
-    shipyard:
+    docker-vm:
       type: reference.Submodule
       configuration:
-        __locator.application-id: "Shipyard"
+        __locator.application-id: "DockerVM"
       required:
         - docker-registry
       interfaces:
@@ -316,13 +316,13 @@ application:
             type: "configuration(int)"
             name: "Storage size"
         result:
-          shipyard_public_ips:
+          docker-vm_public_ips:
             type: "publish-signal(list<string>)"
             name: "Docker IP"
           docker_endpoints:
             type: "publish-signal(list<string>)"
             name: "Docker Endpoints"
-        shipyard-actions:
+        docker-vm-actions:
           registrate_pubkey:
             type: "receive-command(string pubkey, string user)"
             name: "Add Public Key"
@@ -359,10 +359,10 @@ application:
               amazon_instance_security_groups: consume-signal(string)
               amazon_instance_type: consume-signal(string)
               amazon_instance_zone: consume-signal(string)
-            shipyard:
-              shipyard_public_ips: consume-signal(list<string>)
+            docker-vm:
+              docker-vm_public_ips: consume-signal(list<string>)
               docker_endpoints: consume-signal(list<string>)
-            shipyard-actions:
+            docker-vm-actions:
               registrate_pubkey: send-command(string pubkey, string user)
             gerrit:
               gerrit_public_ips: consume-signal(list<string>)
@@ -399,8 +399,8 @@ application:
             - sonar
             - jira
             - nexus
-            - shipyard
-            - shipyard-actions
+            - docker-vm
+            - docker-vm-actions
             - docker-registry
           configuration:
             configuration.triggers: {}
@@ -527,7 +527,7 @@ application:
                   - docker-deployment-setup:
                       phase: jenkins_docker
                       precedingPhases: [ jenkins_setup ]
-                      action: shipyard-actions.registrate_pubkey
+                      action: docker-vm-actions.registrate_pubkey
                       parameters:
                         pubkey: "{$.jenkins_host_state.*.[0].cicd_infrastructure.jenkins.pubkey}"
                         user: "core"
@@ -546,7 +546,7 @@ application:
                             jenkins:
                               docker:
                                 registry: "{$.environment.docker-registry.docker_registry_endpoint}"
-                                shipyard: "{$.environment.shipyard.shipyard_public_ips[0]}"
+                                docker-vm: "{$.environment.docker-vm.docker-vm_public_ips[0]}"
 
                   - gerrit_setup:
                       phase: gerrit_setup

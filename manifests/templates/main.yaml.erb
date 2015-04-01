@@ -25,9 +25,9 @@ application:
   <% end -%>
     - [integration.workflow, props]
   <%- if config['components'].include? 'docker' -%>
-      - [integration.workflow, shipyard]
+      - [integration.workflow, docker-vm]
       - [integration.workflow, docker-registry]
-      - [docker-registry, shipyard]
+      - [docker-registry, docker-vm]
   <%- end -%>
   interfaces:
     input:
@@ -39,7 +39,7 @@ application:
       storage_size: |
         bind(
 <%= (config['components'] - ['selenium']).map {|mod|
-    (' '*10)+(mod=='docker'?'shipyard':mod)+"#input.storage_size" }.join(",\n") 
+    (' '*10)+(mod=='docker'?'docker-vm':mod)+"#input.storage_size" }.join(",\n")
 %>)
       cookbooks_url: |
         bind(
@@ -58,7 +58,7 @@ application:
     <%- end -%>
       dashboard: "bind(integration.workflow#result.dashboard)"
     <%- if config['components'].include? 'docker' -%>
-      docker: "bind(shipyard#result.docker_endpoints)"
+      docker: "bind(docker-vm#result.docker_endpoints)"
     <%- end -%>
     servers:
   <% (config['components'] - ['selenium','docker']).each do |mod| -%>
@@ -68,7 +68,7 @@ application:
       selenium_node_hosts: "bind(selenium#hosts.nodes)"
     <%- end -%>
     <%- if config['components'].include? 'docker' -%>
-      docker: "bind(shipyard#result.shipyard_public_ips)"
+      docker: "bind(docker-vm#result.docker-vm_public_ips)"
     <%- end -%>
 
   components:
@@ -303,10 +303,10 @@ application:
             type: "publish-signal(string)"
             name: "Docker Registry Endpoints"
 
-    shipyard:
+    docker-vm:
       type: reference.Submodule
       configuration:
-        __locator.application-id: "Shipyard"
+        __locator.application-id: "docker-vm"
       required:
         - docker-registry
       interfaces:
@@ -315,13 +315,13 @@ application:
             type: "configuration(int)"
             name: "Storage size"
         result:
-          shipyard_public_ips:
+          docker-vm_public_ips:
             type: "publish-signal(list<string>)"
             name: "Docker IP"
           docker_endpoints:
             type: "publish-signal(list<string>)"
             name: "Docker Endpoints"
-        shipyard-actions:
+        docker-vm-actions:
           registrate_pubkey:
             type: "receive-command(string pubkey, string user)"
             name: "Add Public Key"
@@ -360,10 +360,10 @@ application:
               amazon_instance_type: consume-signal(string)
               amazon_instance_zone: consume-signal(string)
         <%- if config['components'].include? 'docker' -%>
-            shipyard:
-              shipyard_public_ips: consume-signal(list<string>)
+            docker-vm:
+              docker-vm_public_ips: consume-signal(list<string>)
               docker_endpoints: consume-signal(list<string>)
-            shipyard-actions:
+            docker-vm-actions:
               registrate_pubkey: send-command(string pubkey, string user)
         <%- end -%>
         <%- (config['components'] - ['selenium','docker']).each do |mod| -%>
@@ -394,8 +394,8 @@ application:
             - <%= mod -%>
           <%- end %>
           <%- if config['components'].include? 'docker' -%>
-            - shipyard
-            - shipyard-actions
+            - docker-vm
+            - docker-vm-actions
             - docker-registry
           <%- end -%>
           configuration:
@@ -496,7 +496,7 @@ application:
                   - docker-deployment-setup:
                       phase: jenkins_docker
                       precedingPhases: [ jenkins_setup ]
-                      action: shipyard-actions.registrate_pubkey
+                      action: docker-vm-actions.registrate_pubkey
                       parameters:
                         pubkey: "{$.jenkins_host_state.*.[0].cicd_infrastructure.jenkins.pubkey}"
                         user: "core"
@@ -515,7 +515,7 @@ application:
                             jenkins:
                               docker:
                                 registry: "{$.environment.docker-registry.docker_registry_endpoint}"
-                                shipyard: "{$.environment.shipyard.shipyard_public_ips[0]}"
+                                docker-vm: "{$.environment.docker-vm.docker-vm_public_ips[0]}"
                 <%- end %>
                 <%- if config['components'].include? 'gerrit' -%>
                   - gerrit_setup:
