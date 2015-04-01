@@ -123,3 +123,4 @@ Authors:
 - Alexey Kornev <akornev@griddynamics.com>
 - Grigory Silantiev <gsilantyev@griddynamics.com>
 - Nikolay Yurin <nyurin@griddynamics.com>
+- Alexander Mozgovenko <amozgovenko@griddynamics.com>
