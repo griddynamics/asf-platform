@@ -9,8 +9,9 @@ Agile Software Factory
 	* [CI Workflow](#ci-workflow)
 	* [Requirements](#requirements)
 	* [Demo application](#demoapp)
-* [Setup](#setup)
+* [User Guide](#userguide)
 	* [Step-by-step Setup Guide](#step-by-step-setup)
+	* [Demo Script](#demo-script)
 * [Known Issues](#issues)
 * [License and Authors](#license-authors)
 
@@ -88,8 +89,8 @@ All instances required public ips, launching in **VPC currently not supported**.
 
 As a demo application Agile Software factory uses [Spring Petclinic](https://github.com/spring-projects/spring-petclinic) with additional integration tests and deploy scripts. Checkout [ASF-Webapp-Demo](https://github.com/griddynamics/asf-webapp-demo) repo for more info.
 
-<a name="setup"></a>
-## Setup
+<a name="userguide"></a>
+## User Guide
 
 <a name="step-by-step-setup"></a>
 ### Step-by-step Setup Guide
@@ -97,6 +98,11 @@ As a demo application Agile Software factory uses [Spring Petclinic](https://git
 - **[Step 2. Set up a Qubell Account](docs/install-guide/step-2.md)**
 - **[Step 3. Obtain the Agile Software Factory](docs/install-guide/step-3.md)**
 - **[Step 4. Launch and post-deployment](docs/install-guide/step-4.md)**
+
+<a name="demo-script"></a>
+### Demo Script
+
+To show end-to-end working development pipeline we recommend to use our [demo scenario](docs/demo-script.md), that show all features and integrations of Agile Software Factory.
 
 <a name="issues"></a>
 ## Known Issues
