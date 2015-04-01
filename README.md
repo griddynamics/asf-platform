@@ -65,9 +65,17 @@ ASF provides CI pipelines for demo Java application. Currently ASF supports 3 ma
     
     ![Dev Build Pipeline](docs/images/readme/dev-workflow.png)
 
+- **Feature Branch Review Pipeline**
+    
+    Automatically start `fb-build-review` Jenkins job each time new Gerrit change for `fb-*` branch created. Works like *Dev Review pipeline*.
+    
+    ![Dev Review Pipeline](docs/images/readme/fb-review-workflow.png)
+
 - **Feature Branch Build Pipeline**
 
-    Implements the same process as *dev build pipeline* with main difference that feature branch build works for branches with `fb-` prefix and starts only manually.
+    Build and run fuctional tests for each commit merged into feature branch. By default works only branches with `fb-` prefix, starts manually and doesn't post any information to JIRA.
+
+    ![Dev Build Pipeline](docs/images/readme/fb-workflow.png)
 
 <a name="requirements"></a>
 ## Requirements
