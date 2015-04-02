@@ -1,7 +1,7 @@
 # Encoding: utf-8
 #
 # Cookbook Name:: cicd-infrastructure
-# Attributes:: sonarqube
+# Attributes:: sonar
 #
 # Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
 # Classification level: Public

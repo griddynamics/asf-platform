@@ -1,7 +1,7 @@
 # Encoding: utf-8
 #
 # Cookbook Name:: cicd-infrastructure
-# Attributes:: integration_jenkins_mail
+# Recipe:: integration_jenkins_mail
 #
 # Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
 # Classification level: Public

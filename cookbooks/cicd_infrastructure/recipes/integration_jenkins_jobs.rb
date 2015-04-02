@@ -1,7 +1,7 @@
-    # Encoding: utf-8
+# Encoding: utf-8
 #
 # Cookbook Name:: cicd-infrastructure
-# Attributes:: integration_jenkins_ldap
+# Recipe:: integration_jenkins_jobs
 #
 # Copyright (c) 2014 Grid Dynamics International, Inc. All Rights Reserved
 # Classification level: Public
