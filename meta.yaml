@@ -5,7 +5,7 @@ kit:
     - name: "Agile Software Factory"
       manifest: http://gd-asf.s3.amazonaws.com/main.yaml
     - name: "ASF Webapp Demo"
-      manifest: http://gd-asf.s3.amazonaws.com/asf-webapp-demo.yaml
+      manifest: http://gd-asf.s3.amazonaws.com/asf-webapp-demo-docker-ci.yaml
     - name: "Nexus"
       manifest: http://gd-asf.s3.amazonaws.com/nexus.yaml
     - name: "Jenkins"
