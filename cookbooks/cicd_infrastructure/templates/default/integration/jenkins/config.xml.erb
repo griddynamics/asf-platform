@@ -2,7 +2,7 @@
 <hudson>
 	<disabledAdministrativeMonitors/>
 	<version>1.0</version>
-	<numExecutors>2</numExecutors>
+	<numExecutors>4</numExecutors>
 	<mode>NORMAL</mode>
 	<useSecurity>true</useSecurity>
 	<authorizationStrategy class='hudson.security.AuthorizationStrategy$Unsecured'/>
@@ -20,6 +20,20 @@
       <name>Default</name>
       <home>/usr/lib/jvm/java</home>
       <properties/>
+    </jdk>
+    <jdk>
+      <name>jdk-<%= @jdk_version %></name>
+      <home></home>
+      <properties>
+        <hudson.tools.InstallSourceProperty>
+          <installers>
+            <hudson.tools.ZipExtractionInstaller>
+              <url><%= @jdk_installation_url %></url>
+              <subdir>/mnt/.jenkins/tools/hudson.model.JDK/jdk-<%= @jdk_version %>/jdk1.7.0_71</subdir>
+            </hudson.tools.ZipExtractionInstaller>
+          </installers>
+        </hudson.tools.InstallSourceProperty>
+      </properties>
     </jdk>
   </jdks>
 	<viewsTabBar class='hudson.views.DefaultViewsTabBar'/>
@@ -39,7 +53,7 @@
 	</views>
 	<primaryView>All</primaryView>
 	<slaveAgentPort>0</slaveAgentPort>
-	<label/>
+	<label>master</label>
 	<nodeProperties/>
 	<globalNodeProperties/>
 </hudson>

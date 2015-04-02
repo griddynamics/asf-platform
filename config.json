@@ -10,7 +10,8 @@
       "selenium",
       "sonar",
       "jira",
-      "nexus"
+      "nexus",
+      "docker"
     ]
   }
 }

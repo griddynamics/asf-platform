@@ -1,5 +1,14 @@
 AllCops:
   Exclude:
-    - 'cookbooks/**/*'
     - 'metadata.rb'
     - 'Rakefile'
+    - 'Guardfile'
+    - 'Berksfile'
+    - 'Vagrantfile'
+    - 'Thorfile'
+Style/SpaceInsideHashLiteralBraces:  
+  Enabled: false
+Style/BracesAroundHashParameters:
+  Enabled: false
+Style/HashSyntax:
+  Enabled: false

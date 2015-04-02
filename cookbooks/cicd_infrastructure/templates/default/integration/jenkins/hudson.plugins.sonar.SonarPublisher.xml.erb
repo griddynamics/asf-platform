@@ -5,7 +5,7 @@
       <disabled>false</disabled>
       <serverUrl>http://<%= @sonar_host %>:<%= @sonar_port%></serverUrl>
       <mojoVersion></mojoVersion>
-      <databaseUrl>jdbc:h2:tcp://<%= @sonar_host %>:9092/sonar</databaseUrl>
+      <databaseUrl>jdbc:h2:tcp://<%= @sonar_private_ip %>:9092/sonar</databaseUrl>
       <databaseDriver></databaseDriver>
       <databaseLogin></databaseLogin>
       <additionalProperties></additionalProperties>

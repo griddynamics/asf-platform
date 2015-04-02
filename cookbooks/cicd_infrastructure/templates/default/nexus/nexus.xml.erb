@@ -200,9 +200,7 @@
         </memberRepositories>
       </externalConfiguration>
     </repository>
-    <% if @use_jbehave_proxy == 'true' %>
-        <%= render 'nexus/jbehave_proxy.xml.erb' %>
-    <% end %>
+    <%= render 'nexus/gd_proxy.xml.erb' %>
   </repositories>
   <repositoryGrouping>
     <pathMappings>

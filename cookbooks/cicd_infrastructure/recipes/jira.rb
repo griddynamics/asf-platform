@@ -11,6 +11,13 @@
 include_recipe 'java::default'
 include_recipe 'jira::default'
 include_recipe 'postfix'
+include_recipe 'iptables::default'
+
+iptables_rule 'allow_private_ips'
+iptables_rule 'allow_http'
+iptables_rule 'allow_https' do
+  source 'jira/allow_https.erb'
+end
 
 package 'unzip'
 
@@ -45,7 +52,7 @@ node['cicd_infrastructure']['jira']['plugins'].each do |plugin, plugin_attrs|
     mode 0755
     source plugin_attrs['url']
     only_if { Dir["#{download_dir}/*#{plugin}*.jar"].empty? }
-    notifies :run, "execute[unpacking #{plugin}]",:immediately
+    notifies :run, "execute[unpacking #{plugin}]", :immediately
   end
 end
 

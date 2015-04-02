@@ -29,8 +29,9 @@
 		<userRemoteConfigs>
 			<hudson.plugins.git.UserRemoteConfig>
 				<name>origin</name>
-				<refspec>master</refspec>
+				<refspec>+refs/heads/master:refs/remotes/origin/master</refspec>
 				<url>ssh://<%= @gerrit_host %>:<%= @gerrit_port %>/${project_name}-jenkins-jobs</url>
+                <credentialsId><%= @git_creds %></credentialsId>
 			</hudson.plugins.git.UserRemoteConfig>
 		</userRemoteConfigs>
 		<branches>
@@ -41,7 +42,8 @@
 		<doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
 		<submoduleCfg class="list"/>
 	</scm>
-	<canRoam>true</canRoam>
+	<assignedNode>master</assignedNode>
+	<canRoam>false</canRoam>
 	<disabled>false</disabled>
 	<blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
 	<blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>

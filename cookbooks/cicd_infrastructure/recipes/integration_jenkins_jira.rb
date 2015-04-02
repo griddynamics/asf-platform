@@ -40,4 +40,3 @@ template "#{jenkins['home']}/hudson.plugins.jira.JiraProjectProperty.xml" do
   )
   notifies :restart, 'service[jenkins]'
 end
-

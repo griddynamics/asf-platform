@@ -19,5 +19,21 @@
         </hudson.tools.InstallSourceProperty>
       </properties>
     </hudson.plugins.groovy.GroovyInstallation>
+    <% if @groovy_version != "default" %>
+    <hudson.plugins.groovy.GroovyInstallation>
+      <name>Groovy-<%= @groovy_version %></name>
+      <home></home>
+      <properties>
+        <hudson.tools.InstallSourceProperty>
+          <installers>
+            <hudson.tools.ZipExtractionInstaller>
+              <url><%= @groovy_intallation_url %></url>
+              <subdir>/mnt/.jenkins/tools/hudson.plugins.groovy.GroovyInstallation/Groovy-<%= @groovy_version %>/groovy-<%= @groovy_version %></subdir>
+            </hudson.tools.ZipExtractionInstaller>
+          </installers>
+        </hudson.tools.InstallSourceProperty>
+      </properties>
+    </hudson.plugins.groovy.GroovyInstallation>
+    <% end %>
   </installations2>
 </hudson.plugins.groovy.Groovy_-DescriptorImpl>

@@ -22,7 +22,9 @@ template "#{node['jenkins']['master']['home']}/config.xml" do
     nexus_host:     node['cicd_infrastructure']['jenkins']['nexus']['endpoint'],
     jira_host:      node['cicd_infrastructure']['jenkins']['jira']['host'],
     sonar_host:     node['cicd_infrastructure']['jenkins']['sonar']['host'],
-    sonar_port:     node['cicd_infrastructure']['jenkins']['sonar']['port']
+    sonar_port:     node['cicd_infrastructure']['jenkins']['sonar']['port'],
+    jdk_version: node['cicd_infrastructure']['jenkins']['ec2']['jdkVersion'],
+    jdk_installation_url: node['cicd_infrastructure']['jenkins']['ec2']['jdkInstallationUrl']
   )
-  notifies :restart, "service[jenkins]"
+  notifies :restart, 'service[jenkins]'
 end

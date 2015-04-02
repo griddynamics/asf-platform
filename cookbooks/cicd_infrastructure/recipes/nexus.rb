@@ -11,6 +11,12 @@
 Chef::Config[:file_cache_path] = '/var/chef/cache/'
 
 include_recipe 'nexus::default'
+include_recipe 'iptables::default'
+
+iptables_rule 'allow_private_ips'
+iptables_rule 'allow_nexus' do
+  source 'nexus/allow_nexus.erb'
+end
 
 nexus_config = node['cicd_infrastructure']['nexus']
 
@@ -34,7 +40,7 @@ template '/nexus/sonatype-work/nexus/conf/nexus.xml' do
     buid_feature_repo_policy:	nexus_config['repo']['build']['feature']['policy'],
     buid_feature_repo_ttl:	nexus_config['repo']['build']['feature']['ttl'],
     buid_feature_min_snapshots:	nexus_config['repo']['build']['feature']['snaphots'],
-    build_group_repo_id:	nexus_config['repo']['build']['group']['id'],	
+    build_group_repo_id:	nexus_config['repo']['build']['group']['id'],
     build_group_repo_name:	nexus_config['repo']['build']['group']['name'],
     promote_repo_id:		nexus_config['repo']['promote']['id'],
     promote_repo_name:		nexus_config['repo']['promote']['name'],
@@ -43,13 +49,10 @@ template '/nexus/sonatype-work/nexus/conf/nexus.xml' do
     promote_repo_min_snapshots:	nexus_config['repo']['promote']['snapshots'],
     build_promoted_group_repo_id:   nexus_config['repo']['build']['promote']['group']['id'],
     build_promoted_group_repo_name: nexus_config['repo']['build']['promote']['group']['name'],
-    jbehave_framework_repo_id:        nexus_config['repo']['jbehave']['id'],
-    jbehave_framework_repo_name:      nexus_config['repo']['jbehave']['name'],
-    jbehave_framework_repo_policy:    nexus_config['repo']['jbehave']['policy'],
-    jbehave_framework_repo_location:  nexus_config['repo']['jbehave']['location'],
-    jbehave_framework_repo_username:  nexus_config['repo']['jbehave']['username'],
-    jbehave_framework_repo_password:  nexus_config['repo']['jbehave']['password'],
-    use_jbehave_proxy:		nexus_config['repo']['jbehave']['use']
+    gd_repo_id:        nexus_config['repo']['gd']['id'],
+    gd_repo_name:      nexus_config['repo']['gd']['name'],
+    gd_repo_policy:    nexus_config['repo']['gd']['policy'],
+    gd_repo_location:  nexus_config['repo']['gd']['location']
   )
   notifies :restart, 'service[nexus]'
 end

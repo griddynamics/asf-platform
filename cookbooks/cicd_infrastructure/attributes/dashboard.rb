@@ -11,10 +11,12 @@
 node.default['apache']['default_site_enabled'] = false
 
 default['cicd_infrastructure']['dashboard']['alias'] = '/dashboard'
+override['apache']['proxy']['deny_from'] = 'none'
+override['apache']['proxy']['allow_from'] = 'all'
 
-['jenkins', 'gerrit', 'nexus', 'jira', 'sonar', 'selenium', 'ldap' ].each do |service|
+%w(jenkins gerrit nexus jira sonar selenium ldap).each do |service|
   default['cicd_infrastructure']['dashboard']['services'][service] = {
     'ip' => 'Unavailable',
-    'endpoint' => "Unavailable"
+    'endpoint' => 'Unavailable'
   }
 end

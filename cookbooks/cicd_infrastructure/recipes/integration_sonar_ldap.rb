@@ -8,7 +8,7 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-service 'sonar' do
+service 'sonarqube' do
   action :nothing
 end
 
@@ -19,8 +19,8 @@ if node['cicd_infrastructure']['sonar']['auth'] == 'LDAP'
 
   sonar_ldap_config = node['cicd_infrastructure']['sonar']['ldap']
 
-  template "#{node[:sonar][:dir]}/conf/ldap.properties" do
-    source '/sonar/sonar.properties.ldap.erb'
+  template "#{node['sonarqube']['dir']}/conf/ldap.properties" do
+    source 'sonar/sonar.properties.ldap.erb'
     owner 'root'
     group 'root'
     mode 0644
@@ -36,10 +36,16 @@ if node['cicd_infrastructure']['sonar']['auth'] == 'LDAP'
     )
   end
 
-  execute "Add LDAP properties to ldap.properties file" do
+  wait_for_sonar 'Wait for sonar' do
+    sonar_host 'localhost'
+    sonar_port node['cicd_infrastructure']['jenkins']['sonar']['port']
+    attempts 60
+  end
+
+  execute 'Add LDAP properties to ldap.properties file' do
     user 'root'
-    command "cat #{node[:sonar][:dir]}/conf/ldap.properties >> \
-      #{node[:sonar][:dir]}/conf/sonar.properties"
-    notifies :restart, 'service[sonar]'
+    command "cat #{node['sonarqube']['dir']}/conf/ldap.properties >> \
+      #{node['sonarqube']['dir']}/conf/sonar.properties"
+    notifies :restart, 'service[sonarqube]'
   end
 end

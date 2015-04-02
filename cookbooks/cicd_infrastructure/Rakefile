@@ -25,24 +25,23 @@ end
 
 require 'rspec/core/rake_task'
 desc 'Run ChefSpec unit tests'
-RSpec::Core::RakeTask.new(:spec) do |t, args|
+RSpec::Core::RakeTask.new(:spec) do |t, _args|
   t.rspec_opts = 'test/unit/spec'
 end
 
-desc "Runs knife cookbook test"
+desc 'Runs knife cookbook test'
 task :syntax do
   sh "rbenv exec bundle exec knife cookbook test #{File.basename(Dir.getwd)} -o .."
 end
 
 # The default rake task should just run it all
-task default: ['syntax' ,'style']
+task default: %w(syntax style)
 # Disable all test for now
 # task default: ['syntax' ,'style', 'spec', 'integration']
-
 
 begin
   require 'kitchen/rake_tasks'
   Kitchen::RakeTasks.new
 rescue LoadError
-  puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV['CI']
+  puts '>>>>> Kitchen gem not loaded, omitting tasks' unless ENV['CI']
 end

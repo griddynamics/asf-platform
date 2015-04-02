@@ -11,7 +11,7 @@
 application:
   configuration:
     input.storage_size: 10
-    input.sonar_version: "3.7.4"
+    input.sonar_version: "4.5.1"
     input.cookbooks_url: "http://gd-asf.s3.amazonaws.com/cookbooks.tar.gz"
   interfaces:
     input:
@@ -20,6 +20,7 @@ application:
       cookbooks_url: "bind(workflow#input.cookbooks_url)"
     output:
       sonar_public_ips: "bind(workflow#result.sonar_public_ips)"
+      sonar_private_ips: "bind(workflow#result.sonar_private_ips)"
       sonar_endpoint: "bind(workflow#result.sonar_endpoint)"
   components:
     workflow:
@@ -39,6 +40,9 @@ application:
           sonar_public_ips:
             type: publish-signal(list<string>)
             name: "Instance IP"
+          sonar_private_ips:
+            type: publish-signal(list<string>)
+            name: "Instance private IP"
           sonar_endpoint:
             type: publish-signal(list<string>)
             name: "Sonar URL"
@@ -62,7 +66,7 @@ application:
                     jcloudsNodeNamePrefix: sonar
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-b028aad8
-                    ec2SecurityGroup: default
+                    securityGroup: default
                     providerSettings:
                       userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                     blockDeviceMapping:
@@ -80,7 +84,7 @@ application:
                     roles: [ sonar ]
                     recipeUrl: "{$.cookbooks_url}"
                     runList: [ "recipe[cicd_infrastructure::sonar]" ]
-                    version: "11.8.2"
+                    version: "11.16.4"
                     jattrs:
                       sonar:
                         version: "{$.sonar_version}"
@@ -89,6 +93,8 @@ application:
             return:
               sonar_public_ips:
                 value: "{$.sonar_public_ips}"
+              sonar_private_ips:
+                value: "{$.private_ips}"
               sonar_endpoint:
                 value: "http://{$.sonar_public_ips}:9000"
           destroy:

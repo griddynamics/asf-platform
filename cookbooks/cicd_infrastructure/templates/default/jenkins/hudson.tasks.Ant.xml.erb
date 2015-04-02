@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.tasks.Ant_-DescriptorImpl>
+  <installations>
+    <hudson.tasks.Ant_-AntInstallation>
+      <name>Ant-default</name>
+      <properties>
+        <hudson.tools.InstallSourceProperty>
+          <installers>
+            <hudson.tasks.Ant_-AntInstaller>
+              <id>1.9.4</id>
+            </hudson.tasks.Ant_-AntInstaller>
+          </installers>
+        </hudson.tools.InstallSourceProperty>
+      </properties>
+    </hudson.tasks.Ant_-AntInstallation>
+    <% if @ant_version != "default" %>
+    <hudson.tasks.Ant_-AntInstallation>
+      <name>Ant-<%= @ant_version %></name>
+      <home></home>
+      <properties>
+        <hudson.tools.InstallSourceProperty>
+          <installers>
+            <hudson.tools.ZipExtractionInstaller>
+              <url><%= @ant_intallation_url %></url>
+              <subdir>/mnt/.jenkins/tools/hudson.tasks.Ant_AntInstallation/Ant-<%= @ant_version %>/apache-ant-<%= @ant_version %></subdir>
+            </hudson.tools.ZipExtractionInstaller>
+          </installers>
+        </hudson.tools.InstallSourceProperty>
+      </properties>
+    </hudson.tasks.Ant_-AntInstallation>
+    <% end %>
+  </installations>
+</hudson.tasks.Ant_-DescriptorImpl>

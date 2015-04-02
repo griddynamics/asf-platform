@@ -18,6 +18,7 @@ application:
       storage_size: "bind(workflow#input.storage_size)"
     output:
       ldap_public_ips: "bind(workflow#result.ldap_public_ips)"
+      ldap_private_ips: "bind(workflow#result.ldap_private_ips)"
       ldap_endpoint: "bind(workflow#result.ldap_endpoint)"
       ldapadmin_endpoint: "bind(workflow#result.ldapadmin_endpoint)"
   components:
@@ -35,6 +36,9 @@ application:
           ldap_public_ips:
             type: publish-signal(list<string>)
             name: "Instance IP: "
+          ldap_private_ips:
+            type: publish-signal(list<string>)
+            name: "Instance private IP: "
           ldap_endpoint:
             type: publish-signal(list<string>)
             name: "LDAP connnection string: "
@@ -61,7 +65,7 @@ application:
                     jcloudsNodeNamePrefix: ldap
                     vmIdentity: ec2-user
                     imageId: us-east-1/ami-b028aad8
-                    ec2SecurityGroup: default
+                    securityGroup: default
                     providerSettings:
                       userData: "#!/bin/bash\nmkdir -p /etc/chef/ohai/hints\ntouch /etc/chef/ohai/hints/ec2.json"
                     blockDeviceMapping:
@@ -79,14 +83,16 @@ application:
                     roles: [ ldap ]
                     recipeUrl: "{$.cookbooks_url}"
                     runList: [ "recipe[cicd_infrastructure::openldap]" ]
-                    version: "11.8.2"
+                    version: "11.16.4"
                   output:
                     chef_attrs: chefState
             return:
               ldap_public_ips:
                 value: "{$.ldap_public_ips}"
+              ldap_private_ips:
+                value: "{$.private_ips}"
               ldap_endpoint:
-                value: "ldap://{$.ldap_public_ips}:389"
+                value: "ldap://{$.private_ips}:389"
               ldapadmin_endpoint:
                 value: "http://{$.ldap_public_ips}/phpldapadmin"
           destroy:

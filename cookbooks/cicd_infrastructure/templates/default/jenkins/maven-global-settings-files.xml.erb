@@ -9,8 +9,8 @@
         <comment>global settings</comment>
         <content>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 
-&lt;settings xmlns=&quot;http://maven.apache.org/SETTINGS/1.0.0&quot; 
-          xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; 
+&lt;settings xmlns=&quot;http://maven.apache.org/SETTINGS/1.0.0&quot;
+          xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
           xsi:schemaLocation=&quot;http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd&quot;&gt;
 
     &lt;interactiveMode&gt;false&lt;/interactiveMode&gt;
@@ -22,17 +22,13 @@
       &lt;name&gt;Maven Central Mirror.&lt;/name&gt;
       &lt;url&gt;${env.NEXUS_URL}/content/repositories/central&lt;/url&gt;
     &lt;/mirror&gt;
-<% if @use_jbehave_proxy == 'true' %>
-<%= render 'jenkins/jbehave_mirrors_settings.xml.erb' %>
-<% end %>
+  <%= render 'jenkins/gd_mirrors_settings.xml.erb' %>
   &lt;/mirrors&gt;
 
   &lt;activeProfiles&gt;
-<% if @use_jbehave_proxy == 'true' %>
-    &lt;activeProfile&gt;<%= @jbehave_framework_repo_id %>&lt;/activeProfile&gt;
-<% end %>
+    &lt;activeProfile&gt;<%= @gd_repo_id %>&lt;/activeProfile&gt;
   &lt;/activeProfiles&gt;
-  
+
   &lt;profiles&gt;
 
     &lt;!--
@@ -43,7 +39,7 @@
         &lt;!-- Deployment configuration for CI builds for mainline --&gt;
         &lt;profile&gt;
             &lt;id&gt;build&lt;/id&gt;
- 
+
             &lt;properties&gt;
                 &lt;!-- For deploy:deploy-file and &lt;distributionManagement&gt; --&gt;
                 &lt;repositoryId/&gt;
@@ -62,11 +58,11 @@
                 &lt;/repository&gt;
             &lt;/repositories&gt;
         &lt;/profile&gt;
- 
+
         &lt;!-- Deployment configuration for CI builds from feature branches --&gt;
         &lt;profile&gt;
             &lt;id&gt;build-fb&lt;/id&gt;
- 
+
             &lt;properties&gt;
                 &lt;!-- For deploy:deploy-file and &lt;distributionManagement&gt; --&gt;
                 &lt;repositoryId/&gt;
@@ -86,9 +82,7 @@
             &lt;/repositories&gt;
         &lt;/profile&gt;
 
-<% if @use_jbehave_proxy == 'true' %>
-<%= render 'jenkins/jbehave_profile_settings.xml.erb' %>
-<% end %>
+<%= render 'jenkins/gd_profile_settings.xml.erb' %>
 
 &lt;/profiles&gt;
 
@@ -114,9 +108,10 @@
             <serverId>central</serverId>
             <credentialsId>e27d81bd-3c1e-4a30-ac68-da043fb5ecb4</credentialsId>
           </org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
-          <% if @use_jbehave_proxy == 'true' %>
-          <%= render 'jenkins/jbehave_credential_settings.xml.erb' %>
-          <% end %>
+          <org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
+            <serverId><%= @gd_repo_id %></serverId>
+            <credentialsId>e27d81bd-3c1e-4a30-ac68-da043fb5ecb4</credentialsId>
+          </org.jenkinsci.plugins.configfiles.maven.security.ServerCredentialMapping>
         </serverCredentialMappings>
       </org.jenkinsci.plugins.configfiles.maven.GlobalMavenSettingsConfig>
     </entry>

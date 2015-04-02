@@ -8,223 +8,270 @@
 # Licensed under the Apache License, Version 2.0.
 #
 
-default['cicd_infrastructure']['jenkins']['plugins'] = {
-  'mailer'=>'',
-  'openid4java'=>'',
-  'openid'=>'',
-  'promoted-builds'=>'',
-  'credentials'=>'',
-  'ssh-credentials'=>'',
-  'ssh-agent'=>'',
-  'git-client'=>'',
-  'scm-api'=>'',
-  'git'=>'',
-  'parameterized-trigger'=>'',
-  'token-macro'=>'',
-  'config-file-provider'=>'2.7.5',
-  'gerrit-trigger'=>'',
-  'matrix-auth'=>'',
-  'cloudbees-folder'=>'',
-  'job-dsl'=>'',
-  'rebuild'=>'',
-  'copyartifact' => '1.30',
-  'envinject' => '',
-  'groovy' => '',
-  'jira' => '1.39',
-  'htmlpublisher' => '',
-  'analysis-core' => '',
-  'email-ext' => '2.38.2',
-  'sonar' => '',
-  'pmd' => '',
-  'findbugs' => '',
-  'checkstyle' => '',
-  'dry' =>''
-}
-default['cicd_infrastructure']['jenkins']['pubkey'] = nil
-default['cicd_infrastructure']['jenkins']['gerrit-trigger']['host'] = 'localhost'
-default['cicd_infrastructure']['jenkins']['gerrit-trigger']['ssh_port'] = '29418'
-default['cicd_infrastructure']['jenkins']['gerrit-trigger']['http_port'] = '80'
+default['cicd_infrastructure']['jenkins'].tap do |jenkins|
+  jenkins['plugins'] = {
+    'mailer' => '',
+    'promoted-builds' => '',
+    'credentials' => '',
+    'ssh-credentials' => '',
+    'ssh-agent' => '',
+    'scm-api' => '',
+    'parameterized-trigger' => '',
+    'token-macro' => '',
+    'config-file-provider' => '2.7.5',
+    'gerrit-trigger' => '',
+    'matrix-auth' => '',
+    'cloudbees-folder' => '',
+    'job-dsl' => '',
+    'rebuild' => '',
+    'copyartifact' => '1.30',
+    'envinject' => '',
+    'groovy' => '',
+    'jira' => '1.39',
+    'htmlpublisher' => '',
+    'analysis-core' => '',
+    'email-ext' => '2.38.2',
+    'sonar' => '',
+    'pmd' => '',
+    'findbugs' => '',
+    'checkstyle' => '',
+    'dry' => '',
+    'port-allocator' => '',
+    'ec2' => '1.24',
+    'git' => '',
+    'git-client' => ''
+  }
+  jenkins['pubkey'] = nil
+  jenkins['gerrit-trigger']['host'] = 'localhost'
+  jenkins['gerrit-trigger']['ssh_port'] = '29418'
+  jenkins['gerrit-trigger']['http_port'] = '80'
 
-default['cicd_infrastructure']['jenkins']['auth'] = 'LDAP'
-default['cicd_infrastructure']['jenkins']['ldap']['server'] = nil
-default['cicd_infrastructure']['jenkins']['ldap']['port'] = '389'
-default['cicd_infrastructure']['jenkins']['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
-default['cicd_infrastructure']['jenkins']['ldap']['userdn'] = 'ou=people'
-default['cicd_infrastructure']['jenkins']['ldap']['user_id'] = 'uid={0}'
-default['cicd_infrastructure']['jenkins']['ldap']['rootdn'] = 'cn=admin,dc=asf,dc=griddynamics,dc=com'
-default['cicd_infrastructure']['jenkins']['ldap']['root_pwd'] = 'password'
+  jenkins['auth'] = 'LDAP'
+  jenkins['ldap']['server'] = nil
+  jenkins['ldap']['port'] = '389'
+  jenkins['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
+  jenkins['ldap']['userdn'] = 'ou=people'
+  jenkins['ldap']['user_id'] = 'uid={0}'
+  jenkins['ldap']['rootdn'] = 'cn=admin,dc=asf,dc=griddynamics,dc=com'
+  jenkins['ldap']['root_pwd'] = 'password'
 
-default['cicd_infrastructure']['jenkins']['mail']['address'] = 'jenkins@asf.griddynamics.com'
-default['cicd_infrastructure']['jenkins']['mail']['smtp']['host'] = 'localhost'
+  jenkins['mail']['address'] = 'jenkins@asf.griddynamics.com'
+  jenkins['mail']['smtp']['host'] = 'localhost'
 
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['username'] = nil
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['password'] = nil
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['application_id'] = '12345'
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['environment_id'] = '54321'
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['endpoint'] = 'https://express.qubell.com/'
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['version'] = '2.5'
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['checksum'] = '7dc571813114ce521bc22580c8b0e0b3'
-default['cicd_infrastructure']['jenkins']['qubell-plugin']['url'] = "https://github.com/qubell/" +
-  "contrib-jenkins-qubell-plugin/releases/download/" +
-  "v#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}/" +
-  "jenkins-qubell-plugin-#{node['cicd_infrastructure']['jenkins']['qubell-plugin']['version']}.hpi"
-default['cicd_infrastructure']['qubell_default_app_id'] = "53eb65e9e4b0f24b4a52c0f2"
-default['cicd_infrastructure']['qubell_default_env_id'] = "53f5d94ce4b0b03d045f7a13"
+  jenkins['qubell-plugin']['username'] = nil
+  jenkins['qubell-plugin']['password'] = nil
+  jenkins['qubell-plugin']['application_id'] = '12345'
+  jenkins['qubell-plugin']['environment_id'] = '54321'
+  jenkins['qubell-plugin']['endpoint'] = 'https://express.qubell.com/'
+  jenkins['qubell-plugin']['version'] = '2.5'
+  jenkins['qubell-plugin']['checksum'] = '7dc571813114ce521bc22580c8b0e0b3'
+  jenkins['qubell-plugin']['url'] = 'https://github.com/qubell/' \
+    'contrib-jenkins-qubell-plugin/releases/download/' \
+    "v#{jenkins['qubell-plugin']['version']}/" \
+    "jenkins-qubell-plugin-#{jenkins['qubell-plugin']['version']}.hpi"
 
-default['cicd_infrastructure']['jenkins']['nexus']['endpoint'] = nil
-default['cicd_infrastructure']['jenkins']['nexus']['username'] = 'deployment'
-default['cicd_infrastructure']['jenkins']['nexus']['password'] = 'deployment123'
-default['cicd_infrastructure']['jenkins']['selenium']['endpoint'] = nil
+  jenkins['nexus']['endpoint'] = nil
+  jenkins['nexus']['username'] = 'deployment'
+  jenkins['nexus']['password'] = 'deployment123'
+  jenkins['selenium']['endpoint'] = nil
+  jenkins['selenium']['version'] = '2.44.0'
 
-default['cicd_infrastructure']['jenkins']['jira']['host'] = nil
-default['cicd_infrastructure']['jenkins']['jira']['username'] = nil
-default['cicd_infrastructure']['jenkins']['jira']['password'] = nil
-default['cicd_infrastructure']['jenkins']['jira']['plugin']['version'] = '1.4.6.1'
-default['cicd_infrastructure']['jenkins']['jira']['plugin']['url'] = "http://repository.marvelution.org/" +
-  "service/local/repositories/releases/content/com/marvelution/jira/plugins/jenkins-jira-plugin/" +
-  "#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}/" +
-  "jenkins-jira-plugin-#{node['cicd_infrastructure']['jenkins']['jira']['plugin']['version']}.hpi"
+  jenkins['jira']['host'] = nil
+  jenkins['jira']['username'] = nil
+  jenkins['jira']['password'] = nil
+  jenkins['jira']['plugin']['version'] = '1.4.6.1'
+  jenkins['jira']['plugin']['url'] = 'http://repository.marvelution.org/' \
+    'service/local/repositories/releases/content/com/marvelution/jira/' \
+    "plugins/jenkins-jira-plugin/#{jenkins['jira']['plugin']['version']}/" \
+    "jenkins-jira-plugin-#{jenkins['jira']['plugin']['version']}.hpi"
 
-default['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version'] = '3.7'
-default['cicd_infrastructure']['jenkins']['plugin']['jbehave']['url'] = "https://nexus.codehaus.org/content/repositories/releases/org/jbehave/jbehave-jenkins-plugin/" +
-  "#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version']}/" + "jbehave-jenkins-plugin-" +
-  "#{node['cicd_infrastructure']['jenkins']['plugin']['jbehave']['version']}.hpi"
+  jenkins['plugin']['jbehave']['version'] = '3.7'
+  jenkins['plugin']['jbehave']['url'] = 'https://nexus.codehaus.org/content/' \
+  'repositories/releases/org/jbehave/jbehave-jenkins-plugin/' \
+  "#{jenkins['plugin']['jbehave']['version']}/jbehave-jenkins-plugin-" \
+  "#{jenkins['plugin']['jbehave']['version']}.hpi"
 
-default['cicd_infrastructure']['jenkins']['plugin']['xunit']['version'] = '1.89'
-default['cicd_infrastructure']['jenkins']['plugin']['xunit']['url'] = "http://updates.jenkins-ci.org/download/plugins/xunit/" +
-  "#{node['cicd_infrastructure']['jenkins']['plugin']['xunit']['version']}/xunit.hpi"
+  jenkins['plugin']['xunit']['version'] = '1.89'
+  jenkins['plugin']['xunit']['url'] = 'http://updates.jenkins-ci.org/' \
+    "download/plugins/xunit/#{jenkins['plugin']['xunit']['version']}/xunit.hpi"
 
-default['cicd_infrastructure']['jenkins']['sonar']['host'] = nil
-default['cicd_infrastructure']['jenkins']['sonar']['port'] = '9000'
-default['cicd_infrastructure']['jenkins']['sonar']['username'] = nil
-default['cicd_infrastructure']['jenkins']['sonar']['password'] = nil
+  jenkins['sonar']['host'] = nil
+  jenkins['sonar']['private_ip'] = nil
+  jenkins['sonar']['port'] = '9000'
+  jenkins['sonar']['username'] = nil
+  jenkins['sonar']['password'] = nil
 
-default['cicd_infrastructure']['gerrit']['jenkins_host'] = nil
-default['cicd_infrastructure']['gerrit']['jenkins_pubkey'] = nil
-default['cicd_infrastructure']['gerrit']['auth']['type'] = 'LDAP'
-default['cicd_infrastructure']['gerrit']['ldap']['server'] = 'localhost'
-default['cicd_infrastructure']['gerrit']['ldap']['accountBase'] = 'ou=people,dc=asf,dc=griddynamics,dc=com'
-default['cicd_infrastructure']['gerrit']['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)(uid=${username}))'
-default['cicd_infrastructure']['gerrit']['ldap']['groupBase'] = 'ou=groups,dc=asf,dc=griddynamics,dc=com'
-default['cicd_infrastructure']['gerrit']['ldap']['groupMemberPattern'] = '(|(member=${dn})(uniqueMember=${dn}))'
-default['cicd_infrastructure']['gerrit']['ldap']['accountFullName'] = 'displayName'
-default['cicd_infrastructure']['gerrit']['ldap']['accountEmailAddress'] = 'mail'
+  jenkins['ec2']['region'] = nil
+  jenkins['ec2']['accessId'] = nil
+  jenkins['ec2']['secretKey'] = nil
+  jenkins['ec2']['instanceCap'] = nil
+  jenkins['ec2']['keyPairName'] = nil
+  jenkins['ec2']['slaveCredentials'] = 'fa3aab48-4edc-446d-b1e2-1d89d86f4458'
+  jenkins['ec2']['mavenVersion'] = '3.1.1'
+  jenkins['ec2']['antVersion'] = '1.9.4'
+  jenkins['ec2']['groovyVersion'] = '2.2.1'
+  jenkins['ec2']['jdkVersion'] = '7u71'
+  jenkins['ec2']['mavenInstallationUrl']  = "https://s3.amazonaws.com/gd-asf/apache-maven-#{jenkins['ec2']['mavenVersion']}-bin.tar.gz"
+  jenkins['ec2']['antInstallationUrl']    = "https://s3.amazonaws.com/gd-asf/apache-ant-#{jenkins['ec2']['antVersion']}-bin.tar.gz"
+  jenkins['ec2']['groovyInstallationUrl'] = "https://s3.amazonaws.com/gd-asf/groovy-binary-#{jenkins['ec2']['groovyVersion']}.zip"
+  jenkins['ec2']['jdkInstallationUrl']    = "https://s3.amazonaws.com/gd-asf/jdk-#{jenkins['ec2']['jdkVersion']}-linux-x64.tar.gz"
+  jenkins['ec2']['template'] = {
+    ami: nil,
+    description: 'slave',
+    zone: nil,
+    securityGroups: nil,
+    remoteFS: '/mnt/.jenkins',
+    labels: 'build',
+    type: nil,
+    mode: 'NORMAL',
+    jvmopts: '',
+    subnetId: '',
+    userData: '',
+    numExecutors: '4',
+    remoteAdmin: 'ubuntu',
+    stopOnTerminate: 'false',
+    idleTerminationMinutes: '45',
+    useEphemeralDevices: 'true',
+    customDeviceMapping: 'false',
+    stopOnTerminate: 'false',
+    launchTimeout: '1800'
+  }
+  jenkins['docker']['registry'] = nil
+  jenkins['docker']['shipyard'] = nil
+end
 
-default['cicd_infrastructure']['gerrit']['sendemail']['enable'] = 'true'
-default['cicd_infrastructure']['gerrit']['sendemail']['smtpServer'] = 'localhost'
-default['cicd_infrastructure']['gerrit']['sendemail']['smtpServerPort'] = '25'
+default['cicd_infrastructure']['gerrit'].tap do |gerrit|
+  gerrit['jenkins_host'] = nil
+  gerrit['jenkins_pubkey'] = nil
+  gerrit['auth']['type'] = 'LDAP'
+  gerrit['ldap']['server'] = 'localhost'
+  gerrit['ldap']['accountBase'] = 'ou=people,dc=asf,dc=griddynamics,dc=com'
+  gerrit['ldap']['accountPattern'] = '(&(objectClass=inetOrgPerson)' \
+    '(uid=${username}))'
+  gerrit['ldap']['groupBase'] = 'ou=groups,dc=asf,dc=griddynamics,dc=com'
+  gerrit['ldap']['groupMemberPattern'] = '(|(member=${dn})(uniqueMember=${dn}))'
+  gerrit['ldap']['accountFullName'] = 'displayName'
+  gerrit['ldap']['accountEmailAddress'] = 'mail'
+  gerrit['sendemail']['enable'] = 'true'
+  gerrit['sendemail']['smtpServer'] = 'localhost'
+  gerrit['sendemail']['smtpServerPort'] = '25'
+end
 
-default['cicd_infrastructure']['nexus']['auth'] = 'LDAP'
-default['cicd_infrastructure']['nexus']['ldap']['server'] = 'localhost'
-default['cicd_infrastructure']['nexus']['ldap']['port'] = '389'
-default['cicd_infrastructure']['nexus']['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
-default['cicd_infrastructure']['nexus']['ldap']['rootdn'] = "cn=admin,#{node['cicd_infrastructure']['nexus']['ldap']['basedn']}"
-default['cicd_infrastructure']['nexus']['ldap']['root_pwd'] = 'password'
-default['cicd_infrastructure']['nexus']['ldap']['scheme'] = 'simple'
-default['cicd_infrastructure']['nexus']['ldap']['userdn'] = 'ou=people'
-default['cicd_infrastructure']['nexus']['ldap']['user_attrs'] = {
-  'userId' => 'uid',
-  'userPwd' => 'userPassword',
-  'objClass' => 'inetOrgPerson',
-  'mail' => 'mail',
-  'realname' => 'cn'
-}
-default['cicd_infrastructure']['nexus']['ldap']['groupdn'] = 'ou=groups'
-default['cicd_infrastructure']['nexus']['ldap']['group_attrs'] = {
-  'groupId' => 'cn',
-  'objClass' => 'groupOfNames',
-  'memberAttr' => 'member',
-  'memberFormat' => 'uid=${username},ou=people,dc=asf,dc=griddynamics,dc=com'
-}
-# LDAP groups mapping
-# Key - LDAP group
-# Value - List of Nexus roles
-default['cicd_infrastructure']['nexus']['ldap']['group_mapping'] = {
-  'developers' => [
-    'nx-admin'
-  ]
-}
-default['cicd_infrastructure']['nexus']['login'] = 'admin'
-default['cicd_infrastructure']['nexus']['password'] = 'admin123'
-default['cicd_infrastructure']['nexus']['repo']['build']['main']['id'] = 'builds-main'
-default['cicd_infrastructure']['nexus']['repo']['build']['main']['name'] = 'Builds - mainline'
-default['cicd_infrastructure']['nexus']['repo']['build']['main']['policy'] = 'SNAPSHOT'
-default['cicd_infrastructure']['nexus']['repo']['build']['main']['ttl'] = '14'
-default['cicd_infrastructure']['nexus']['repo']['build']['main']['snapshots'] = '0'
+default['cicd_infrastructure']['nexus'].tap do |nexus|
+  nexus['auth'] = 'LDAP'
+  nexus['ldap']['server'] = 'localhost'
+  nexus['ldap']['port'] = '389'
+  nexus['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
+  nexus['ldap']['rootdn'] = "cn=admin,#{nexus['ldap']['basedn']}"
+  nexus['ldap']['root_pwd'] = 'password'
+  nexus['ldap']['scheme'] = 'simple'
+  nexus['ldap']['userdn'] = 'ou=people'
+  nexus['ldap']['user_attrs'] = {
+    'userId' => 'uid',
+    'userPwd' => 'userPassword',
+    'objClass' => 'inetOrgPerson',
+    'mail' => 'mail',
+    'realname' => 'cn'
+  }
+  nexus['ldap']['groupdn'] = 'ou=groups'
+  nexus['ldap']['group_attrs'] = {
+    'groupId' => 'cn',
+    'objClass' => 'groupOfNames',
+    'memberAttr' => 'member',
+    'memberFormat' => 'uid=${username},ou=people,dc=asf,dc=griddynamics,dc=com'
+  }
+  # LDAP groups mapping
+  # Key - LDAP group
+  # Value - List of Nexus roles
+  nexus['ldap']['group_mapping'] = {
+    'developers' => [
+      'nx-admin'
+    ]
+  }
+  nexus['login'] = 'admin'
+  nexus['password'] = 'admin123'
 
-default['cicd_infrastructure']['nexus']['repo']['build']['feature']['id'] = 'builds-feature'
-default['cicd_infrastructure']['nexus']['repo']['build']['feature']['name'] = 'Builds - feature branches'
-default['cicd_infrastructure']['nexus']['repo']['build']['feature']['policy'] = 'SNAPSHOT'
-default['cicd_infrastructure']['nexus']['repo']['build']['feature']['ttl'] = '14'
-default['cicd_infrastructure']['nexus']['repo']['build']['feature']['snapshots'] = '0'
+  nexus['repo']['build']['main']['id'] = 'builds-main'
+  nexus['repo']['build']['main']['name'] = 'Builds - mainline'
+  nexus['repo']['build']['main']['policy'] = 'SNAPSHOT'
+  nexus['repo']['build']['main']['ttl'] = '14'
+  nexus['repo']['build']['main']['snapshots'] = '0'
+  nexus['repo']['build']['feature']['id'] = 'builds-feature'
+  nexus['repo']['build']['feature']['name'] = 'Builds - feature branches'
+  nexus['repo']['build']['feature']['policy'] = 'SNAPSHOT'
+  nexus['repo']['build']['feature']['ttl'] = '14'
+  nexus['repo']['build']['feature']['snapshots'] = '0'
+  nexus['repo']['build']['group']['id'] = 'builds-all'
+  nexus['repo']['build']['group']['name'] = 'Builds - all'
+  nexus['repo']['build']['promote']['group']['id'] = 'builds-promoted'
+  nexus['repo']['build']['promote']['group']['name'] = 'Builds - promoted'
 
-default['cicd_infrastructure']['nexus']['repo']['promote']['id'] = 'builds-main-promoted'
-default['cicd_infrastructure']['nexus']['repo']['promote']['name'] = 'Builds-main-promoted'
-default['cicd_infrastructure']['nexus']['repo']['promote']['policy'] = 'SNAPSHOT'
-default['cicd_infrastructure']['nexus']['repo']['promote']['ttl'] = '99'
-default['cicd_infrastructure']['nexus']['repo']['promote']['snapshots'] = '0'
+  nexus['repo']['promote']['id'] = 'builds-main-promoted'
+  nexus['repo']['promote']['name'] = 'Builds-main-promoted'
+  nexus['repo']['promote']['policy'] = 'SNAPSHOT'
+  nexus['repo']['promote']['ttl'] = '99'
+  nexus['repo']['promote']['snapshots'] = '0'
 
-default['cicd_infrastructure']['nexus']['repo']['build']['group']['id'] = 'builds-all'
-default['cicd_infrastructure']['nexus']['repo']['build']['group']['name'] = 'Builds - all'
-default['cicd_infrastructure']['nexus']['repo']['build']['promote']['group']['id'] = 'builds-promoted'
-default['cicd_infrastructure']['nexus']['repo']['build']['promote']['group']['name'] = 'Builds - promoted'
-default['cicd_infrastructure']['nexus']['repo']['jbehave']['id'] = 'gd_jbehave_framework-snapshots'
-default['cicd_infrastructure']['nexus']['repo']['jbehave']['name'] = 'GD JBehave framework - snapshots'
-default['cicd_infrastructure']['nexus']['repo']['jbehave']['policy'] = 'Snapshot'
-default['cicd_infrastructure']['nexus']['repo']['jbehave']['location'] = 'https://nexus.griddynamics.net/nexus/content/repositories/gd_jbehave_framework-snapshots/'
-default['cicd_infrastructure']['nexus']['repo']['jbehave']['username'] = 'gd-jbehave'
-default['cicd_infrastructure']['nexus']['repo']['jbehave']['password'] = '{LX48QCkpKT48fi1+PEApKSk+PH4tfjxAKSkpPjx+LQo=}'
-default['cicd_infrastructure']['nexus']['repo']['jbehave']['use'] = 'true'
+  nexus['repo']['gd']['id'] = 'cd-releases'
+  nexus['repo']['gd']['name'] = 'GD CD Releases'
+  nexus['repo']['gd']['policy'] = 'Release'
+  nexus['repo']['gd']['location'] = 'https://nexus.griddynamics.net/' \
+    'nexus/content/repositories/cd-releases/'
+end
 
-default['cicd_infrastructure']['sonar']['credentials']['username'] = nil
-default['cicd_infrastructure']['sonar']['credentials']['password'] = nil
+default['cicd_infrastructure']['sonar'].tap do |sonar|
+  sonar['credentials']['username'] = nil
+  sonar['credentials']['password'] = nil
 
-default['cicd_infrastructure']['sonar']['auth'] = 'LDAP'
-default['cicd_infrastructure']['sonar']['ldap']['realm'] = 'mydomain.com'
-default['cicd_infrastructure']['sonar']['ldap']['security']['realm'] = 'LDAP'
-default['cicd_infrastructure']['sonar']['ldap']['server'] = 'localhost'
-default['cicd_infrastructure']['sonar']['ldap']['port'] = '389'
-default['cicd_infrastructure']['sonar']['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
-default['cicd_infrastructure']['sonar']['ldap']['rootdn'] = "cn=admin,\
-  #{node['cicd_infrastructure']['sonar']['ldap']['basedn']}"
-default['cicd_infrastructure']['sonar']['ldap']['root_pwd'] = 'password'
-default['cicd_infrastructure']['sonar']['ldap']['userdn'] = "ou=people,\
-  #{node['cicd_infrastructure']['sonar']['ldap']['basedn']}"
-default['cicd_infrastructure']['sonar']['ldap']['groupdn'] = "ou=groups,\
-  #{node['cicd_infrastructure']['sonar']['ldap']['basedn']}"
+  sonar['auth'] = 'LDAP'
+  sonar['ldap']['realm'] = 'mydomain.com'
+  sonar['ldap']['security']['realm'] = 'LDAP'
+  sonar['ldap']['server'] = 'localhost'
+  sonar['ldap']['port'] = '389'
+  sonar['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
+  sonar['ldap']['rootdn'] = "cn=admin,\
+    #{sonar['ldap']['basedn']}"
+  sonar['ldap']['root_pwd'] = 'password'
+  sonar['ldap']['userdn'] = "ou=people,\
+    #{sonar['ldap']['basedn']}"
+  sonar['ldap']['groupdn'] = "ou=groups,\
+    #{sonar['ldap']['basedn']}"
 
-default['cicd_infrastructure']['sonar']['mail']['from'] = 'sonar@asf.griddynamics.com'
-default['cicd_infrastructure']['sonar']['mail']['smtp_host.secured'] = 'localhost'
-default['cicd_infrastructure']['sonar']['mail']['smtp_port.secured'] = '25'
+  sonar['mail']['from'] = 'sonar@asf.griddynamics.com'
+  sonar['mail']['smtp_host.secured'] = 'localhost'
+  sonar['mail']['smtp_port.secured'] = '25'
+end
 
-default['cicd_infrastructure']['jira']['ldap']['server'] = 'localhost'
-default['cicd_infrastructure']['jira']['ldap']['port'] = '389'
-default['cicd_infrastructure']['jira']['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
-default['cicd_infrastructure']['jira']['ldap']['rootdn'] = "cn=admin,#{node['cicd_infrastructure']['jira']['ldap']['basedn']}"
-default['cicd_infrastructure']['jira']['ldap']['root_pwd'] = 'password'
-default['cicd_infrastructure']['jira']['ldap']['scheme'] = 'simple'
-default['cicd_infrastructure']['jira']['ldap']['userdn'] = 'ou=people'
-default['cicd_infrastructure']['jira']['ldap']['user_attrs'] = {
-  'userId' => 'uid',
-  'userPwd' => 'userPassword',
-  'objClass' => 'inetorgperson',
-  'mail' => 'mail',
-  'realname' => 'givenName'
-}
-default['cicd_infrastructure']['jira']['ldap']['groupdn'] = 'ou=groups'
-default['cicd_infrastructure']['jira']['ldap']['group_attrs'] = {
-  'groupId' => 'cn',
-  'objClass' => 'groupOfUniqueNames',
-  'memberAttr' => 'uniqueMember',
-  'memberFormat' => 'uid=${username},ou=people,dc=asf,dc=griddynamics,dc=com'
-}
-default['cicd_infrastructure']['jira']['plugins'] = {
-#   'jira-jenkins-plugin' => {
-#     'type' => 'obr',
-#     'url' => 'https://marketplace.atlassian.com/download/plugins/com.marvelution.jira.plugins.jenkins/version/212'
-#   },
-#   'rest-api-browser' => {
-#     'type' => 'jar',
-#     'url' => 'https://marketplace.atlassian.com/download/plugins/com.atlassian.labs.rest-api-browser/version/3110'
-#   }
-}
+default['cicd_infrastructure']['jira'].tap do |jira|
+  jira['ldap']['server'] = 'localhost'
+  jira['ldap']['port'] = '389'
+  jira['ldap']['basedn'] = 'dc=asf,dc=griddynamics,dc=com'
+  jira['ldap']['rootdn'] = "cn=admin,#{jira['ldap']['basedn']}"
+  jira['ldap']['root_pwd'] = 'password'
+  jira['ldap']['scheme'] = 'simple'
+  jira['ldap']['userdn'] = 'ou=people'
+  jira['ldap']['user_attrs'] = {
+    'userId' => 'uid',
+    'userPwd' => 'userPassword',
+    'objClass' => 'inetorgperson',
+    'mail' => 'mail',
+    'realname' => 'givenName'
+  }
+  jira['ldap']['groupdn'] = 'ou=groups'
+  jira['ldap']['group_attrs'] = {
+    'groupId' => 'cn',
+    'objClass' => 'groupOfUniqueNames',
+    'memberAttr' => 'uniqueMember',
+    'memberFormat' => 'uid=${username},ou=people,dc=asf,dc=griddynamics,dc=com'
+  }
+  jira['plugins'] = {
+    #   'jira-jenkins-plugin' => {
+    #     'type' => 'obr',
+    #     'url' => 'https://marketplace.atlassian.com/download/plugins/com.marvelution.jira.plugins.jenkins/version/212'
+    #   },
+    #   'rest-api-browser' => {
+    #     'type' => 'jar',
+    #     'url' => 'https://marketplace.atlassian.com/download/plugins/com.atlassian.labs.rest-api-browser/version/3110'
+    #   }
+  }
+end
